@@ -6,13 +6,13 @@ import {
   Clock,
   Plus,
   Users,
-  Target,
+  Monitor,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { missions, simulatorTypes, exercises } from '@/data/mockData';
+import { missions, customCourses, iwtsStations, getCourseById, getStationById } from '@/data/mockData';
 import {
   Dialog,
   DialogContent,
@@ -127,6 +127,7 @@ export default function MissionScheduler() {
 
   const weekDays = getWeekDays(currentDate);
   const monthDays = getDaysInMonth(currentDate);
+  const availableStations = iwtsStations.filter(s => s.status !== 'offline');
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -146,7 +147,7 @@ export default function MissionScheduler() {
               Schedule Mission
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-md bg-background">
             <DialogHeader>
               <DialogTitle>Schedule New Mission</DialogTitle>
             </DialogHeader>
@@ -156,14 +157,16 @@ export default function MissionScheduler() {
                 <Input placeholder="Enter mission name" className="bg-muted" />
               </div>
               <div className="space-y-2">
-                <Label>Exercise Template</Label>
+                <Label>Custom Course</Label>
                 <Select>
                   <SelectTrigger className="bg-muted">
-                    <SelectValue placeholder="Select exercise" />
+                    <SelectValue placeholder="Select course" />
                   </SelectTrigger>
-                  <SelectContent>
-                    {exercises.filter(e => e.status === 'published').map(ex => (
-                      <SelectItem key={ex.id} value={ex.id}>{ex.name}</SelectItem>
+                  <SelectContent className="bg-popover">
+                    {customCourses.map(course => (
+                      <SelectItem key={course.id} value={course.id}>
+                        {course.name} ({course.exerciseIds.length} exercises)
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -180,14 +183,14 @@ export default function MissionScheduler() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Simulator Type</Label>
+                  <Label>IWTS Station</Label>
                   <Select>
                     <SelectTrigger className="bg-muted">
-                      <SelectValue placeholder="Select type" />
+                      <SelectValue placeholder="Select station" />
                     </SelectTrigger>
-                    <SelectContent>
-                      {simulatorTypes.map(type => (
-                        <SelectItem key={type.id} value={type.id}>{type.name}</SelectItem>
+                    <SelectContent className="bg-popover">
+                      {availableStations.map(station => (
+                        <SelectItem key={station.id} value={station.id}>{station.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -237,36 +240,40 @@ export default function MissionScheduler() {
           {view === 'daily' && (
             <div className="space-y-3">
               {getMissionsForDate(currentDate).length > 0 ? (
-                getMissionsForDate(currentDate).map((mission) => (
-                  <div
-                    key={mission.id}
-                    className="flex items-center gap-4 p-4 rounded-lg bg-muted/30 border border-border hover:border-primary/30 transition-colors"
-                  >
-                    <div className="w-16 text-center">
-                      <span className="text-xl font-bold text-primary">{mission.time}</span>
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-foreground">{mission.name}</p>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                        <span className="flex items-center gap-1">
-                          <Target className="w-3 h-3" />
-                          {mission.simulatorType.toUpperCase()}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {mission.duration} min
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Users className="w-3 h-3" />
-                          {mission.assignedTrainees.length} trainees
-                        </span>
+                getMissionsForDate(currentDate).map((mission) => {
+                  const course = getCourseById(mission.courseId);
+                  const station = getStationById(mission.stationId);
+                  return (
+                    <div
+                      key={mission.id}
+                      className="flex items-center gap-4 p-4 rounded-lg bg-muted/30 border border-border hover:border-primary/30 transition-colors"
+                    >
+                      <div className="w-16 text-center">
+                        <span className="text-xl font-bold text-primary">{mission.time}</span>
                       </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-foreground">{mission.name}</p>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                          <span className="flex items-center gap-1">
+                            <Monitor className="w-3 h-3" />
+                            {station?.name}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {mission.duration} min
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Users className="w-3 h-3" />
+                            {mission.assignedTrainees.length} trainees
+                          </span>
+                        </div>
+                      </div>
+                      <Badge variant={mission.status === 'in-progress' ? 'default' : 'secondary'}>
+                        {mission.status}
+                      </Badge>
                     </div>
-                    <Badge variant={mission.status === 'in-progress' ? 'default' : 'secondary'}>
-                      {mission.status}
-                    </Badge>
-                  </div>
-                ))
+                  );
+                })
               ) : (
                 <div className="text-center py-12 text-muted-foreground">
                   No missions scheduled for this day
@@ -377,7 +384,8 @@ export default function MissionScheduler() {
               <thead>
                 <tr>
                   <th>Mission Name</th>
-                  <th>Simulator</th>
+                  <th>Station</th>
+                  <th>Course</th>
                   <th>Date & Time</th>
                   <th>Duration</th>
                   <th>Trainees</th>
@@ -385,25 +393,30 @@ export default function MissionScheduler() {
                 </tr>
               </thead>
               <tbody>
-                {missions.map((mission) => (
-                  <tr key={mission.id}>
-                    <td className="font-medium text-foreground">{mission.name}</td>
-                    <td>
-                      <Badge variant="outline">{mission.simulatorType.toUpperCase()}</Badge>
-                    </td>
-                    <td className="text-muted-foreground">{mission.date} at {mission.time}</td>
-                    <td className="text-muted-foreground">{mission.duration} min</td>
-                    <td>{mission.assignedTrainees.length}</td>
-                    <td>
-                      <Badge variant={
-                        mission.status === 'in-progress' ? 'default' :
-                        mission.status === 'completed' ? 'secondary' : 'outline'
-                      }>
-                        {mission.status}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))}
+                {missions.map((mission) => {
+                  const course = getCourseById(mission.courseId);
+                  const station = getStationById(mission.stationId);
+                  return (
+                    <tr key={mission.id}>
+                      <td className="font-medium text-foreground">{mission.name}</td>
+                      <td>
+                        <Badge variant="outline">{station?.name}</Badge>
+                      </td>
+                      <td className="text-muted-foreground">{course?.name}</td>
+                      <td className="text-muted-foreground">{mission.date} at {mission.time}</td>
+                      <td className="text-muted-foreground">{mission.duration} min</td>
+                      <td>{mission.assignedTrainees.length}</td>
+                      <td>
+                        <Badge variant={
+                          mission.status === 'in-progress' ? 'default' :
+                          mission.status === 'completed' ? 'secondary' : 'outline'
+                        }>
+                          {mission.status}
+                        </Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

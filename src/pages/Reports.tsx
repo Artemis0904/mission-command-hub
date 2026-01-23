@@ -10,7 +10,6 @@ import {
   Target,
   CheckCircle,
   XCircle,
-  ChevronRight,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,11 +28,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { sessionReports, trainees, missions, simulatorTypes, replayEvents, getTraineeById, getSimulatorTypeName } from '@/data/mockData';
+import { sessionReports, trainees, missions, replayEvents, getTraineeById, getCourseById } from '@/data/mockData';
 
 export default function Reports() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [simTypeFilter, setSimTypeFilter] = useState<string>('all');
   const [resultFilter, setResultFilter] = useState<string>('all');
   const [selectedReport, setSelectedReport] = useState<typeof sessionReports[0] | null>(null);
   const [showReplay, setShowReplay] = useState(false);
@@ -41,7 +39,6 @@ export default function Reports() {
   const filteredReports = sessionReports.filter(report => {
     const trainee = getTraineeById(report.traineeId);
     if (searchTerm && !trainee?.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
-    if (simTypeFilter !== 'all' && report.simulatorType !== simTypeFilter) return false;
     if (resultFilter !== 'all' && report.result !== resultFilter) return false;
     return true;
   });
@@ -58,6 +55,14 @@ export default function Reports() {
 
   const getReplayEvents = (sessionId: string) => {
     return replayEvents[sessionId as keyof typeof replayEvents] || [];
+  };
+
+  const getMissionCourse = (missionId: string) => {
+    const mission = missions.find(m => m.id === missionId);
+    if (mission) {
+      return getCourseById(mission.courseId);
+    }
+    return null;
   };
 
   return (
@@ -90,23 +95,12 @@ export default function Reports() {
                 className="pl-10 bg-muted border-border"
               />
             </div>
-            <Select value={simTypeFilter} onValueChange={setSimTypeFilter}>
-              <SelectTrigger className="w-44 bg-muted border-border">
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Simulator Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                {simulatorTypes.map((type) => (
-                  <SelectItem key={type.id} value={type.id}>{type.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
             <Select value={resultFilter} onValueChange={setResultFilter}>
               <SelectTrigger className="w-36 bg-muted border-border">
+                <Filter className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Result" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-popover">
                 <SelectItem value="all">All Results</SelectItem>
                 <SelectItem value="pass">Pass</SelectItem>
                 <SelectItem value="fail">Fail</SelectItem>
@@ -128,7 +122,7 @@ export default function Reports() {
                 <tr>
                   <th>Session ID</th>
                   <th>Trainee</th>
-                  <th>Simulator</th>
+                  <th>Course</th>
                   <th>Score</th>
                   <th>Result</th>
                   <th>Date/Time</th>
@@ -139,7 +133,7 @@ export default function Reports() {
               <tbody>
                 {filteredReports.map((report) => {
                   const trainee = getTraineeById(report.traineeId);
-                  const mission = missions.find(m => m.id === report.missionId);
+                  const course = getMissionCourse(report.missionId);
                   
                   return (
                     <tr key={report.id}>
@@ -156,9 +150,7 @@ export default function Reports() {
                           <span className="font-medium text-foreground">{trainee?.name}</span>
                         </div>
                       </td>
-                      <td>
-                        <Badge variant="outline">{getSimulatorTypeName(report.simulatorType)}</Badge>
-                      </td>
+                      <td className="text-muted-foreground">{course?.name || 'N/A'}</td>
                       <td>
                         <span className="font-bold text-primary">{report.score}</span>
                       </td>
@@ -212,7 +204,7 @@ export default function Reports() {
 
       {/* Report Detail / Replay Dialog */}
       <Dialog open={!!selectedReport} onOpenChange={() => setSelectedReport(null)}>
-        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto bg-background">
           {selectedReport && (
             <>
               <DialogHeader>

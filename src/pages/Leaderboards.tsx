@@ -18,10 +18,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { trainees, simulatorTypes, scores, getSimulatorTypeName } from '@/data/mockData';
+import { trainees, scores } from '@/data/mockData';
 
 export default function Leaderboards() {
-  const [selectedSimType, setSelectedSimType] = useState<string>('all');
   const [dateRange, setDateRange] = useState<string>('all');
 
   // Sort trainees by score
@@ -80,23 +79,12 @@ export default function Leaderboards() {
           <p className="text-muted-foreground">Top performing trainees by score and accuracy</p>
         </div>
         <div className="flex gap-3">
-          <Select value={selectedSimType} onValueChange={setSelectedSimType}>
-            <SelectTrigger className="w-40 bg-muted border-border">
-              <Filter className="w-4 h-4 mr-2" />
-              <SelectValue placeholder="Simulator Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              {simulatorTypes.map((type) => (
-                <SelectItem key={type.id} value={type.id}>{type.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           <Select value={dateRange} onValueChange={setDateRange}>
             <SelectTrigger className="w-40 bg-muted border-border">
+              <Filter className="w-4 h-4 mr-2" />
               <SelectValue placeholder="Date Range" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-popover">
               <SelectItem value="all">All Time</SelectItem>
               <SelectItem value="week">This Week</SelectItem>
               <SelectItem value="month">This Month</SelectItem>
@@ -240,41 +228,6 @@ export default function Leaderboards() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Stats by Simulator Type */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {simulatorTypes.map((type) => {
-          const typeScores = scores.filter(s => s.simulatorType === type.id);
-          const avgScore = typeScores.length > 0 
-            ? Math.round(typeScores.reduce((sum, s) => sum + s.score, 0) / typeScores.length)
-            : 0;
-          const avgAccuracy = typeScores.length > 0
-            ? Math.round(typeScores.reduce((sum, s) => sum + s.accuracy, 0) / typeScores.length)
-            : 0;
-          
-          return (
-            <Card key={type.id} className="tactical-card-hover">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <Badge variant="outline">{type.name}</Badge>
-                  <Trophy className="w-5 h-5 text-accent" />
-                </div>
-                <p className="text-sm text-muted-foreground mb-1">{type.fullName}</p>
-                <div className="flex items-baseline gap-4 mt-3">
-                  <div>
-                    <span className="text-2xl font-bold text-foreground">{avgScore}</span>
-                    <span className="text-xs text-muted-foreground ml-1">avg score</span>
-                  </div>
-                  <div>
-                    <span className="text-lg font-medium text-primary">{avgAccuracy}%</span>
-                    <span className="text-xs text-muted-foreground ml-1">accuracy</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
     </div>
   );
 }

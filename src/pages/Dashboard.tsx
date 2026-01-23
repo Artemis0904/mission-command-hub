@@ -1,35 +1,37 @@
 import { 
-  Target, 
+  Monitor, 
   Calendar, 
   Users, 
   FileBarChart, 
   Trophy, 
   AlertTriangle,
   Clock,
-  CheckCircle,
   Activity,
   TrendingUp,
   Zap,
   Play,
+  BookOpen,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
-import { dashboardStats, missions, trainees, complianceAlerts, getTraineeById } from '@/data/mockData';
+import { dashboardStats, missions, trainees, complianceAlerts, getTraineeById, getCourseById, iwtsStations } from '@/data/mockData';
 
 export default function Dashboard() {
   const navigate = useNavigate();
 
   const todaysMissions = missions.filter(m => m.date === '2026-01-23');
   const topTrainees = trainees.slice(0, 5);
+  const activeStations = iwtsStations.filter(s => s.status !== 'offline').length;
+  const stationsInUse = iwtsStations.filter(s => s.status === 'in-use').length;
 
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Welcome Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Command Dashboard</h1>
+          <h1 className="text-2xl font-bold text-foreground">IWTS Dashboard</h1>
           <p className="text-muted-foreground">Welcome back, Instructor. Here's today's overview.</p>
         </div>
         <div className="flex gap-3">
@@ -37,32 +39,32 @@ export default function Dashboard() {
             <Calendar className="w-4 h-4 mr-2" />
             Schedule Mission
           </Button>
-          <Button className="bg-primary hover:bg-primary/90" onClick={() => navigate('/exercise-builder')}>
-            <Target className="w-4 h-4 mr-2" />
-            Create Exercise
+          <Button className="bg-primary hover:bg-primary/90" onClick={() => navigate('/custom-courses')}>
+            <BookOpen className="w-4 h-4 mr-2" />
+            Create Course
           </Button>
         </div>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="tactical-card-hover">
+        <Card className="tactical-card-hover cursor-pointer" onClick={() => navigate('/stations')}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Active Simulator Types</p>
-                <p className="metric-value text-foreground">{dashboardStats.activeSimulatorTypes}</p>
+                <p className="text-sm text-muted-foreground">IWTS Stations</p>
+                <p className="metric-value text-foreground">{dashboardStats.totalStations}</p>
               </div>
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Target className="w-6 h-6 text-primary" />
+                <Monitor className="w-6 h-6 text-primary" />
               </div>
             </div>
             <div className="mt-3 flex items-center gap-2 text-xs">
               <span className="text-primary flex items-center gap-1">
                 <Activity className="w-3 h-3" />
-                {dashboardStats.activeSimulators} active
+                {stationsInUse} in use
               </span>
-              <span className="text-muted-foreground">of {dashboardStats.totalSimulators} total</span>
+              <span className="text-muted-foreground">• {activeStations} available</span>
             </div>
           </CardContent>
         </Card>
@@ -87,21 +89,21 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="tactical-card-hover">
+        <Card className="tactical-card-hover cursor-pointer" onClick={() => navigate('/custom-courses')}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Pending Completions</p>
-                <p className="metric-value text-foreground">{dashboardStats.pendingCompletions}</p>
+                <p className="text-sm text-muted-foreground">Custom Courses</p>
+                <p className="metric-value text-foreground">{dashboardStats.customCourses}</p>
               </div>
               <div className="w-12 h-12 rounded-xl bg-status-info/10 flex items-center justify-center">
-                <Users className="w-6 h-6 text-status-info" />
+                <BookOpen className="w-6 h-6 text-status-info" />
               </div>
             </div>
             <div className="mt-3 flex items-center gap-2 text-xs">
               <span className="text-status-info flex items-center gap-1">
                 <TrendingUp className="w-3 h-3" />
-                82% on track
+                Active courses
               </span>
             </div>
           </CardContent>
@@ -137,40 +139,43 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-3">
             {todaysMissions.length > 0 ? (
-              todaysMissions.map((mission) => (
-                <div
-                  key={mission.id}
-                  className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border border-border hover:border-primary/30 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      mission.status === 'in-progress' 
-                        ? 'bg-accent/20 text-accent' 
-                        : 'bg-primary/20 text-primary'
-                    }`}>
-                      {mission.status === 'in-progress' ? (
-                        <Play className="w-5 h-5" />
-                      ) : (
-                        <Calendar className="w-5 h-5" />
-                      )}
+              todaysMissions.map((mission) => {
+                const course = getCourseById(mission.courseId);
+                return (
+                  <div
+                    key={mission.id}
+                    className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border border-border hover:border-primary/30 transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                        mission.status === 'in-progress' 
+                          ? 'bg-accent/20 text-accent' 
+                          : 'bg-primary/20 text-primary'
+                      }`}>
+                        {mission.status === 'in-progress' ? (
+                          <Play className="w-5 h-5" />
+                        ) : (
+                          <Calendar className="w-5 h-5" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">{mission.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {course?.name} • {mission.time} • {mission.duration}min
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-foreground">{mission.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {mission.simulatorType.toUpperCase()} • {mission.time} • {mission.duration}min
-                      </p>
+                    <div className="flex items-center gap-3">
+                      <Badge variant={mission.status === 'in-progress' ? 'default' : 'secondary'}>
+                        {mission.status === 'in-progress' ? 'In Progress' : 'Scheduled'}
+                      </Badge>
+                      <span className="text-sm text-muted-foreground">
+                        {mission.assignedTrainees.length} trainees
+                      </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Badge variant={mission.status === 'in-progress' ? 'default' : 'secondary'}>
-                      {mission.status === 'in-progress' ? 'In Progress' : 'Scheduled'}
-                    </Badge>
-                    <span className="text-sm text-muted-foreground">
-                      {mission.assignedTrainees.length} trainees
-                    </span>
-                  </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="text-center py-8 text-muted-foreground">
                 No missions scheduled for today
@@ -233,14 +238,14 @@ export default function Dashboard() {
           <CardContent>
             <div className="space-y-3">
               {[
-                { trainee: 'SGT John Mitchell', mission: 'Night Ops Prep', simulator: 'CTN', status: 'assigned' },
-                { trainee: 'CPL David Kim', mission: 'Sniper Qualification', simulator: 'Sniper', status: 'overdue' },
-                { trainee: 'SPC Robert Hayes', mission: 'Mortar Basics', simulator: 'Mortar', status: 'assigned' },
+                { trainee: 'SGT John Mitchell', mission: 'Night Ops Training', station: 'IWTS-05', status: 'assigned' },
+                { trainee: 'CPL David Kim', mission: 'Advanced Combat Drill', station: 'IWTS-06', status: 'overdue' },
+                { trainee: 'SPC Robert Hayes', mission: 'Qualification Test', station: 'IWTS-09', status: 'assigned' },
               ].map((item, i) => (
                 <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                   <div>
                     <p className="font-medium text-foreground">{item.trainee}</p>
-                    <p className="text-sm text-muted-foreground">{item.mission} • {item.simulator}</p>
+                    <p className="text-sm text-muted-foreground">{item.mission} • {item.station}</p>
                   </div>
                   <Badge variant={item.status === 'overdue' ? 'destructive' : 'secondary'}>
                     {item.status}
@@ -306,18 +311,18 @@ export default function Dashboard() {
             <Button 
               variant="outline" 
               className="h-auto py-4 flex flex-col gap-2"
-              onClick={() => navigate('/exercise-builder')}
+              onClick={() => navigate('/custom-courses')}
             >
-              <Target className="w-6 h-6 text-primary" />
-              <span>Create Exercise</span>
+              <BookOpen className="w-6 h-6 text-primary" />
+              <span>Create Course</span>
             </Button>
             <Button 
               variant="outline" 
               className="h-auto py-4 flex flex-col gap-2"
-              onClick={() => navigate('/mission-scheduler')}
+              onClick={() => navigate('/stations')}
             >
-              <Calendar className="w-6 h-6 text-accent" />
-              <span>Schedule Mission</span>
+              <Monitor className="w-6 h-6 text-accent" />
+              <span>Manage Stations</span>
             </Button>
             <Button 
               variant="outline" 
