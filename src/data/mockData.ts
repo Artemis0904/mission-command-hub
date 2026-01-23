@@ -14,19 +14,151 @@ export const iwtsStations = [
   { id: 'iwts-10', name: 'IWTS-10', status: 'offline', location: 'Training Hall C', assignedCourseId: null },
 ];
 
-// Pre-defined Exercises (to be combined into custom courses)
-export const exercises = [
-  { id: 'ex001', name: 'Basic Marksmanship', difficulty: 'easy', timeLimit: 15, targets: 5, description: 'Fundamental shooting skills with stationary targets' },
-  { id: 'ex002', name: 'Rapid Fire Drill', difficulty: 'medium', timeLimit: 10, targets: 8, description: 'Quick target acquisition and engagement' },
-  { id: 'ex003', name: 'Moving Target Engagement', difficulty: 'hard', timeLimit: 20, targets: 6, description: 'Track and engage moving targets' },
-  { id: 'ex004', name: 'Night Vision Ops', difficulty: 'hard', timeLimit: 25, targets: 8, description: 'Low-light environment training' },
-  { id: 'ex005', name: 'Close Quarter Combat', difficulty: 'medium', timeLimit: 12, targets: 10, description: 'Urban environment engagement' },
-  { id: 'ex006', name: 'Long Range Precision', difficulty: 'hard', timeLimit: 30, targets: 4, description: 'Extended range accuracy training' },
-  { id: 'ex007', name: 'Timed Qualification', difficulty: 'medium', timeLimit: 20, targets: 12, description: 'Standard qualification course' },
-  { id: 'ex008', name: 'Stress Fire Drill', difficulty: 'hard', timeLimit: 15, targets: 10, description: 'High-pressure scenario training' },
-  { id: 'ex009', name: 'Target Identification', difficulty: 'easy', timeLimit: 18, targets: 8, description: 'Friend/foe identification training' },
-  { id: 'ex010', name: 'Team Coordination', difficulty: 'medium', timeLimit: 25, targets: 15, description: 'Multi-shooter coordination exercise' },
+// Exercise Types (10 categories)
+export const exerciseTypes = [
+  { id: 'type-rainy', name: 'Rainy', icon: 'cloud-rain', description: 'Wet weather conditions training' },
+  { id: 'type-wind', name: 'Wind', icon: 'wind', description: 'High wind environment training' },
+  { id: 'type-uphill', name: 'Uphill', icon: 'mountain', description: 'Elevated terrain shooting' },
+  { id: 'type-distance', name: 'Distance', icon: 'crosshair', description: 'Long range engagement' },
+  { id: 'type-night', name: 'Night', icon: 'moon', description: 'Low-light conditions' },
+  { id: 'type-urban', name: 'Urban', icon: 'building', description: 'Urban warfare scenarios' },
+  { id: 'type-moving', name: 'Moving Target', icon: 'move', description: 'Dynamic target engagement' },
+  { id: 'type-stress', name: 'Stress', icon: 'zap', description: 'High-pressure scenarios' },
+  { id: 'type-tactical', name: 'Tactical', icon: 'shield', description: 'Tactical movement drills' },
+  { id: 'type-qualification', name: 'Qualification', icon: 'award', description: 'Standard qualification tests' },
 ];
+
+// Pre-defined Exercises organized by type (10 exercises per type = 100 total)
+export const exercises = [
+  // Rainy (type-rainy)
+  { id: 'ex-rainy-01', typeId: 'type-rainy', name: 'Light Rain Basics', difficulty: 'easy', timeLimit: 12, targets: 5, description: 'Basic marksmanship in light rain' },
+  { id: 'ex-rainy-02', typeId: 'type-rainy', name: 'Heavy Downpour', difficulty: 'hard', timeLimit: 18, targets: 8, description: 'Visibility impaired by heavy rain' },
+  { id: 'ex-rainy-03', typeId: 'type-rainy', name: 'Fog & Mist', difficulty: 'medium', timeLimit: 15, targets: 6, description: 'Limited visibility with fog' },
+  { id: 'ex-rainy-04', typeId: 'type-rainy', name: 'Wet Terrain Movement', difficulty: 'medium', timeLimit: 20, targets: 7, description: 'Shooting while moving on wet ground' },
+  { id: 'ex-rainy-05', typeId: 'type-rainy', name: 'Storm Conditions', difficulty: 'hard', timeLimit: 25, targets: 10, description: 'Extreme weather engagement' },
+  { id: 'ex-rainy-06', typeId: 'type-rainy', name: 'Drizzle Precision', difficulty: 'easy', timeLimit: 10, targets: 4, description: 'Precision shots in drizzle' },
+  { id: 'ex-rainy-07', typeId: 'type-rainy', name: 'Puddle Navigation', difficulty: 'medium', timeLimit: 16, targets: 8, description: 'Navigate wet terrain obstacles' },
+  { id: 'ex-rainy-08', typeId: 'type-rainy', name: 'Monsoon Drill', difficulty: 'hard', timeLimit: 22, targets: 12, description: 'Monsoon-level conditions' },
+  { id: 'ex-rainy-09', typeId: 'type-rainy', name: 'Slick Surface Stance', difficulty: 'medium', timeLimit: 14, targets: 6, description: 'Maintain stance on slick surfaces' },
+  { id: 'ex-rainy-10', typeId: 'type-rainy', name: 'Rain & Thunder', difficulty: 'hard', timeLimit: 28, targets: 15, description: 'Full storm simulation' },
+
+  // Wind (type-wind)
+  { id: 'ex-wind-01', typeId: 'type-wind', name: 'Light Breeze', difficulty: 'easy', timeLimit: 10, targets: 5, description: 'Basic wind compensation' },
+  { id: 'ex-wind-02', typeId: 'type-wind', name: 'Crosswind Challenge', difficulty: 'medium', timeLimit: 15, targets: 7, description: 'Strong crosswind shooting' },
+  { id: 'ex-wind-03', typeId: 'type-wind', name: 'Gusty Conditions', difficulty: 'hard', timeLimit: 20, targets: 8, description: 'Variable wind gusts' },
+  { id: 'ex-wind-04', typeId: 'type-wind', name: 'Headwind Accuracy', difficulty: 'medium', timeLimit: 12, targets: 6, description: 'Shooting into headwind' },
+  { id: 'ex-wind-05', typeId: 'type-wind', name: 'Tailwind Adjustment', difficulty: 'easy', timeLimit: 10, targets: 5, description: 'Compensate for tailwind' },
+  { id: 'ex-wind-06', typeId: 'type-wind', name: 'Hurricane Simulation', difficulty: 'hard', timeLimit: 25, targets: 10, description: 'Extreme wind conditions' },
+  { id: 'ex-wind-07', typeId: 'type-wind', name: 'Wind Reading', difficulty: 'medium', timeLimit: 18, targets: 8, description: 'Read and adjust for wind' },
+  { id: 'ex-wind-08', typeId: 'type-wind', name: 'Dust Storm', difficulty: 'hard', timeLimit: 22, targets: 9, description: 'Wind with reduced visibility' },
+  { id: 'ex-wind-09', typeId: 'type-wind', name: 'Variable Windage', difficulty: 'medium', timeLimit: 16, targets: 7, description: 'Changing wind patterns' },
+  { id: 'ex-wind-10', typeId: 'type-wind', name: 'Coastal Winds', difficulty: 'hard', timeLimit: 20, targets: 12, description: 'Ocean wind conditions' },
+
+  // Uphill (type-uphill)
+  { id: 'ex-uphill-01', typeId: 'type-uphill', name: 'Gentle Incline', difficulty: 'easy', timeLimit: 12, targets: 5, description: 'Slight elevation shooting' },
+  { id: 'ex-uphill-02', typeId: 'type-uphill', name: 'Steep Ascent', difficulty: 'hard', timeLimit: 20, targets: 8, description: 'Steep angle engagement' },
+  { id: 'ex-uphill-03', typeId: 'type-uphill', name: 'Mountain Ridge', difficulty: 'hard', timeLimit: 25, targets: 10, description: 'Ridge line shooting' },
+  { id: 'ex-uphill-04', typeId: 'type-uphill', name: 'Hill Crest', difficulty: 'medium', timeLimit: 15, targets: 6, description: 'Shooting from hill crest' },
+  { id: 'ex-uphill-05', typeId: 'type-uphill', name: 'Rocky Terrain', difficulty: 'medium', timeLimit: 18, targets: 7, description: 'Unstable rocky surface' },
+  { id: 'ex-uphill-06', typeId: 'type-uphill', name: 'Valley to Peak', difficulty: 'hard', timeLimit: 22, targets: 9, description: 'Low to high elevation' },
+  { id: 'ex-uphill-07', typeId: 'type-uphill', name: 'Cliff Edge', difficulty: 'hard', timeLimit: 28, targets: 12, description: 'Shooting near cliff edges' },
+  { id: 'ex-uphill-08', typeId: 'type-uphill', name: 'Slope Stability', difficulty: 'medium', timeLimit: 14, targets: 6, description: 'Maintain position on slopes' },
+  { id: 'ex-uphill-09', typeId: 'type-uphill', name: 'Elevation Basics', difficulty: 'easy', timeLimit: 10, targets: 4, description: 'Basic elevation adjustment' },
+  { id: 'ex-uphill-10', typeId: 'type-uphill', name: 'Summit Assault', difficulty: 'hard', timeLimit: 30, targets: 15, description: 'Full mountain assault' },
+
+  // Distance (type-distance)
+  { id: 'ex-dist-01', typeId: 'type-distance', name: '100m Standard', difficulty: 'easy', timeLimit: 10, targets: 5, description: 'Basic 100m engagement' },
+  { id: 'ex-dist-02', typeId: 'type-distance', name: '200m Precision', difficulty: 'easy', timeLimit: 12, targets: 5, description: '200m precision shots' },
+  { id: 'ex-dist-03', typeId: 'type-distance', name: '300m Challenge', difficulty: 'medium', timeLimit: 15, targets: 6, description: 'Medium range accuracy' },
+  { id: 'ex-dist-04', typeId: 'type-distance', name: '400m Engagement', difficulty: 'medium', timeLimit: 18, targets: 7, description: 'Extended range shooting' },
+  { id: 'ex-dist-05', typeId: 'type-distance', name: '500m Long Shot', difficulty: 'hard', timeLimit: 22, targets: 6, description: 'Long range basics' },
+  { id: 'ex-dist-06', typeId: 'type-distance', name: '600m Expert', difficulty: 'hard', timeLimit: 25, targets: 6, description: 'Expert range shooting' },
+  { id: 'ex-dist-07', typeId: 'type-distance', name: '700m Sniper', difficulty: 'hard', timeLimit: 28, targets: 5, description: 'Sniper range training' },
+  { id: 'ex-dist-08', typeId: 'type-distance', name: '800m Master', difficulty: 'hard', timeLimit: 30, targets: 4, description: 'Master range accuracy' },
+  { id: 'ex-dist-09', typeId: 'type-distance', name: 'Variable Range', difficulty: 'medium', timeLimit: 20, targets: 8, description: 'Mixed distance targets' },
+  { id: 'ex-dist-10', typeId: 'type-distance', name: 'Max Range', difficulty: 'hard', timeLimit: 35, targets: 3, description: 'Maximum effective range' },
+
+  // Night (type-night)
+  { id: 'ex-night-01', typeId: 'type-night', name: 'Dusk Transition', difficulty: 'easy', timeLimit: 12, targets: 5, description: 'Transition to low light' },
+  { id: 'ex-night-02', typeId: 'type-night', name: 'Moonlit Night', difficulty: 'medium', timeLimit: 15, targets: 6, description: 'Shooting with moonlight' },
+  { id: 'ex-night-03', typeId: 'type-night', name: 'Pitch Black', difficulty: 'hard', timeLimit: 20, targets: 6, description: 'Zero ambient light' },
+  { id: 'ex-night-04', typeId: 'type-night', name: 'NVG Basics', difficulty: 'medium', timeLimit: 18, targets: 7, description: 'Night vision basics' },
+  { id: 'ex-night-05', typeId: 'type-night', name: 'NVG Advanced', difficulty: 'hard', timeLimit: 25, targets: 10, description: 'Advanced NVG operations' },
+  { id: 'ex-night-06', typeId: 'type-night', name: 'Flashlight Ops', difficulty: 'medium', timeLimit: 14, targets: 6, description: 'Weapon-mounted light' },
+  { id: 'ex-night-07', typeId: 'type-night', name: 'Starlight Only', difficulty: 'hard', timeLimit: 22, targets: 8, description: 'Minimal natural light' },
+  { id: 'ex-night-08', typeId: 'type-night', name: 'IR Laser', difficulty: 'hard', timeLimit: 20, targets: 8, description: 'IR laser targeting' },
+  { id: 'ex-night-09', typeId: 'type-night', name: 'Dawn Patrol', difficulty: 'easy', timeLimit: 10, targets: 5, description: 'Early morning light' },
+  { id: 'ex-night-10', typeId: 'type-night', name: 'Full Night Ops', difficulty: 'hard', timeLimit: 30, targets: 12, description: 'Complete night mission' },
+
+  // Urban (type-urban)
+  { id: 'ex-urban-01', typeId: 'type-urban', name: 'Room Entry', difficulty: 'medium', timeLimit: 10, targets: 4, description: 'Basic room clearing' },
+  { id: 'ex-urban-02', typeId: 'type-urban', name: 'Hallway Advance', difficulty: 'medium', timeLimit: 12, targets: 5, description: 'Corridor movement' },
+  { id: 'ex-urban-03', typeId: 'type-urban', name: 'Stairwell Combat', difficulty: 'hard', timeLimit: 15, targets: 6, description: 'Vertical movement' },
+  { id: 'ex-urban-04', typeId: 'type-urban', name: 'Window Engagement', difficulty: 'medium', timeLimit: 14, targets: 6, description: 'Shooting through windows' },
+  { id: 'ex-urban-05', typeId: 'type-urban', name: 'Street Combat', difficulty: 'hard', timeLimit: 20, targets: 10, description: 'Open street scenarios' },
+  { id: 'ex-urban-06', typeId: 'type-urban', name: 'Vehicle Cover', difficulty: 'medium', timeLimit: 16, targets: 7, description: 'Using vehicles as cover' },
+  { id: 'ex-urban-07', typeId: 'type-urban', name: 'Rooftop Ops', difficulty: 'hard', timeLimit: 22, targets: 8, description: 'Elevated urban positions' },
+  { id: 'ex-urban-08', typeId: 'type-urban', name: 'CQB Basics', difficulty: 'easy', timeLimit: 8, targets: 4, description: 'Close quarters basics' },
+  { id: 'ex-urban-09', typeId: 'type-urban', name: 'Building Assault', difficulty: 'hard', timeLimit: 28, targets: 12, description: 'Full building clearance' },
+  { id: 'ex-urban-10', typeId: 'type-urban', name: 'Hostage Rescue', difficulty: 'hard', timeLimit: 25, targets: 8, description: 'Precision hostage scenario' },
+
+  // Moving Target (type-moving)
+  { id: 'ex-moving-01', typeId: 'type-moving', name: 'Slow Traverse', difficulty: 'easy', timeLimit: 12, targets: 5, description: 'Slow moving targets' },
+  { id: 'ex-moving-02', typeId: 'type-moving', name: 'Fast Traverse', difficulty: 'hard', timeLimit: 15, targets: 6, description: 'Fast moving targets' },
+  { id: 'ex-moving-03', typeId: 'type-moving', name: 'Pop-up Targets', difficulty: 'medium', timeLimit: 14, targets: 8, description: 'Appearing targets' },
+  { id: 'ex-moving-04', typeId: 'type-moving', name: 'Bob & Weave', difficulty: 'hard', timeLimit: 18, targets: 6, description: 'Erratic movement patterns' },
+  { id: 'ex-moving-05', typeId: 'type-moving', name: 'Linear Track', difficulty: 'easy', timeLimit: 10, targets: 5, description: 'Predictable linear movement' },
+  { id: 'ex-moving-06', typeId: 'type-moving', name: 'Circular Motion', difficulty: 'medium', timeLimit: 16, targets: 6, description: 'Circular target paths' },
+  { id: 'ex-moving-07', typeId: 'type-moving', name: 'Random Pattern', difficulty: 'hard', timeLimit: 22, targets: 8, description: 'Unpredictable patterns' },
+  { id: 'ex-moving-08', typeId: 'type-moving', name: 'Multi-Speed', difficulty: 'medium', timeLimit: 18, targets: 7, description: 'Variable speed targets' },
+  { id: 'ex-moving-09', typeId: 'type-moving', name: 'Disappearing', difficulty: 'hard', timeLimit: 20, targets: 10, description: 'Quick exposure windows' },
+  { id: 'ex-moving-10', typeId: 'type-moving', name: 'Full Dynamic', difficulty: 'hard', timeLimit: 25, targets: 12, description: 'Complete dynamic course' },
+
+  // Stress (type-stress)
+  { id: 'ex-stress-01', typeId: 'type-stress', name: 'Timed Pressure', difficulty: 'medium', timeLimit: 8, targets: 5, description: 'Tight time constraints' },
+  { id: 'ex-stress-02', typeId: 'type-stress', name: 'Physical Fatigue', difficulty: 'hard', timeLimit: 15, targets: 6, description: 'Post-exercise shooting' },
+  { id: 'ex-stress-03', typeId: 'type-stress', name: 'Audio Distraction', difficulty: 'medium', timeLimit: 12, targets: 6, description: 'Loud audio distractions' },
+  { id: 'ex-stress-04', typeId: 'type-stress', name: 'Multi-Task', difficulty: 'hard', timeLimit: 20, targets: 8, description: 'Simultaneous objectives' },
+  { id: 'ex-stress-05', typeId: 'type-stress', name: 'Time Crunch', difficulty: 'hard', timeLimit: 6, targets: 6, description: 'Minimal time allowed' },
+  { id: 'ex-stress-06', typeId: 'type-stress', name: 'Decision Making', difficulty: 'medium', timeLimit: 15, targets: 8, description: 'Friend/foe decisions' },
+  { id: 'ex-stress-07', typeId: 'type-stress', name: 'Chaos Scenario', difficulty: 'hard', timeLimit: 22, targets: 10, description: 'Multiple stressors' },
+  { id: 'ex-stress-08', typeId: 'type-stress', name: 'Stamina Test', difficulty: 'hard', timeLimit: 30, targets: 15, description: 'Extended stress exposure' },
+  { id: 'ex-stress-09', typeId: 'type-stress', name: 'Quick Decisions', difficulty: 'medium', timeLimit: 10, targets: 6, description: 'Rapid decision making' },
+  { id: 'ex-stress-10', typeId: 'type-stress', name: 'Combat Stress', difficulty: 'hard', timeLimit: 25, targets: 12, description: 'Full combat simulation' },
+
+  // Tactical (type-tactical)
+  { id: 'ex-tactical-01', typeId: 'type-tactical', name: 'Cover Movement', difficulty: 'medium', timeLimit: 15, targets: 6, description: 'Move between cover' },
+  { id: 'ex-tactical-02', typeId: 'type-tactical', name: 'Bounding Fire', difficulty: 'hard', timeLimit: 20, targets: 8, description: 'Alternating advance' },
+  { id: 'ex-tactical-03', typeId: 'type-tactical', name: 'Flanking Maneuver', difficulty: 'hard', timeLimit: 22, targets: 8, description: 'Side approach tactics' },
+  { id: 'ex-tactical-04', typeId: 'type-tactical', name: 'Retreat Fire', difficulty: 'medium', timeLimit: 18, targets: 7, description: 'Shooting while retreating' },
+  { id: 'ex-tactical-05', typeId: 'type-tactical', name: 'Ambush Response', difficulty: 'hard', timeLimit: 15, targets: 10, description: 'React to ambush' },
+  { id: 'ex-tactical-06', typeId: 'type-tactical', name: 'Formation Drill', difficulty: 'medium', timeLimit: 20, targets: 8, description: 'Team formation shooting' },
+  { id: 'ex-tactical-07', typeId: 'type-tactical', name: 'Concealment Use', difficulty: 'easy', timeLimit: 12, targets: 5, description: 'Using concealment' },
+  { id: 'ex-tactical-08', typeId: 'type-tactical', name: 'Fire & Move', difficulty: 'medium', timeLimit: 16, targets: 7, description: 'Shoot while moving' },
+  { id: 'ex-tactical-09', typeId: 'type-tactical', name: 'Squad Tactics', difficulty: 'hard', timeLimit: 28, targets: 12, description: 'Full squad coordination' },
+  { id: 'ex-tactical-10', typeId: 'type-tactical', name: 'Tactical Advance', difficulty: 'hard', timeLimit: 25, targets: 10, description: 'Complete tactical course' },
+
+  // Qualification (type-qualification)
+  { id: 'ex-qual-01', typeId: 'type-qualification', name: 'Basic Qual', difficulty: 'easy', timeLimit: 15, targets: 10, description: 'Entry level qualification' },
+  { id: 'ex-qual-02', typeId: 'type-qualification', name: 'Standard Qual', difficulty: 'medium', timeLimit: 20, targets: 12, description: 'Standard qualification test' },
+  { id: 'ex-qual-03', typeId: 'type-qualification', name: 'Expert Qual', difficulty: 'hard', timeLimit: 25, targets: 15, description: 'Expert level qualification' },
+  { id: 'ex-qual-04', typeId: 'type-qualification', name: 'Speed Qual', difficulty: 'medium', timeLimit: 12, targets: 10, description: 'Timed qualification' },
+  { id: 'ex-qual-05', typeId: 'type-qualification', name: 'Accuracy Qual', difficulty: 'medium', timeLimit: 25, targets: 8, description: 'Precision-focused test' },
+  { id: 'ex-qual-06', typeId: 'type-qualification', name: 'Combat Qual', difficulty: 'hard', timeLimit: 20, targets: 12, description: 'Combat readiness test' },
+  { id: 'ex-qual-07', typeId: 'type-qualification', name: 'Night Qual', difficulty: 'hard', timeLimit: 22, targets: 10, description: 'Night qualification' },
+  { id: 'ex-qual-08', typeId: 'type-qualification', name: 'Annual Recert', difficulty: 'medium', timeLimit: 18, targets: 12, description: 'Annual recertification' },
+  { id: 'ex-qual-09', typeId: 'type-qualification', name: 'Marksman Test', difficulty: 'hard', timeLimit: 30, targets: 15, description: 'Marksman qualification' },
+  { id: 'ex-qual-10', typeId: 'type-qualification', name: 'Sharpshooter', difficulty: 'hard', timeLimit: 35, targets: 20, description: 'Sharpshooter qualification' },
+];
+
+// Helper to get exercises by type
+export function getExercisesByType(typeId: string) {
+  return exercises.filter(e => e.typeId === typeId);
+}
+
+export function getExerciseTypeById(typeId: string) {
+  return exerciseTypes.find(t => t.id === typeId);
+}
 
 // Custom Courses (combinations of exercises)
 export const customCourses = [

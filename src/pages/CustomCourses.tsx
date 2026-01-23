@@ -9,6 +9,18 @@ import {
   GripVertical,
   Check,
   Monitor,
+  ChevronDown,
+  ChevronRight,
+  CloudRain,
+  Wind,
+  Mountain,
+  Crosshair,
+  Moon,
+  Building,
+  Move,
+  Zap,
+  Shield,
+  Award,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,8 +42,26 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { exercises, customCourses, iwtsStations, getExerciseById } from '@/data/mockData';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { exerciseTypes, customCourses, iwtsStations, getExerciseById, getExercisesByType } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
+
+const typeIcons: Record<string, React.ReactNode> = {
+  'type-rainy': <CloudRain className="w-4 h-4" />,
+  'type-wind': <Wind className="w-4 h-4" />,
+  'type-uphill': <Mountain className="w-4 h-4" />,
+  'type-distance': <Crosshair className="w-4 h-4" />,
+  'type-night': <Moon className="w-4 h-4" />,
+  'type-urban': <Building className="w-4 h-4" />,
+  'type-moving': <Move className="w-4 h-4" />,
+  'type-stress': <Zap className="w-4 h-4" />,
+  'type-tactical': <Shield className="w-4 h-4" />,
+  'type-qualification': <Award className="w-4 h-4" />,
+};
 
 export default function CustomCourses() {
   const { toast } = useToast();
@@ -287,42 +317,28 @@ export default function CustomCourses() {
           </Card>
         </div>
 
-        {/* Available Exercises Sidebar */}
+        {/* Available Exercises Sidebar - Organized by Type */}
         <div className="space-y-6">
           <Card className="tactical-card">
             <CardHeader>
               <CardTitle className="text-lg font-semibold">Available Exercises</CardTitle>
+              <p className="text-sm text-muted-foreground">Organized by type • Click to expand</p>
             </CardHeader>
             <CardContent className="space-y-2 max-h-[600px] overflow-y-auto">
-              {exercises.map((exercise) => {
-                const isSelected = selectedExercises.includes(exercise.id);
+              {exerciseTypes.map((type) => {
+                const typeExercises = getExercisesByType(type.id);
+                const selectedCount = typeExercises.filter(e => selectedExercises.includes(e.id)).length;
+                
                 return (
-                  <div
-                    key={exercise.id}
-                    onClick={() => !isSelected && addExercise(exercise.id)}
-                    className={`p-3 rounded-lg border transition-colors cursor-pointer ${
-                      isSelected 
-                        ? 'bg-primary/10 border-primary/30 opacity-60' 
-                        : 'bg-muted/30 border-border hover:border-primary/30'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium text-foreground text-sm">{exercise.name}</span>
-                      {isSelected ? (
-                        <Badge variant="secondary">Added</Badge>
-                      ) : (
-                        <Button variant="ghost" size="sm" className="h-6 px-2">
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground mb-2">{exercise.description}</p>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <Badge variant="outline" className="text-xs capitalize">{exercise.difficulty}</Badge>
-                      <span>{exercise.timeLimit}min</span>
-                      <span>{exercise.targets} targets</span>
-                    </div>
-                  </div>
+                  <ExerciseTypeSection
+                    key={type.id}
+                    type={type}
+                    exercises={typeExercises}
+                    selectedExercises={selectedExercises}
+                    selectedCount={selectedCount}
+                    onAddExercise={addExercise}
+                    icon={typeIcons[type.id]}
+                  />
                 );
               })}
             </CardContent>
@@ -330,5 +346,83 @@ export default function CustomCourses() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Collapsible section for each exercise type
+function ExerciseTypeSection({
+  type,
+  exercises,
+  selectedExercises,
+  selectedCount,
+  onAddExercise,
+  icon,
+}: {
+  type: { id: string; name: string; description: string };
+  exercises: Array<{ id: string; name: string; difficulty: string; timeLimit: number; targets: number; description: string }>;
+  selectedExercises: string[];
+  selectedCount: number;
+  onAddExercise: (id: string) => void;
+  icon: React.ReactNode;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger asChild>
+        <button className="w-full flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors">
+          <div className="flex items-center gap-3">
+            <span className="text-primary">{icon}</span>
+            <div className="text-left">
+              <span className="font-medium text-foreground">{type.name}</span>
+              <p className="text-xs text-muted-foreground">{exercises.length} exercises</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {selectedCount > 0 && (
+              <Badge variant="default" className="text-xs">{selectedCount} added</Badge>
+            )}
+            {isOpen ? (
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+            ) : (
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            )}
+          </div>
+        </button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="mt-2 space-y-2 pl-4 border-l-2 border-primary/20 ml-2">
+        {exercises.map((exercise) => {
+          const isSelected = selectedExercises.includes(exercise.id);
+          return (
+            <div
+              key={exercise.id}
+              onClick={() => !isSelected && onAddExercise(exercise.id)}
+              className={`p-3 rounded-lg border transition-colors cursor-pointer ${
+                isSelected 
+                  ? 'bg-primary/10 border-primary/30 opacity-60' 
+                  : 'bg-muted/30 border-border hover:border-primary/30'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-medium text-foreground text-sm">{exercise.name}</span>
+                {isSelected ? (
+                  <Badge variant="secondary" className="text-xs">Added</Badge>
+                ) : (
+                  <Button variant="ghost" size="sm" className="h-6 px-2">
+                    <Plus className="w-3 h-3" />
+                  </Button>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground mb-2">{exercise.description}</p>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                <Badge variant="outline" className="text-xs capitalize">{exercise.difficulty}</Badge>
+                <span>{exercise.timeLimit}min</span>
+                <span>{exercise.targets} targets</span>
+              </div>
+            </div>
+          );
+        })}
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
