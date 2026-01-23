@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { format } from 'date-fns';
 import { 
   Plus, 
   Trash2, 
@@ -21,6 +22,9 @@ import {
   Zap,
   Shield,
   Award,
+  Search,
+  Calendar as CalendarIcon,
+  Repeat,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -47,7 +51,14 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { exerciseTypes, customCourses, iwtsStations, getExerciseById, getExercisesByType } from '@/data/mockData';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
+import { exerciseTypes, customCourses, iwtsStations, getExerciseById, getExercisesByType, exercises } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
 
 const typeIcons: Record<string, React.ReactNode> = {
@@ -63,6 +74,8 @@ const typeIcons: Record<string, React.ReactNode> = {
   'type-qualification': <Award className="w-4 h-4" />,
 };
 
+type ScheduleFrequency = 'daily' | 'weekly' | 'monthly' | 'none';
+
 export default function CustomCourses() {
   const { toast } = useToast();
   const [courseName, setCourseName] = useState('');
@@ -71,6 +84,14 @@ export default function CustomCourses() {
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
   const [selectedCourseForAssign, setSelectedCourseForAssign] = useState<string | null>(null);
   const [selectedStation, setSelectedStation] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  
+  // Scheduling state
+  const [scheduleFrequency, setScheduleFrequency] = useState<ScheduleFrequency>('none');
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
   const addExercise = (exerciseId: string) => {
     if (!selectedExercises.includes(exerciseId)) {
@@ -80,6 +101,31 @@ export default function CustomCourses() {
 
   const removeExercise = (exerciseId: string) => {
     setSelectedExercises(selectedExercises.filter(id => id !== exerciseId));
+  };
+
+  // Drag and drop handlers
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    setDragOverIndex(index);
+  };
+
+  const handleDragEnd = () => {
+    if (draggedIndex !== null && dragOverIndex !== null && draggedIndex !== dragOverIndex) {
+      const newExercises = [...selectedExercises];
+      const [removed] = newExercises.splice(draggedIndex, 1);
+      newExercises.splice(dragOverIndex, 0, removed);
+      setSelectedExercises(newExercises);
+    }
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
   };
 
   const getTotalTime = () => {
@@ -95,6 +141,17 @@ export default function CustomCourses() {
       return total + (exercise?.targets || 0);
     }, 0);
   };
+
+  // Filter exercises based on search query
+  const filterExercisesBySearch = useCallback((typeExercises: typeof exercises) => {
+    if (!searchQuery.trim()) return typeExercises;
+    const query = searchQuery.toLowerCase();
+    return typeExercises.filter(ex => 
+      ex.name.toLowerCase().includes(query) ||
+      ex.description.toLowerCase().includes(query) ||
+      ex.difficulty.toLowerCase().includes(query)
+    );
+  }, [searchQuery]);
 
   const handleSaveCourse = () => {
     if (!courseName || selectedExercises.length === 0) {
@@ -114,15 +171,27 @@ export default function CustomCourses() {
       totalTime: getTotalTime(),
       totalTargets: getTotalTargets(),
       status: 'active' as const,
+      schedule: scheduleFrequency !== 'none' ? {
+        frequency: scheduleFrequency,
+        startDate: startDate?.toISOString(),
+        endDate: endDate?.toISOString(),
+      } : undefined,
     };
 
     setCourses([...courses, newCourse]);
     setCourseName('');
     setSelectedExercises([]);
+    setScheduleFrequency('none');
+    setStartDate(undefined);
+    setEndDate(undefined);
+
+    const scheduleText = scheduleFrequency !== 'none' 
+      ? ` (${scheduleFrequency} from ${startDate ? format(startDate, 'MMM d') : ''} to ${endDate ? format(endDate, 'MMM d') : ''})`
+      : '';
 
     toast({
       title: 'Course Created',
-      description: `"${courseName}" has been created with ${selectedExercises.length} exercises.`,
+      description: `"${courseName}" has been created with ${selectedExercises.length} exercises${scheduleText}.`,
     });
   };
 
@@ -139,6 +208,12 @@ export default function CustomCourses() {
   };
 
   const availableStations = iwtsStations.filter(s => s.status !== 'offline');
+
+  // Check if any type has matching exercises for search
+  const hasSearchResults = exerciseTypes.some(type => {
+    const typeExercises = getExercisesByType(type.id);
+    return filterExercisesBySearch(typeExercises).length > 0;
+  });
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -173,6 +248,93 @@ export default function CustomCourses() {
                 />
               </div>
 
+              {/* Schedule Section */}
+              <div className="space-y-3 p-4 rounded-lg bg-muted/30 border border-border">
+                <div className="flex items-center gap-2">
+                  <Repeat className="w-4 h-4 text-primary" />
+                  <Label className="text-sm font-medium">Task Schedule</Label>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">Frequency</Label>
+                    <Select value={scheduleFrequency} onValueChange={(v) => setScheduleFrequency(v as ScheduleFrequency)}>
+                      <SelectTrigger className="bg-background border-border">
+                        <SelectValue placeholder="Select frequency" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover">
+                        <SelectItem value="none">No schedule</SelectItem>
+                        <SelectItem value="daily">Daily</SelectItem>
+                        <SelectItem value="weekly">Weekly</SelectItem>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">Start Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          disabled={scheduleFrequency === 'none'}
+                          className={cn(
+                            "w-full justify-start text-left font-normal bg-background",
+                            !startDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {startDate ? format(startDate, "MMM d, yyyy") : "Pick date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-popover" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={startDate}
+                          onSelect={setStartDate}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">End Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          disabled={scheduleFrequency === 'none'}
+                          className={cn(
+                            "w-full justify-start text-left font-normal bg-background",
+                            !endDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {endDate ? format(endDate, "MMM d, yyyy") : "Pick date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-popover" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={endDate}
+                          onSelect={setEndDate}
+                          disabled={(date) => startDate ? date < startDate : false}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </div>
+
+                {scheduleFrequency !== 'none' && startDate && endDate && (
+                  <p className="text-xs text-primary flex items-center gap-1">
+                    <Check className="w-3 h-3" />
+                    This course will run {scheduleFrequency} from {format(startDate, "MMM d")} to {format(endDate, "MMM d, yyyy")}
+                  </p>
+                )}
+              </div>
+
               {/* Selected Exercises */}
               <div className="space-y-2">
                 <Label className="flex items-center justify-between">
@@ -188,7 +350,16 @@ export default function CustomCourses() {
                       return (
                         <div
                           key={id}
-                          className="flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20"
+                          draggable
+                          onDragStart={() => handleDragStart(index)}
+                          onDragOver={(e) => handleDragOver(e, index)}
+                          onDragEnd={handleDragEnd}
+                          onDragLeave={handleDragLeave}
+                          className={cn(
+                            "flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20 cursor-grab active:cursor-grabbing transition-all",
+                            draggedIndex === index && "opacity-50 scale-95",
+                            dragOverIndex === index && draggedIndex !== index && "border-primary border-2 bg-primary/10"
+                          )}
                         >
                           <GripVertical className="w-4 h-4 text-muted-foreground" />
                           <span className="text-sm text-muted-foreground w-6">{index + 1}.</span>
@@ -209,6 +380,9 @@ export default function CustomCourses() {
                         </div>
                       );
                     })}
+                    <p className="text-xs text-muted-foreground text-center pt-2">
+                      Drag items to reorder
+                    </p>
                   </div>
                 ) : (
                   <div className="text-center py-8 border border-dashed border-border rounded-lg text-muted-foreground">
@@ -257,6 +431,12 @@ export default function CustomCourses() {
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-medium text-foreground">{course.name}</span>
                       <Badge variant="default">{course.status}</Badge>
+                      {(course as any).schedule && (
+                        <Badge variant="outline" className="text-xs">
+                          <Repeat className="w-3 h-3 mr-1" />
+                          {(course as any).schedule.frequency}
+                        </Badge>
+                      )}
                     </div>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span>{course.exerciseIds.length} exercises</span>
@@ -320,24 +500,42 @@ export default function CustomCourses() {
         {/* Available Exercises Sidebar - Organized by Type */}
         <div className="space-y-6">
           <Card className="tactical-card">
-            <CardHeader>
+            <CardHeader className="space-y-3">
               <CardTitle className="text-lg font-semibold">Available Exercises</CardTitle>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search exercises..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 bg-muted border-border"
+                />
+              </div>
               <p className="text-sm text-muted-foreground">Organized by type • Click to expand</p>
             </CardHeader>
             <CardContent className="space-y-2 max-h-[600px] overflow-y-auto">
+              {!hasSearchResults && searchQuery && (
+                <div className="text-center py-8 text-muted-foreground">
+                  No exercises found for "{searchQuery}"
+                </div>
+              )}
               {exerciseTypes.map((type) => {
                 const typeExercises = getExercisesByType(type.id);
-                const selectedCount = typeExercises.filter(e => selectedExercises.includes(e.id)).length;
+                const filteredExercises = filterExercisesBySearch(typeExercises);
+                const selectedCount = filteredExercises.filter(e => selectedExercises.includes(e.id)).length;
+                
+                if (searchQuery && filteredExercises.length === 0) return null;
                 
                 return (
                   <ExerciseTypeSection
                     key={type.id}
                     type={type}
-                    exercises={typeExercises}
+                    exercises={filteredExercises}
                     selectedExercises={selectedExercises}
                     selectedCount={selectedCount}
                     onAddExercise={addExercise}
                     icon={typeIcons[type.id]}
+                    defaultOpen={searchQuery.length > 0}
                   />
                 );
               })}
@@ -357,6 +555,7 @@ function ExerciseTypeSection({
   selectedCount,
   onAddExercise,
   icon,
+  defaultOpen = false,
 }: {
   type: { id: string; name: string; description: string };
   exercises: Array<{ id: string; name: string; difficulty: string; timeLimit: number; targets: number; description: string }>;
@@ -364,11 +563,12 @@ function ExerciseTypeSection({
   selectedCount: number;
   onAddExercise: (id: string) => void;
   icon: React.ReactNode;
+  defaultOpen?: boolean;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+    <Collapsible open={isOpen || defaultOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger asChild>
         <button className="w-full flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors">
           <div className="flex items-center gap-3">
@@ -382,7 +582,7 @@ function ExerciseTypeSection({
             {selectedCount > 0 && (
               <Badge variant="default" className="text-xs">{selectedCount} added</Badge>
             )}
-            {isOpen ? (
+            {isOpen || defaultOpen ? (
               <ChevronDown className="w-4 h-4 text-muted-foreground" />
             ) : (
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
