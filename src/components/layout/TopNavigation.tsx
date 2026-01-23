@@ -4,13 +4,10 @@ import {
   LayoutDashboard,
   BookOpen,
   Monitor,
-  Calendar,
-  ClipboardList,
   Users,
   Trophy,
   AlertTriangle,
   FileBarChart,
-  Settings,
   LogOut,
   Bell,
   User,
@@ -33,13 +30,10 @@ const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/custom-courses', label: 'Custom Courses', icon: BookOpen },
   { path: '/stations', label: 'Stations', icon: Monitor },
-  { path: '/mission-scheduler', label: 'Scheduler', icon: Calendar },
-  { path: '/mission-assignment', label: 'Assignment', icon: ClipboardList },
   { path: '/trainee-progress', label: 'Progress', icon: Users },
   { path: '/leaderboards', label: 'Leaderboards', icon: Trophy },
   { path: '/compliance', label: 'Alerts', icon: AlertTriangle },
   { path: '/reports', label: 'Reports', icon: FileBarChart },
-  { path: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export default function TopNavigation() {
