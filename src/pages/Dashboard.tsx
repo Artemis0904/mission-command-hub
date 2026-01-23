@@ -29,21 +29,9 @@ export default function Dashboard() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Welcome Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">IWTS Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back, Instructor. Here's today's overview.</p>
-        </div>
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={() => navigate('/mission-scheduler')}>
-            <Calendar className="w-4 h-4 mr-2" />
-            Schedule Mission
-          </Button>
-          <Button className="bg-primary hover:bg-primary/90" onClick={() => navigate('/custom-courses')}>
-            <BookOpen className="w-4 h-4 mr-2" />
-            Create Course
-          </Button>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">IWTS Dashboard</h1>
+        <p className="text-muted-foreground">Welcome back, Instructor. Here's today's overview.</p>
       </div>
 
       {/* Stats Grid */}
