@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { 
   ClipboardList, 
-  Target, 
+  Monitor, 
   Users, 
   Check,
   Clock,
@@ -22,21 +22,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { simulatorTypes, simulatorUnits, missions, trainees, assignments, getTraineeById } from '@/data/mockData';
+import { iwtsStations, missions, trainees, assignments, getTraineeById, getStationById } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
 
 export default function MissionAssignment() {
   const { toast } = useToast();
-  const [selectedSimType, setSelectedSimType] = useState('');
-  const [selectedSimulator, setSelectedSimulator] = useState('');
+  const [selectedStation, setSelectedStation] = useState('');
   const [selectedMission, setSelectedMission] = useState('');
   const [selectedTrainees, setSelectedTrainees] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredSimulators = selectedSimType 
-    ? simulatorUnits.filter(s => s.typeId === selectedSimType && s.status !== 'offline')
-    : [];
-
+  const availableStations = iwtsStations.filter(s => s.status !== 'offline');
   const filteredMissions = missions.filter(m => m.status === 'scheduled');
 
   const filteredTrainees = trainees.filter(t => 
@@ -53,10 +49,10 @@ export default function MissionAssignment() {
   };
 
   const handleAssign = () => {
-    if (!selectedSimulator || !selectedMission || selectedTrainees.length === 0) {
+    if (!selectedStation || !selectedMission || selectedTrainees.length === 0) {
       toast({
         title: 'Incomplete Selection',
-        description: 'Please select a simulator, mission, and at least one trainee.',
+        description: 'Please select a station, mission, and at least one trainee.',
         variant: 'destructive',
       });
       return;
@@ -85,7 +81,7 @@ export default function MissionAssignment() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'assigned': return <Clock className="w-4 h-4" />;
-      case 'in-progress': return <Target className="w-4 h-4" />;
+      case 'in-progress': return <Monitor className="w-4 h-4" />;
       case 'completed': return <CheckCircle className="w-4 h-4" />;
       case 'overdue': return <AlertCircle className="w-4 h-4" />;
       default: return null;
@@ -101,7 +97,7 @@ export default function MissionAssignment() {
             <ClipboardList className="w-7 h-7 text-primary" />
             Mission Assignment
           </h1>
-          <p className="text-muted-foreground">Assign missions to simulators and trainees</p>
+          <p className="text-muted-foreground">Assign missions to IWTS stations and trainees</p>
         </div>
       </div>
 
@@ -113,48 +109,24 @@ export default function MissionAssignment() {
               <CardTitle className="text-lg font-semibold">New Assignment</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Step 1: Select Simulator Type & Unit */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Target className="w-4 h-4 text-primary" />
-                    Simulator Type
-                  </Label>
-                  <Select value={selectedSimType} onValueChange={(v) => {
-                    setSelectedSimType(v);
-                    setSelectedSimulator('');
-                  }}>
-                    <SelectTrigger className="bg-muted border-border">
-                      <SelectValue placeholder="Select simulator type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {simulatorTypes.map((type) => (
-                        <SelectItem key={type.id} value={type.id}>
-                          {type.name} - {type.fullName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Simulator Unit</Label>
-                  <Select 
-                    value={selectedSimulator} 
-                    onValueChange={setSelectedSimulator}
-                    disabled={!selectedSimType}
-                  >
-                    <SelectTrigger className="bg-muted border-border">
-                      <SelectValue placeholder="Select simulator unit" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {filteredSimulators.map((sim) => (
-                        <SelectItem key={sim.id} value={sim.id}>
-                          {sim.name} ({sim.status === 'idle' ? 'Available' : 'In Use'})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              {/* Step 1: Select Station */}
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Monitor className="w-4 h-4 text-primary" />
+                  IWTS Station
+                </Label>
+                <Select value={selectedStation} onValueChange={setSelectedStation}>
+                  <SelectTrigger className="bg-muted border-border">
+                    <SelectValue placeholder="Select an IWTS station" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover">
+                    {availableStations.map((station) => (
+                      <SelectItem key={station.id} value={station.id}>
+                        {station.name} - {station.location} ({station.status === 'idle' ? 'Available' : 'In Use'})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Step 2: Select Mission */}
@@ -164,7 +136,7 @@ export default function MissionAssignment() {
                   <SelectTrigger className="bg-muted border-border">
                     <SelectValue placeholder="Select a mission to assign" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-popover">
                     {filteredMissions.map((mission) => (
                       <SelectItem key={mission.id} value={mission.id}>
                         {mission.name} - {mission.date} at {mission.time}
@@ -242,7 +214,7 @@ export default function MissionAssignment() {
               {assignments.map((assignment) => {
                 const trainee = getTraineeById(assignment.traineeId);
                 const mission = missions.find(m => m.id === assignment.missionId);
-                const simulator = simulatorUnits.find(s => s.id === assignment.simulatorId);
+                const station = getStationById(assignment.stationId);
                 
                 return (
                   <div
@@ -258,7 +230,7 @@ export default function MissionAssignment() {
                     </div>
                     <div className="text-xs text-muted-foreground space-y-1">
                       <p>Mission: {mission?.name}</p>
-                      <p>Simulator: {simulator?.name}</p>
+                      <p>Station: {station?.name}</p>
                     </div>
                   </div>
                 );

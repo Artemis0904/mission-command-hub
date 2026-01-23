@@ -22,7 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { trainees, traineeProgress, scores, getSimulatorTypeName } from '@/data/mockData';
+import { trainees, traineeProgress, scores } from '@/data/mockData';
 
 interface TraineeProfile {
   trainee: typeof trainees[0];
@@ -215,7 +215,7 @@ export default function TraineeProgress() {
 
       {/* Trainee Profile Dialog */}
       <Dialog open={!!selectedTrainee} onOpenChange={() => setSelectedTrainee(null)}>
-        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto bg-background">
           {selectedTrainee && (
             <>
               <DialogHeader>
@@ -254,16 +254,16 @@ export default function TraineeProgress() {
                   </div>
                 </div>
 
-                {/* Progress by Simulator Type */}
+                {/* Progress Summary */}
                 {selectedTrainee.progress.length > 0 && (
                   <div>
-                    <h3 className="font-semibold mb-3 text-foreground">Progress by Simulator</h3>
+                    <h3 className="font-semibold mb-3 text-foreground">Training Progress</h3>
                     <div className="space-y-3">
                       {selectedTrainee.progress.map((p, i) => (
                         <div key={i} className="p-3 rounded-lg bg-muted/30">
                           <div className="flex items-center justify-between mb-2">
                             <span className="font-medium text-foreground">
-                              {getSimulatorTypeName(p.simulatorType)}
+                              Training Track {i + 1}
                             </span>
                             <span className="text-sm text-muted-foreground">
                               {p.completedMissions}/{p.assignedMissions} missions
@@ -285,7 +285,7 @@ export default function TraineeProgress() {
                         <div key={s.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                           <div>
                             <p className="font-medium text-foreground">
-                              {getSimulatorTypeName(s.simulatorType)}
+                              Training Session
                             </p>
                             <p className="text-xs text-muted-foreground">{s.date}</p>
                           </div>

@@ -7,8 +7,8 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import AppLayout from "@/components/layout/AppLayout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import SimulatorTypeView from "./pages/SimulatorTypeView";
-import ExerciseBuilder from "./pages/ExerciseBuilder";
+import CustomCourses from "./pages/CustomCourses";
+import StationManagement from "./pages/StationManagement";
 import MissionScheduler from "./pages/MissionScheduler";
 import MissionAssignment from "./pages/MissionAssignment";
 import TraineeProgress from "./pages/TraineeProgress";
@@ -35,8 +35,8 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-      <Route path="/simulator/:typeId" element={<ProtectedRoute><SimulatorTypeView /></ProtectedRoute>} />
-      <Route path="/exercise-builder" element={<ProtectedRoute><ExerciseBuilder /></ProtectedRoute>} />
+      <Route path="/custom-courses" element={<ProtectedRoute><CustomCourses /></ProtectedRoute>} />
+      <Route path="/stations" element={<ProtectedRoute><StationManagement /></ProtectedRoute>} />
       <Route path="/mission-scheduler" element={<ProtectedRoute><MissionScheduler /></ProtectedRoute>} />
       <Route path="/mission-assignment" element={<ProtectedRoute><MissionAssignment /></ProtectedRoute>} />
       <Route path="/trainee-progress" element={<ProtectedRoute><TraineeProgress /></ProtectedRoute>} />
