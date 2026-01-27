@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { format } from 'date-fns';
 import { 
   Plus, 
@@ -12,21 +12,21 @@ import {
   Monitor,
   ChevronDown,
   ChevronRight,
-  CloudRain,
-  Wind,
-  Mountain,
-  Crosshair,
-  Moon,
-  Building,
-  Move,
-  Zap,
-  Shield,
-  Award,
   Search,
   Calendar as CalendarIcon,
   Repeat,
+  Crosshair,
+  RotateCw,
+  Move,
+  ArrowRight,
+  ArrowLeft,
+  Circle,
+  MoveHorizontal,
+  Users,
+  AlertTriangle,
+  X,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AnimatedCard } from '@/components/ui/animated-card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -48,6 +48,17 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
@@ -59,28 +70,43 @@ import {
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
-import { exerciseTypes, customCourses, iwtsStations, getExerciseById, getExercisesByType, exercises } from '@/data/mockData';
+import { iwtsStations, customCourses } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
+import { 
+  ExerciseConfigurator, 
+  ExerciseConfig, 
+  ExerciseType, 
+  EXERCISE_TYPES,
+  getTargetName,
+} from '@/components/ExerciseConfigurator';
 
+// Icons mapping for exercise types
 const typeIcons: Record<string, React.ReactNode> = {
-  'type-rainy': <CloudRain className="w-4 h-4" />,
-  'type-wind': <Wind className="w-4 h-4" />,
-  'type-uphill': <Mountain className="w-4 h-4" />,
-  'type-distance': <Crosshair className="w-4 h-4" />,
-  'type-night': <Moon className="w-4 h-4" />,
-  'type-urban': <Building className="w-4 h-4" />,
-  'type-moving': <Move className="w-4 h-4" />,
-  'type-stress': <Zap className="w-4 h-4" />,
-  'type-tactical': <Shield className="w-4 h-4" />,
-  'type-qualification': <Award className="w-4 h-4" />,
+  'static-normal': <Target className="w-4 h-4" />,
+  'squad-post-normal': <Users className="w-4 h-4" />,
+  'grouping': <Circle className="w-4 h-4" />,
+  'rotate': <RotateCw className="w-4 h-4" />,
+  'moving-basic': <Move className="w-4 h-4" />,
+  'moving-ltr': <ArrowRight className="w-4 h-4" />,
+  'moving-rtl': <ArrowLeft className="w-4 h-4" />,
+  'point-target': <Crosshair className="w-4 h-4" />,
+  'traverse-target': <MoveHorizontal className="w-4 h-4" />,
 };
 
 type ScheduleFrequency = 'daily' | 'weekly' | 'monthly' | 'none';
 
+// Configured exercise with type and settings
+interface ConfiguredExercise {
+  id: string;
+  typeId: string;
+  typeName: string;
+  config: ExerciseConfig;
+}
+
 export default function CustomCourses() {
   const { toast } = useToast();
   const [courseName, setCourseName] = useState('');
-  const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
+  const [configuredExercises, setConfiguredExercises] = useState<ConfiguredExercise[]>([]);
   const [courses, setCourses] = useState(customCourses);
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
   const [selectedCourseForAssign, setSelectedCourseForAssign] = useState<string | null>(null);
@@ -89,19 +115,31 @@ export default function CustomCourses() {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   
+  // Direct station assignment for new course
+  const [assignStationOnCreate, setAssignStationOnCreate] = useState('');
+  
   // Scheduling state
   const [scheduleFrequency, setScheduleFrequency] = useState<ScheduleFrequency>('none');
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
-  const addExercise = (exerciseId: string) => {
-    if (!selectedExercises.includes(exerciseId)) {
-      setSelectedExercises([...selectedExercises, exerciseId]);
-    }
+  // Add configured exercise
+  const handleAddExercise = (type: ExerciseType, config: ExerciseConfig) => {
+    const newExercise: ConfiguredExercise = {
+      id: `ex-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      typeId: type.id,
+      typeName: type.name,
+      config,
+    };
+    setConfiguredExercises(prev => [...prev, newExercise]);
+    toast({
+      title: 'Exercise Added',
+      description: `${type.name} exercise added to course.`,
+    });
   };
 
   const removeExercise = (exerciseId: string) => {
-    setSelectedExercises(selectedExercises.filter(id => id !== exerciseId));
+    setConfiguredExercises(prev => prev.filter(ex => ex.id !== exerciseId));
   };
 
   // Drag and drop handlers
@@ -116,10 +154,10 @@ export default function CustomCourses() {
 
   const handleDragEnd = () => {
     if (draggedIndex !== null && dragOverIndex !== null && draggedIndex !== dragOverIndex) {
-      const newExercises = [...selectedExercises];
+      const newExercises = [...configuredExercises];
       const [removed] = newExercises.splice(draggedIndex, 1);
       newExercises.splice(dragOverIndex, 0, removed);
-      setSelectedExercises(newExercises);
+      setConfiguredExercises(newExercises);
     }
     setDraggedIndex(null);
     setDragOverIndex(null);
@@ -130,35 +168,36 @@ export default function CustomCourses() {
   };
 
   const getTotalTime = () => {
-    return selectedExercises.reduce((total, id) => {
-      const exercise = getExerciseById(id);
-      return total + (exercise?.timeLimit || 0);
+    return configuredExercises.reduce((total, ex) => {
+      return total + Math.ceil(ex.config.scenarioTime / 60);
     }, 0);
   };
 
-  const getTotalTargets = () => {
-    return selectedExercises.reduce((total, id) => {
-      const exercise = getExerciseById(id);
-      return total + (exercise?.targets || 0);
+  const getTotalBullets = () => {
+    return configuredExercises.reduce((total, ex) => {
+      return total + ex.config.bullets;
     }, 0);
   };
 
-  // Filter exercises based on search query
-  const filterExercisesBySearch = useCallback((typeExercises: typeof exercises) => {
-    if (!searchQuery.trim()) return typeExercises;
-    const query = searchQuery.toLowerCase();
-    return typeExercises.filter(ex => 
-      ex.name.toLowerCase().includes(query) ||
-      ex.description.toLowerCase().includes(query) ||
-      ex.difficulty.toLowerCase().includes(query)
-    );
-  }, [searchQuery]);
+  // Clear all functionality
+  const handleClearAll = () => {
+    setCourseName('');
+    setConfiguredExercises([]);
+    setScheduleFrequency('none');
+    setStartDate(undefined);
+    setEndDate(undefined);
+    setAssignStationOnCreate('');
+    toast({
+      title: 'Cleared',
+      description: 'All course data has been cleared.',
+    });
+  };
 
   const handleSaveCourse = () => {
-    if (!courseName || selectedExercises.length === 0) {
+    if (!courseName || configuredExercises.length === 0) {
       toast({
         title: 'Missing Information',
-        description: 'Please provide a course name and select at least one exercise.',
+        description: 'Please provide a course name and add at least one exercise.',
         variant: 'destructive',
       });
       return;
@@ -167,11 +206,12 @@ export default function CustomCourses() {
     const newCourse = {
       id: `course-${Date.now()}`,
       name: courseName,
-      exerciseIds: selectedExercises,
+      exerciseIds: configuredExercises.map(ex => ex.id),
       createdAt: new Date().toISOString(),
       totalTime: getTotalTime(),
-      totalTargets: getTotalTargets(),
+      totalTargets: configuredExercises.length,
       status: 'active' as const,
+      assignedStation: assignStationOnCreate || undefined,
       schedule: scheduleFrequency !== 'none' ? {
         frequency: scheduleFrequency,
         startDate: startDate?.toISOString(),
@@ -180,20 +220,22 @@ export default function CustomCourses() {
     };
 
     setCourses([...courses, newCourse]);
-    setCourseName('');
-    setSelectedExercises([]);
-    setScheduleFrequency('none');
-    setStartDate(undefined);
-    setEndDate(undefined);
-
+    
     const scheduleText = scheduleFrequency !== 'none' 
       ? ` (${scheduleFrequency} from ${startDate ? format(startDate, 'MMM d') : ''} to ${endDate ? format(endDate, 'MMM d') : ''})`
       : '';
 
+    const stationText = assignStationOnCreate 
+      ? ` and assigned to ${assignStationOnCreate.toUpperCase()}`
+      : '';
+
     toast({
       title: 'Course Created',
-      description: `"${courseName}" has been created with ${selectedExercises.length} exercises${scheduleText}.`,
+      description: `"${courseName}" has been created with ${configuredExercises.length} exercises${scheduleText}${stationText}.`,
     });
+
+    // Reset form
+    handleClearAll();
   };
 
   const handleAssignToStation = () => {
@@ -210,11 +252,19 @@ export default function CustomCourses() {
 
   const availableStations = iwtsStations.filter(s => s.status !== 'offline');
 
-  // Check if any type has matching exercises for search
-  const hasSearchResults = exerciseTypes.some(type => {
-    const typeExercises = getExercisesByType(type.id);
-    return filterExercisesBySearch(typeExercises).length > 0;
+  // Filter exercise types based on search query
+  const filteredTypes = EXERCISE_TYPES.filter(type => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    return type.name.toLowerCase().includes(query) || 
+           type.description.toLowerCase().includes(query);
   });
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -225,7 +275,7 @@ export default function CustomCourses() {
             <BookOpen className="w-7 h-7 text-primary" />
             Custom Courses
           </h1>
-          <p className="text-muted-foreground">Create training courses by combining exercises</p>
+          <p className="text-muted-foreground">Create training courses with configurable exercises</p>
         </div>
       </div>
 
@@ -234,8 +284,41 @@ export default function CustomCourses() {
         <div className="lg:col-span-2 space-y-6">
           {/* New Course Form */}
           <AnimatedCard index={0} className="tactical-card">
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg font-semibold">Create New Course</CardTitle>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    disabled={!courseName && configuredExercises.length === 0}
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Clear All
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-background">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-2">
+                      <AlertTriangle className="w-5 h-5 text-destructive" />
+                      Clear All Course Data?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will remove the course name, all configured exercises, schedule settings, and station assignment. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={handleClearAll}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Clear All
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -247,6 +330,28 @@ export default function CustomCourses() {
                   onChange={(e) => setCourseName(e.target.value)}
                   className="bg-muted border-border"
                 />
+              </div>
+
+              {/* Direct Station Assignment */}
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Monitor className="w-4 h-4 text-primary" />
+                  Assign to Station (Optional)
+                </Label>
+                <Select value={assignStationOnCreate} onValueChange={setAssignStationOnCreate}>
+                  <SelectTrigger className="bg-background border-border">
+                    <SelectValue placeholder="Select a station to assign" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover">
+                    <SelectItem value="none">No station</SelectItem>
+                    {availableStations.map((station) => (
+                      <SelectItem key={station.id} value={station.id}>
+                        {station.name} - {station.location}
+                        {station.status === 'in-use' && ' (In Use)'}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Schedule Section */}
@@ -336,83 +441,102 @@ export default function CustomCourses() {
                 )}
               </div>
 
-              {/* Selected Exercises */}
+              {/* Configured Exercises */}
               <div className="space-y-2">
                 <Label className="flex items-center justify-between">
-                  <span>Selected Exercises</span>
-                  <Badge variant="secondary">{selectedExercises.length} selected</Badge>
+                  <span>Configured Exercises</span>
+                  <Badge variant="secondary">{configuredExercises.length} exercises</Badge>
                 </Label>
                 
-                {selectedExercises.length > 0 ? (
+                {configuredExercises.length > 0 ? (
                   <div className="space-y-2">
-                    {selectedExercises.map((id, index) => {
-                      const exercise = getExerciseById(id);
-                      if (!exercise) return null;
-                      return (
-                        <div
-                          key={id}
-                          draggable
-                          onDragStart={() => handleDragStart(index)}
-                          onDragOver={(e) => handleDragOver(e, index)}
-                          onDragEnd={handleDragEnd}
-                          onDragLeave={handleDragLeave}
-                          className={cn(
-                            "flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20 cursor-grab active:cursor-grabbing transition-all",
-                            draggedIndex === index && "opacity-50 scale-95",
-                            dragOverIndex === index && draggedIndex !== index && "border-primary border-2 bg-primary/10"
-                          )}
-                        >
-                          <GripVertical className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground w-6">{index + 1}.</span>
-                          <div className="flex-1">
-                            <p className="font-medium text-foreground">{exercise.name}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {exercise.timeLimit}min • {exercise.targets} targets
-                            </p>
+                    {configuredExercises.map((exercise, index) => (
+                      <div
+                        key={exercise.id}
+                        draggable
+                        onDragStart={() => handleDragStart(index)}
+                        onDragOver={(e) => handleDragOver(e, index)}
+                        onDragEnd={handleDragEnd}
+                        onDragLeave={handleDragLeave}
+                        className={cn(
+                          "flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20 cursor-grab active:cursor-grabbing transition-all",
+                          draggedIndex === index && "opacity-50 scale-95",
+                          dragOverIndex === index && draggedIndex !== index && "border-primary border-2 bg-primary/10"
+                        )}
+                      >
+                        <GripVertical className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground w-6">{index + 1}.</span>
+                        <span className="text-primary">{typeIcons[exercise.typeId]}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-foreground">{exercise.typeName}</p>
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                            <span>{formatTime(exercise.config.scenarioTime)}</span>
+                            <span>•</span>
+                            <span>{getTargetName(exercise.config.targetId)}</span>
+                            <span>•</span>
+                            <span>{exercise.config.range}m</span>
+                            <span>•</span>
+                            <span>{exercise.config.bullets} rounds</span>
+                            <span>•</span>
+                            <Badge variant="outline" className="text-xs capitalize h-5">
+                              {exercise.config.position}
+                            </Badge>
+                            {exercise.config.speed && (
+                              <>
+                                <span>•</span>
+                                <span>Speed {exercise.config.speed}</span>
+                              </>
+                            )}
+                            {exercise.config.groupingSize && (
+                              <>
+                                <span>•</span>
+                                <span>{exercise.config.groupingSize}cm grouping</span>
+                              </>
+                            )}
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => removeExercise(id)}
-                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
                         </div>
-                      );
-                    })}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeExercise(exercise.id)}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
                     <p className="text-xs text-muted-foreground text-center pt-2">
                       Drag items to reorder
                     </p>
                   </div>
                 ) : (
                   <div className="text-center py-8 border border-dashed border-border rounded-lg text-muted-foreground">
-                    Select exercises from the list on the right to add them to your course
+                    Select an exercise type from the sidebar and configure it to add to your course
                   </div>
                 )}
               </div>
 
               {/* Course Summary */}
-              {selectedExercises.length > 0 && (
+              {configuredExercises.length > 0 && (
                 <div className="flex items-center gap-6 p-4 rounded-lg bg-muted/50">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-primary" />
-                    <span className="text-sm">Total Time: <strong>{getTotalTime()} min</strong></span>
+                    <span className="text-sm">Est. Time: <strong>{getTotalTime()} min</strong></span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Target className="w-4 h-4 text-primary" />
-                    <span className="text-sm">Total Targets: <strong>{getTotalTargets()}</strong></span>
+                    <span className="text-sm">Total Bullets: <strong>{getTotalBullets()}</strong></span>
                   </div>
                 </div>
               )}
 
               <Button 
-                className="w-full bg-primary hover:bg-primary/90" 
+                className="w-full bg-primary hover:bg-primary/90 btn-interactive hover:glow-primary" 
                 onClick={handleSaveCourse}
-                disabled={!courseName || selectedExercises.length === 0}
+                disabled={!courseName || configuredExercises.length === 0}
               >
                 <Save className="w-4 h-4 mr-2" />
-                Save Course
+                Save Course {assignStationOnCreate && assignStationOnCreate !== 'none' && `& Assign to ${assignStationOnCreate.toUpperCase()}`}
               </Button>
             </CardContent>
           </AnimatedCard>
@@ -438,6 +562,12 @@ export default function CustomCourses() {
                           {(course as any).schedule.frequency}
                         </Badge>
                       )}
+                      {(course as any).assignedStation && (
+                        <Badge variant="secondary" className="text-xs">
+                          <Monitor className="w-3 h-3 mr-1" />
+                          {(course as any).assignedStation.toUpperCase()}
+                        </Badge>
+                      )}
                     </div>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span>{course.exerciseIds.length} exercises</span>
@@ -455,6 +585,7 @@ export default function CustomCourses() {
                       <Button 
                         variant="outline" 
                         size="sm"
+                        className="btn-interactive"
                         onClick={() => setSelectedCourseForAssign(course.id)}
                       >
                         <Monitor className="w-4 h-4 mr-2" />
@@ -485,7 +616,7 @@ export default function CustomCourses() {
                         <Button variant="outline" onClick={() => setAssignDialogOpen(false)}>
                           Cancel
                         </Button>
-                        <Button onClick={handleAssignToStation} disabled={!selectedStation}>
+                        <Button onClick={handleAssignToStation} disabled={!selectedStation} className="btn-interactive hover:glow-primary">
                           <Check className="w-4 h-4 mr-2" />
                           Assign
                         </Button>
@@ -498,92 +629,84 @@ export default function CustomCourses() {
           </AnimatedCard>
         </div>
 
-        {/* Available Exercises Sidebar - Organized by Type */}
+        {/* Available Exercise Types Sidebar */}
         <div className="space-y-6">
-          <Card className="tactical-card">
+          <AnimatedCard index={2} className="tactical-card">
             <CardHeader className="space-y-3">
-              <CardTitle className="text-lg font-semibold">Available Exercises</CardTitle>
+              <CardTitle className="text-lg font-semibold">Exercise Types</CardTitle>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search exercises..."
+                  placeholder="Search exercise types..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9 bg-muted border-border"
                 />
               </div>
-              <p className="text-sm text-muted-foreground">Organized by type • Click to expand</p>
+              <p className="text-sm text-muted-foreground">Select type • Configure • Add to course</p>
             </CardHeader>
-            <CardContent className="space-y-2 max-h-[600px] overflow-y-auto">
-              {!hasSearchResults && searchQuery && (
+            <CardContent className="space-y-2 max-h-[700px] overflow-y-auto">
+              {filteredTypes.length === 0 && searchQuery && (
                 <div className="text-center py-8 text-muted-foreground">
-                  No exercises found for "{searchQuery}"
+                  No exercise types found for "{searchQuery}"
                 </div>
               )}
-              {exerciseTypes.map((type) => {
-                const typeExercises = getExercisesByType(type.id);
-                const filteredExercises = filterExercisesBySearch(typeExercises);
-                const selectedCount = filteredExercises.filter(e => selectedExercises.includes(e.id)).length;
-                
-                if (searchQuery && filteredExercises.length === 0) return null;
-                
-                return (
-                  <ExerciseTypeSection
-                    key={type.id}
-                    type={type}
-                    exercises={filteredExercises}
-                    selectedExercises={selectedExercises}
-                    selectedCount={selectedCount}
-                    onAddExercise={addExercise}
-                    icon={typeIcons[type.id]}
-                    defaultOpen={searchQuery.length > 0}
-                  />
-                );
-              })}
+              {filteredTypes.map((type, index) => (
+                <ExerciseTypeSection
+                  key={type.id}
+                  type={type}
+                  onAddExercise={handleAddExercise}
+                  icon={typeIcons[type.id]}
+                  index={index}
+                />
+              ))}
             </CardContent>
-          </Card>
+          </AnimatedCard>
         </div>
       </div>
     </div>
   );
 }
 
-// Collapsible section for each exercise type
+// Collapsible section for each exercise type with configurator
 function ExerciseTypeSection({
   type,
-  exercises,
-  selectedExercises,
-  selectedCount,
   onAddExercise,
   icon,
-  defaultOpen = false,
+  index,
 }: {
-  type: { id: string; name: string; description: string };
-  exercises: Array<{ id: string; name: string; difficulty: string; timeLimit: number; targets: number; description: string }>;
-  selectedExercises: string[];
-  selectedCount: number;
-  onAddExercise: (id: string) => void;
+  type: ExerciseType;
+  onAddExercise: (type: ExerciseType, config: ExerciseConfig) => void;
   icon: React.ReactNode;
-  defaultOpen?: boolean;
+  index: number;
 }) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Collapsible open={isOpen || defaultOpen} onOpenChange={setIsOpen}>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger asChild>
-        <button className="w-full flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors">
+        <button 
+          className="w-full flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          style={{ animationDelay: `${index * 50}ms` }}
+        >
           <div className="flex items-center gap-3">
             <span className="text-primary">{icon}</span>
             <div className="text-left">
               <span className="font-medium text-foreground">{type.name}</span>
-              <p className="text-xs text-muted-foreground">{exercises.length} exercises</p>
+              <p className="text-xs text-muted-foreground">{type.description}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {selectedCount > 0 && (
-              <Badge variant="default" className="text-xs">{selectedCount} added</Badge>
+            {type.hasSpeed && (
+              <Badge variant="outline" className="text-xs">Speed</Badge>
             )}
-            {isOpen || defaultOpen ? (
+            {type.hasGrouping && (
+              <Badge variant="outline" className="text-xs">Grouping</Badge>
+            )}
+            {type.includesVehicles && (
+              <Badge variant="outline" className="text-xs">Vehicles</Badge>
+            )}
+            {isOpen ? (
               <ChevronDown className="w-4 h-4 text-muted-foreground" />
             ) : (
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
@@ -591,38 +714,11 @@ function ExerciseTypeSection({
           </div>
         </button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="mt-2 space-y-2 pl-4 border-l-2 border-primary/20 ml-2">
-        {exercises.map((exercise) => {
-          const isSelected = selectedExercises.includes(exercise.id);
-          return (
-            <div
-              key={exercise.id}
-              onClick={() => !isSelected && onAddExercise(exercise.id)}
-              className={`p-3 rounded-lg border transition-colors cursor-pointer ${
-                isSelected 
-                  ? 'bg-primary/10 border-primary/30 opacity-60' 
-                  : 'bg-muted/30 border-border hover:border-primary/30'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-medium text-foreground text-sm">{exercise.name}</span>
-                {isSelected ? (
-                  <Badge variant="secondary" className="text-xs">Added</Badge>
-                ) : (
-                  <Button variant="ghost" size="sm" className="h-6 px-2">
-                    <Plus className="w-3 h-3" />
-                  </Button>
-                )}
-              </div>
-              <p className="text-xs text-muted-foreground mb-2">{exercise.description}</p>
-              <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                <Badge variant="outline" className="text-xs capitalize">{exercise.difficulty}</Badge>
-                <span>{exercise.timeLimit}min</span>
-                <span>{exercise.targets} targets</span>
-              </div>
-            </div>
-          );
-        })}
+      <CollapsibleContent className="mt-2">
+        <ExerciseConfigurator
+          exerciseType={type}
+          onAddExercise={onAddExercise}
+        />
       </CollapsibleContent>
     </Collapsible>
   );
