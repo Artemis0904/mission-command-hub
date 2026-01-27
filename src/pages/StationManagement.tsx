@@ -10,7 +10,8 @@ import {
   X,
   Settings,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AnimatedCard } from '@/components/ui/animated-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -119,7 +120,7 @@ export default function StationManagement() {
 
       {/* Stats Row */}
       <div className="grid grid-cols-3 gap-4">
-        <Card className="tactical-card">
+        <AnimatedCard index={0} className="tactical-card">
           <CardContent className="p-4 flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
               <Power className="w-6 h-6 text-primary" />
@@ -129,8 +130,8 @@ export default function StationManagement() {
               <p className="text-sm text-muted-foreground">Idle</p>
             </div>
           </CardContent>
-        </Card>
-        <Card className="tactical-card">
+        </AnimatedCard>
+        <AnimatedCard index={1} className="tactical-card">
           <CardContent className="p-4 flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
               <Activity className="w-6 h-6 text-accent" />
@@ -140,8 +141,8 @@ export default function StationManagement() {
               <p className="text-sm text-muted-foreground">In Use</p>
             </div>
           </CardContent>
-        </Card>
-        <Card className="tactical-card">
+        </AnimatedCard>
+        <AnimatedCard index={2} className="tactical-card">
           <CardContent className="p-4 flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
               <PowerOff className="w-6 h-6 text-muted-foreground" />
@@ -151,19 +152,20 @@ export default function StationManagement() {
               <p className="text-sm text-muted-foreground">Offline</p>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
       </div>
 
       {/* Stations Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        {stations.map((station) => {
+        {stations.map((station, index) => {
           const assignedCourse = station.assignedCourseId 
             ? getCourseById(station.assignedCourseId) 
             : null;
 
           return (
-            <Card 
-              key={station.id} 
+            <AnimatedCard 
+              key={station.id}
+              index={index + 3}
               className={cn(
                 "tactical-card transition-all",
                 station.status === 'offline' && "opacity-60"
@@ -216,7 +218,7 @@ export default function StationManagement() {
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="w-full"
+                          className="w-full btn-interactive hover:glow-primary"
                           disabled={station.status === 'offline'}
                           onClick={() => setSelectedStationId(station.id)}
                         >
@@ -246,7 +248,7 @@ export default function StationManagement() {
                           <Button variant="outline" onClick={() => setAssignDialogOpen(false)}>
                             Cancel
                           </Button>
-                          <Button onClick={handleAssignCourse} disabled={!selectedCourseId}>
+                          <Button onClick={handleAssignCourse} disabled={!selectedCourseId} className="btn-interactive glow-primary">
                             <Check className="w-4 h-4 mr-2" />
                             Assign
                           </Button>
@@ -256,7 +258,7 @@ export default function StationManagement() {
                   </div>
                 )}
               </CardContent>
-            </Card>
+            </AnimatedCard>
           );
         })}
       </div>

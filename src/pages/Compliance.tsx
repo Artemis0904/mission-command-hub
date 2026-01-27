@@ -12,6 +12,7 @@ import {
   Filter,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AnimatedCard } from '@/components/ui/animated-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -123,7 +124,7 @@ export default function Compliance() {
 
       {/* Alert Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="tactical-card-hover border-destructive/30">
+        <AnimatedCard index={0} className="tactical-card-hover border-destructive/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -135,9 +136,9 @@ export default function Compliance() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card className="tactical-card-hover border-accent/30">
+        <AnimatedCard index={1} className="tactical-card-hover border-accent/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -149,9 +150,9 @@ export default function Compliance() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card className="tactical-card-hover border-status-info/30">
+        <AnimatedCard index={2} className="tactical-card-hover border-status-info/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -163,11 +164,11 @@ export default function Compliance() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
       </div>
 
       {/* Alerts List */}
-      <Card className="tactical-card">
+      <AnimatedCard index={3} className="tactical-card">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">Active Alerts</CardTitle>
         </CardHeader>
@@ -207,6 +208,7 @@ export default function Compliance() {
                       <Button 
                         variant="outline" 
                         size="sm"
+                        className="btn-interactive hover:glow-primary"
                         onClick={() => handleSendReminder(alert.traineeId)}
                       >
                         <Send className="w-4 h-4 mr-1" />
@@ -215,6 +217,7 @@ export default function Compliance() {
                       <Button 
                         variant="outline" 
                         size="sm"
+                        className="btn-interactive hover:glow-accent"
                         onClick={() => handleEscalate(alert.traineeId)}
                       >
                         <Shield className="w-4 h-4 mr-1" />
@@ -223,6 +226,7 @@ export default function Compliance() {
                       <Button 
                         variant="ghost" 
                         size="sm"
+                        className="btn-interactive"
                         onClick={() => handleExcuse(alert.traineeId)}
                       >
                         <CheckCircle className="w-4 h-4 mr-1" />
@@ -239,10 +243,10 @@ export default function Compliance() {
             </div>
           )}
         </CardContent>
-      </Card>
+      </AnimatedCard>
 
       {/* Compliance Summary */}
-      <Card className="tactical-card">
+      <AnimatedCard index={4} className="tactical-card">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">Compliance Overview</CardTitle>
         </CardHeader>
@@ -279,7 +283,7 @@ export default function Compliance() {
             </div>
           </div>
         </CardContent>
-      </Card>
+      </AnimatedCard>
     </div>
   );
 }

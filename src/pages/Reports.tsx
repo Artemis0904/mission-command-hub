@@ -12,6 +12,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AnimatedCard } from '@/components/ui/animated-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -76,14 +77,14 @@ export default function Reports() {
           </h1>
           <p className="text-muted-foreground">View historical training data and session replays</p>
         </div>
-        <Button variant="outline">
+        <Button variant="outline" className="btn-interactive hover:glow-primary">
           <Download className="w-4 h-4 mr-2" />
           Export Reports
         </Button>
       </div>
 
       {/* Filters */}
-      <Card className="tactical-card">
+      <AnimatedCard index={0} className="tactical-card">
         <CardContent className="p-4">
           <div className="flex flex-wrap gap-4">
             <div className="relative flex-1 min-w-[200px]">
@@ -108,10 +109,10 @@ export default function Reports() {
             </Select>
           </div>
         </CardContent>
-      </Card>
+      </AnimatedCard>
 
       {/* Reports Table */}
-      <Card className="tactical-card">
+      <AnimatedCard index={1} className="tactical-card">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">Session Reports</CardTitle>
         </CardHeader>
@@ -172,6 +173,7 @@ export default function Reports() {
                           <Button 
                             variant="ghost" 
                             size="sm"
+                            className="btn-interactive"
                             onClick={() => openReportDetail(report)}
                           >
                             <Eye className="w-4 h-4 mr-1" />
@@ -180,6 +182,7 @@ export default function Reports() {
                           <Button 
                             variant="ghost" 
                             size="sm"
+                            className="btn-interactive"
                             onClick={() => openReplay(report)}
                           >
                             <Play className="w-4 h-4 mr-1" />
@@ -200,7 +203,7 @@ export default function Reports() {
             </div>
           )}
         </CardContent>
-      </Card>
+      </AnimatedCard>
 
       {/* Report Detail / Replay Dialog */}
       <Dialog open={!!selectedReport} onOpenChange={() => setSelectedReport(null)}>
@@ -263,13 +266,13 @@ export default function Reports() {
 
                     <div className="flex gap-3">
                       <Button 
-                        className="flex-1"
+                        className="flex-1 btn-interactive glow-primary"
                         onClick={() => setShowReplay(true)}
                       >
                         <Play className="w-4 h-4 mr-2" />
                         View Replay
                       </Button>
-                      <Button variant="outline" className="flex-1">
+                      <Button variant="outline" className="flex-1 btn-interactive hover:glow-primary">
                         <Download className="w-4 h-4 mr-2" />
                         Export PDF
                       </Button>

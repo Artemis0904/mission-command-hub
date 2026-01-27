@@ -12,6 +12,7 @@ import {
   Award,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AnimatedCard } from '@/components/ui/animated-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -91,7 +92,7 @@ export default function TraineeProgress() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <Card className="tactical-card-hover">
+        <AnimatedCard index={0} className="tactical-card-hover">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -103,9 +104,9 @@ export default function TraineeProgress() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card className="tactical-card-hover">
+        <AnimatedCard index={1} className="tactical-card-hover">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -117,9 +118,9 @@ export default function TraineeProgress() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card className="tactical-card-hover">
+        <AnimatedCard index={2} className="tactical-card-hover">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -131,9 +132,9 @@ export default function TraineeProgress() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card className="tactical-card-hover">
+        <AnimatedCard index={3} className="tactical-card-hover">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -145,11 +146,11 @@ export default function TraineeProgress() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
       </div>
 
       {/* Trainee Table */}
-      <Card className="tactical-card">
+      <AnimatedCard index={4} className="tactical-card">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="data-table">
@@ -198,6 +199,7 @@ export default function TraineeProgress() {
                         <Button 
                           variant="ghost" 
                           size="sm"
+                          className="btn-interactive"
                           onClick={() => openTraineeProfile(trainee)}
                         >
                           View Profile
@@ -211,7 +213,7 @@ export default function TraineeProgress() {
             </table>
           </div>
         </CardContent>
-      </Card>
+      </AnimatedCard>
 
       {/* Trainee Profile Dialog */}
       <Dialog open={!!selectedTrainee} onOpenChange={() => setSelectedTrainee(null)}>
