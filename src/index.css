@@ -6,85 +6,86 @@
 
 @layer base {
   :root {
-    /* Dark professional theme */
-    --background: 222 47% 8%;
-    --foreground: 210 20% 95%;
+    /* Dark professional theme - deep background */
+    --background: 222 47% 7%;
+    --foreground: 210 20% 98%;
 
-    --card: 220 40% 11%;
-    --card-foreground: 210 20% 95%;
+    /* Brighter cards for clear distinction */
+    --card: 220 35% 16%;
+    --card-foreground: 210 20% 98%;
 
-    --popover: 220 40% 11%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 220 35% 18%;
+    --popover-foreground: 210 20% 98%;
 
-    /* Teal/Cyan primary - modern and professional */
-    --primary: 187 85% 43%;
+    /* Teal/Cyan primary - vibrant and modern */
+    --primary: 187 90% 48%;
     --primary-foreground: 220 40% 8%;
 
-    /* Neutral slate secondary */
-    --secondary: 220 20% 18%;
-    --secondary-foreground: 210 20% 90%;
+    /* Lighter secondary for better contrast */
+    --secondary: 220 25% 22%;
+    --secondary-foreground: 210 20% 95%;
 
-    --muted: 220 20% 14%;
-    --muted-foreground: 220 15% 55%;
+    --muted: 220 25% 12%;
+    --muted-foreground: 220 15% 60%;
 
     /* Soft teal accent */
-    --accent: 175 60% 45%;
+    --accent: 175 70% 50%;
     --accent-foreground: 220 40% 8%;
 
-    --destructive: 0 65% 50%;
+    --destructive: 0 70% 55%;
     --destructive-foreground: 210 20% 98%;
 
-    --border: 220 20% 16%;
-    --input: 220 20% 16%;
-    --ring: 187 85% 43%;
+    --border: 220 25% 22%;
+    --input: 220 25% 20%;
+    --ring: 187 90% 48%;
 
     --radius: 0.5rem;
 
-    /* Status colors - cleaner palette */
-    --status-active: 160 70% 40%;
-    --status-warning: 40 85% 50%;
-    --status-danger: 0 65% 50%;
-    --status-info: 200 80% 50%;
-    --status-idle: 220 15% 50%;
-    --status-offline: 220 15% 25%;
+    /* Status colors - vibrant palette */
+    --status-active: 160 75% 45%;
+    --status-warning: 40 90% 55%;
+    --status-danger: 0 70% 55%;
+    --status-info: 200 85% 55%;
+    --status-idle: 220 20% 55%;
+    --status-offline: 220 20% 30%;
 
-    /* Sidebar */
-    --sidebar-background: 222 47% 6%;
-    --sidebar-foreground: 210 20% 85%;
-    --sidebar-primary: 187 85% 43%;
+    /* Sidebar - slightly darker than main bg */
+    --sidebar-background: 222 47% 5%;
+    --sidebar-foreground: 210 20% 90%;
+    --sidebar-primary: 187 90% 48%;
     --sidebar-primary-foreground: 220 40% 8%;
-    --sidebar-accent: 220 20% 14%;
-    --sidebar-accent-foreground: 210 20% 95%;
-    --sidebar-border: 220 20% 14%;
-    --sidebar-ring: 187 85% 43%;
+    --sidebar-accent: 220 25% 16%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 220 25% 18%;
+    --sidebar-ring: 187 90% 48%;
 
     /* Custom gradients */
-    --gradient-tactical: linear-gradient(135deg, hsl(220 40% 11%) 0%, hsl(220 20% 14%) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(187 85% 43%) 0%, hsl(187 85% 35%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(175 60% 45%) 0%, hsl(175 60% 38%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(220 40% 12%) 0%, hsl(220 40% 9%) 100%);
+    --gradient-tactical: linear-gradient(135deg, hsl(220 35% 16%) 0%, hsl(220 30% 20%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(187 90% 48%) 0%, hsl(187 85% 40%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(175 70% 50%) 0%, hsl(175 65% 42%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(220 35% 18%) 0%, hsl(220 35% 14%) 100%);
   }
 
   .dark {
-    --background: 222 47% 8%;
-    --foreground: 210 20% 95%;
-    --card: 220 40% 11%;
-    --card-foreground: 210 20% 95%;
-    --popover: 220 40% 11%;
-    --popover-foreground: 210 20% 95%;
-    --primary: 187 85% 43%;
+    --background: 222 47% 7%;
+    --foreground: 210 20% 98%;
+    --card: 220 35% 16%;
+    --card-foreground: 210 20% 98%;
+    --popover: 220 35% 18%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 187 90% 48%;
     --primary-foreground: 220 40% 8%;
-    --secondary: 220 20% 18%;
-    --secondary-foreground: 210 20% 90%;
-    --muted: 220 20% 14%;
-    --muted-foreground: 220 15% 55%;
-    --accent: 175 60% 45%;
+    --secondary: 220 25% 22%;
+    --secondary-foreground: 210 20% 95%;
+    --muted: 220 25% 12%;
+    --muted-foreground: 220 15% 60%;
+    --accent: 175 70% 50%;
     --accent-foreground: 220 40% 8%;
-    --destructive: 0 65% 50%;
+    --destructive: 0 70% 55%;
     --destructive-foreground: 210 20% 98%;
-    --border: 220 20% 16%;
-    --input: 220 20% 16%;
-    --ring: 187 85% 43%;
+    --border: 220 25% 22%;
+    --input: 220 25% 20%;
+    --ring: 187 90% 48%;
   }
 }
 
@@ -145,18 +146,18 @@
 
   /* Tactical card with glow effect */
   .tactical-card {
-    @apply bg-card border border-border rounded-lg;
+    @apply bg-card border border-border rounded-lg transition-all duration-300;
     background: var(--gradient-card);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
   .tactical-card-hover {
-    @apply tactical-card transition-all duration-200;
+    @apply tactical-card;
   }
 
   .tactical-card-hover:hover {
-    @apply border-primary/50;
-    box-shadow: 0 4px 24px rgba(6, 182, 212, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    @apply border-primary/60 -translate-y-0.5;
+    box-shadow: 0 8px 32px rgba(6, 182, 212, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
   /* Data table styles */
@@ -165,15 +166,19 @@
   }
 
   .data-table th {
-    @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground bg-muted/50;
+    @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground bg-secondary/50;
   }
 
   .data-table td {
-    @apply px-4 py-3 border-t border-border;
+    @apply px-4 py-3 border-t border-border transition-colors duration-200;
+  }
+
+  .data-table tr {
+    @apply transition-all duration-200;
   }
 
   .data-table tr:hover td {
-    @apply bg-muted/30;
+    @apply bg-secondary/40;
   }
 
   /* Pulse animation for live indicators */
@@ -198,7 +203,57 @@
 
   /* Sidebar active state */
   .sidebar-active {
-    @apply bg-primary/10 text-primary border-l-2 border-primary;
+    @apply bg-primary/15 text-primary border-l-2 border-primary;
+  }
+
+  /* Interactive button animations */
+  .btn-interactive {
+    @apply transition-all duration-200 active:scale-95;
+  }
+
+  .btn-interactive:hover {
+    @apply -translate-y-0.5;
+  }
+
+  /* Card entrance animation */
+  .card-animate {
+    @apply animate-fade-in;
+  }
+
+  /* Interactive list item */
+  .list-item-interactive {
+    @apply transition-all duration-200 cursor-pointer;
+  }
+
+  .list-item-interactive:hover {
+    @apply bg-secondary/50 -translate-x-0.5;
+  }
+
+  /* Badge pulse for notifications */
+  .badge-pulse {
+    @apply relative;
+  }
+
+  .badge-pulse::after {
+    content: '';
+    @apply absolute inset-0 rounded-full bg-current opacity-40;
+    animation: badge-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  @keyframes badge-ping {
+    75%, 100% {
+      transform: scale(1.5);
+      opacity: 0;
+    }
+  }
+
+  /* Smooth icon transitions */
+  .icon-interactive {
+    @apply transition-all duration-200;
+  }
+
+  .icon-interactive:hover {
+    @apply scale-110 text-primary;
   }
 }
 
