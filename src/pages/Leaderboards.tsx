@@ -10,6 +10,7 @@ import {
   Award,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AnimatedCard } from '@/components/ui/animated-card';
 import { Badge } from '@/components/ui/badge';
 import {
   Select,
@@ -101,8 +102,9 @@ export default function Leaderboards() {
           const position = index + 1;
           
           return (
-            <Card 
+            <AnimatedCard 
               key={trainee.id}
+              index={position - 1}
               className={`tactical-card relative overflow-hidden ${
                 position === 1 ? 'md:order-2 ring-2 ring-accent/50' : 
                 position === 2 ? 'md:order-1' : 'md:order-3'
@@ -136,13 +138,13 @@ export default function Leaderboards() {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </AnimatedCard>
           );
         })}
       </div>
 
       {/* Full Rankings Table */}
-      <Card className="tactical-card">
+      <AnimatedCard index={3} className="tactical-card">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">Full Rankings</CardTitle>
         </CardHeader>
@@ -227,7 +229,7 @@ export default function Leaderboards() {
             </table>
           </div>
         </CardContent>
-      </Card>
+      </AnimatedCard>
     </div>
   );
 }
