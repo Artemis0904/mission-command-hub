@@ -27,6 +27,7 @@ import {
   Repeat,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AnimatedCard } from '@/components/ui/animated-card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -232,7 +233,7 @@ export default function CustomCourses() {
         {/* Course Builder */}
         <div className="lg:col-span-2 space-y-6">
           {/* New Course Form */}
-          <Card className="tactical-card">
+          <AnimatedCard index={0} className="tactical-card">
             <CardHeader>
               <CardTitle className="text-lg font-semibold">Create New Course</CardTitle>
             </CardHeader>
@@ -414,10 +415,10 @@ export default function CustomCourses() {
                 Save Course
               </Button>
             </CardContent>
-          </Card>
+          </AnimatedCard>
 
           {/* Existing Courses */}
-          <Card className="tactical-card">
+          <AnimatedCard index={1} className="tactical-card">
             <CardHeader>
               <CardTitle className="text-lg font-semibold">Your Custom Courses</CardTitle>
             </CardHeader>
@@ -494,7 +495,7 @@ export default function CustomCourses() {
                 </div>
               ))}
             </CardContent>
-          </Card>
+          </AnimatedCard>
         </div>
 
         {/* Available Exercises Sidebar - Organized by Type */}

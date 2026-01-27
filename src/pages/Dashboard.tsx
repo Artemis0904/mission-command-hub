@@ -13,6 +13,7 @@ import {
   BookOpen,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AnimatedCard } from '@/components/ui/animated-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
@@ -36,7 +37,7 @@ export default function Dashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="tactical-card-hover cursor-pointer" onClick={() => navigate('/stations')}>
+        <AnimatedCard index={0} className="tactical-card-hover cursor-pointer" onClick={() => navigate('/stations')}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -55,9 +56,9 @@ export default function Dashboard() {
               <span className="text-muted-foreground">• {activeStations} available</span>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card className="tactical-card-hover">
+        <AnimatedCard index={1} className="tactical-card-hover">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -75,9 +76,9 @@ export default function Dashboard() {
               </span>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card className="tactical-card-hover cursor-pointer" onClick={() => navigate('/custom-courses')}>
+        <AnimatedCard index={2} className="tactical-card-hover cursor-pointer" onClick={() => navigate('/custom-courses')}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -95,9 +96,9 @@ export default function Dashboard() {
               </span>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card className="tactical-card-hover">
+        <AnimatedCard index={3} className="tactical-card-hover">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -112,13 +113,13 @@ export default function Dashboard() {
               <span className="text-muted-foreground">This week</span>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
       </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Today's Missions */}
-        <Card className="tactical-card lg:col-span-2">
+        <AnimatedCard index={4} className="tactical-card lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-lg font-semibold">Today's Missions</CardTitle>
             <Button variant="ghost" size="sm" onClick={() => navigate('/mission-scheduler')}>
@@ -132,7 +133,7 @@ export default function Dashboard() {
                 return (
                   <div
                     key={mission.id}
-                    className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border border-border hover:border-primary/30 transition-colors"
+                    className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border border-border hover:border-primary/30 transition-all duration-200 hover:-translate-x-0.5"
                   >
                     <div className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
@@ -170,10 +171,10 @@ export default function Dashboard() {
               </div>
             )}
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
         {/* Leaderboard Top 5 */}
-        <Card className="tactical-card">
+        <AnimatedCard index={5} className="tactical-card">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-lg font-semibold flex items-center gap-2">
               <Trophy className="w-5 h-5 text-accent" />
@@ -187,7 +188,7 @@ export default function Dashboard() {
             {topTrainees.map((trainee, index) => (
               <div
                 key={trainee.id}
-                className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
+                className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-200 hover:-translate-x-0.5 ${
                   index < 3 ? 'bg-accent/5 border border-accent/20' : 'bg-muted/30'
                 }`}
               >
@@ -210,13 +211,13 @@ export default function Dashboard() {
               </div>
             ))}
           </CardContent>
-        </Card>
+        </AnimatedCard>
       </div>
 
       {/* Bottom Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Pending Assignments */}
-        <Card className="tactical-card">
+        <AnimatedCard index={6} className="tactical-card">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-lg font-semibold">Pending Assignments</CardTitle>
             <Button variant="ghost" size="sm" onClick={() => navigate('/mission-assignment')}>
@@ -230,7 +231,7 @@ export default function Dashboard() {
                 { trainee: 'CPL David Kim', mission: 'Advanced Combat Drill', station: 'IWTS-06', status: 'overdue' },
                 { trainee: 'SPC Robert Hayes', mission: 'Qualification Test', station: 'IWTS-09', status: 'assigned' },
               ].map((item, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-muted/30 transition-all duration-200 hover:bg-secondary/50 hover:-translate-x-0.5">
                   <div>
                     <p className="font-medium text-foreground">{item.trainee}</p>
                     <p className="text-sm text-muted-foreground">{item.mission} • {item.station}</p>
@@ -242,10 +243,10 @@ export default function Dashboard() {
               ))}
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
         {/* Compliance Alerts */}
-        <Card className="tactical-card">
+        <AnimatedCard index={7} className="tactical-card">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-lg font-semibold flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-destructive" />
@@ -260,10 +261,10 @@ export default function Dashboard() {
               {complianceAlerts.slice(0, 3).map((alert) => {
                 const trainee = getTraineeById(alert.traineeId);
                 return (
-                  <div key={alert.id} className={`flex items-center justify-between p-3 rounded-lg border ${
+                  <div key={alert.id} className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-200 hover:-translate-x-0.5 ${
                     alert.severity === 'high' 
-                      ? 'bg-destructive/5 border-destructive/30' 
-                      : 'bg-muted/30 border-border'
+                      ? 'bg-destructive/5 border-destructive/30 hover:bg-destructive/10' 
+                      : 'bg-muted/30 border-border hover:bg-secondary/50'
                   }`}>
                     <div className="flex items-center gap-3">
                       <div className={`w-2 h-2 rounded-full ${
@@ -283,11 +284,11 @@ export default function Dashboard() {
               })}
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
       </div>
 
       {/* Quick Actions */}
-      <Card className="tactical-card">
+      <AnimatedCard index={8} className="tactical-card">
         <CardHeader>
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
             <Zap className="w-5 h-5 text-accent" />
@@ -298,7 +299,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <Button 
               variant="outline" 
-              className="h-auto py-4 flex flex-col gap-2"
+              className="h-auto py-4 flex flex-col gap-2 transition-all duration-200 hover:-translate-y-1 hover:border-primary/50"
               onClick={() => navigate('/custom-courses')}
             >
               <BookOpen className="w-6 h-6 text-primary" />
@@ -306,7 +307,7 @@ export default function Dashboard() {
             </Button>
             <Button 
               variant="outline" 
-              className="h-auto py-4 flex flex-col gap-2"
+              className="h-auto py-4 flex flex-col gap-2 transition-all duration-200 hover:-translate-y-1 hover:border-accent/50"
               onClick={() => navigate('/stations')}
             >
               <Monitor className="w-6 h-6 text-accent" />
@@ -314,7 +315,7 @@ export default function Dashboard() {
             </Button>
             <Button 
               variant="outline" 
-              className="h-auto py-4 flex flex-col gap-2"
+              className="h-auto py-4 flex flex-col gap-2 transition-all duration-200 hover:-translate-y-1 hover:border-status-info/50"
               onClick={() => navigate('/reports')}
             >
               <FileBarChart className="w-6 h-6 text-status-info" />
@@ -322,7 +323,7 @@ export default function Dashboard() {
             </Button>
             <Button 
               variant="outline" 
-              className="h-auto py-4 flex flex-col gap-2"
+              className="h-auto py-4 flex flex-col gap-2 transition-all duration-200 hover:-translate-y-1 hover:border-primary/50"
               onClick={() => navigate('/trainee-progress')}
             >
               <Users className="w-6 h-6 text-primary" />
@@ -330,7 +331,7 @@ export default function Dashboard() {
             </Button>
           </div>
         </CardContent>
-      </Card>
+      </AnimatedCard>
     </div>
   );
 }
