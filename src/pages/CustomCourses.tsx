@@ -79,6 +79,7 @@ import {
   EXERCISE_TYPES,
   getTargetName,
 } from '@/components/ExerciseConfigurator';
+import { CourseTemplateManager } from '@/components/CourseTemplateManager';
 
 // Icons mapping for exercise types
 const typeIcons: Record<string, React.ReactNode> = {
@@ -136,6 +137,17 @@ export default function CustomCourses() {
       title: 'Exercise Added',
       description: `${type.name} exercise added to course.`,
     });
+  };
+
+  // Load template exercises
+  const handleLoadTemplate = (exercises: { typeId: string; typeName: string; config: ExerciseConfig }[]) => {
+    const loadedExercises: ConfiguredExercise[] = exercises.map((ex, idx) => ({
+      id: `ex-${Date.now()}-${idx}-${Math.random().toString(36).substr(2, 9)}`,
+      typeId: ex.typeId,
+      typeName: ex.typeName,
+      config: ex.config,
+    }));
+    setConfiguredExercises(prev => [...prev, ...loadedExercises]);
   };
 
   const removeExercise = (exerciseId: string) => {
@@ -277,6 +289,10 @@ export default function CustomCourses() {
           </h1>
           <p className="text-muted-foreground">Create training courses with configurable exercises</p>
         </div>
+        <CourseTemplateManager
+          configuredExercises={configuredExercises}
+          onLoadTemplate={handleLoadTemplate}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
