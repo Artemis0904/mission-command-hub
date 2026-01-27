@@ -8,6 +8,7 @@ import {
   Filter,
   Crown,
   Award,
+  Crosshair,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AnimatedCard } from '@/components/ui/animated-card';
@@ -19,10 +20,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { trainees, scores } from '@/data/mockData';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { trainees, scores, weapons, weaponScores, getWeaponById } from '@/data/mockData';
+
+type LeaderboardView = 'overall' | 'weapons';
 
 export default function Leaderboards() {
   const [dateRange, setDateRange] = useState<string>('all');
+  const [selectedWeapon, setSelectedWeapon] = useState<string>('all');
+  const [leaderboardView, setLeaderboardView] = useState<LeaderboardView>('overall');
 
   // Sort trainees by score
   const sortedTrainees = [...trainees].sort((a, b) => b.totalScore - a.totalScore);
@@ -40,6 +46,53 @@ export default function Leaderboards() {
       avgTime: Math.round(totalTime / traineeScores.length / 60), // Convert to minutes
     };
   };
+
+  // Get weapon leaderboard data
+  const getWeaponLeaderboard = () => {
+    const filteredScores = selectedWeapon === 'all' 
+      ? weaponScores 
+      : weaponScores.filter(ws => ws.weaponId === selectedWeapon);
+
+    // Aggregate by trainee if viewing all weapons
+    if (selectedWeapon === 'all') {
+      const traineeAggregates = new Map<string, { totalScore: number; accuracy: number; sessions: number }>();
+      
+      filteredScores.forEach(ws => {
+        const existing = traineeAggregates.get(ws.traineeId);
+        if (existing) {
+          existing.totalScore += ws.totalScore;
+          existing.accuracy = Math.round((existing.accuracy * existing.sessions + ws.accuracy * ws.sessions) / (existing.sessions + ws.sessions));
+          existing.sessions += ws.sessions;
+        } else {
+          traineeAggregates.set(ws.traineeId, {
+            totalScore: ws.totalScore,
+            accuracy: ws.accuracy,
+            sessions: ws.sessions,
+          });
+        }
+      });
+
+      return Array.from(traineeAggregates.entries())
+        .map(([traineeId, stats]) => ({
+          traineeId,
+          trainee: trainees.find(t => t.id === traineeId),
+          ...stats,
+        }))
+        .sort((a, b) => b.totalScore - a.totalScore);
+    }
+
+    return filteredScores
+      .map(ws => ({
+        traineeId: ws.traineeId,
+        trainee: trainees.find(t => t.id === ws.traineeId),
+        totalScore: ws.totalScore,
+        accuracy: ws.accuracy,
+        sessions: ws.sessions,
+      }))
+      .sort((a, b) => b.totalScore - a.totalScore);
+  };
+
+  const weaponLeaderboard = getWeaponLeaderboard();
 
   const getRankBadge = (rank: number) => {
     if (rank === 1) {
@@ -95,141 +148,327 @@ export default function Leaderboards() {
         </div>
       </div>
 
-      {/* Top 3 Podium */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {sortedTrainees.slice(0, 3).map((trainee, index) => {
-          const stats = getTraineeStats(trainee.id);
-          const position = index + 1;
-          
-          return (
-            <AnimatedCard 
-              key={trainee.id}
-              index={position - 1}
-              className={`tactical-card relative overflow-hidden ${
-                position === 1 ? 'md:order-2 ring-2 ring-accent/50' : 
-                position === 2 ? 'md:order-1' : 'md:order-3'
-              }`}
-            >
-              {position === 1 && (
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600" />
-              )}
-              <CardContent className="p-6 text-center">
-                <div className="flex justify-center mb-4">
-                  {getRankBadge(position)}
-                </div>
-                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary mx-auto mb-3">
-                  {trainee.avatar}
-                </div>
-                <h3 className="font-bold text-lg text-foreground mb-1">{trainee.name}</h3>
-                <p className="text-sm text-muted-foreground mb-4">{trainee.rank} • {trainee.unit}</p>
-                
-                <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-border">
-                  <div>
-                    <p className="text-2xl font-bold text-primary">{trainee.totalScore}</p>
-                    <p className="text-xs text-muted-foreground">Score</p>
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-foreground">{stats.accuracy}%</p>
-                    <p className="text-xs text-muted-foreground">Accuracy</p>
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-foreground">{stats.avgTime}m</p>
-                    <p className="text-xs text-muted-foreground">Avg Time</p>
-                  </div>
-                </div>
-              </CardContent>
-            </AnimatedCard>
-          );
-        })}
-      </div>
+      {/* Leaderboard Tabs */}
+      <Tabs value={leaderboardView} onValueChange={(v) => setLeaderboardView(v as LeaderboardView)}>
+        <TabsList className="bg-muted">
+          <TabsTrigger value="overall" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <Trophy className="w-4 h-4 mr-2" />
+            Overall Rankings
+          </TabsTrigger>
+          <TabsTrigger value="weapons" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <Crosshair className="w-4 h-4 mr-2" />
+            By Weapon
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Full Rankings Table */}
-      <AnimatedCard index={3} className="tactical-card">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">Full Rankings</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th className="w-20">Rank</th>
-                  <th>Trainee</th>
-                  <th>
-                    <div className="flex items-center gap-1">
-                      <Target className="w-4 h-4" />
-                      Total Score
+        {/* Overall Rankings Tab */}
+        <TabsContent value="overall" className="space-y-6 mt-6">
+          {/* Top 3 Podium */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {sortedTrainees.slice(0, 3).map((trainee, index) => {
+              const stats = getTraineeStats(trainee.id);
+              const position = index + 1;
+              
+              return (
+                <AnimatedCard 
+                  key={trainee.id}
+                  index={position - 1}
+                  className={`tactical-card relative overflow-hidden ${
+                    position === 1 ? 'md:order-2 ring-2 ring-accent/50' : 
+                    position === 2 ? 'md:order-1' : 'md:order-3'
+                  }`}
+                >
+                  {position === 1 && (
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600" />
+                  )}
+                  <CardContent className="p-6 text-center">
+                    <div className="flex justify-center mb-4">
+                      {getRankBadge(position)}
                     </div>
-                  </th>
-                  <th>
-                    <div className="flex items-center gap-1">
-                      <Percent className="w-4 h-4" />
-                      Accuracy
+                    <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary mx-auto mb-3">
+                      {trainee.avatar}
                     </div>
-                  </th>
-                  <th>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      Avg Time
+                    <h3 className="font-bold text-lg text-foreground mb-1">{trainee.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">{trainee.rank} • {trainee.unit}</p>
+                    
+                    <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-border">
+                      <div>
+                        <p className="text-2xl font-bold text-primary">{trainee.totalScore}</p>
+                        <p className="text-xs text-muted-foreground">Score</p>
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-foreground">{stats.accuracy}%</p>
+                        <p className="text-xs text-muted-foreground">Accuracy</p>
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-foreground">{stats.avgTime}m</p>
+                        <p className="text-xs text-muted-foreground">Avg Time</p>
+                      </div>
                     </div>
-                  </th>
-                  <th>Missions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedTrainees.map((trainee, index) => {
-                  const rank = index + 1;
-                  const stats = getTraineeStats(trainee.id);
-                  
-                  return (
-                    <tr 
-                      key={trainee.id} 
-                      className={rank <= 3 ? 'bg-accent/5' : ''}
-                    >
-                      <td>
-                        <div className="flex items-center justify-center">
-                          {rank <= 3 ? (
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white ${
-                              rank === 1 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' :
-                              rank === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-500' :
-                              'bg-gradient-to-br from-amber-600 to-amber-800'
-                            }`}>
-                              {rank}
-                            </div>
-                          ) : (
-                            <span className="text-lg font-medium text-muted-foreground">{rank}</span>
-                          )}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">
-                            {trainee.avatar}
-                          </div>
-                          <div>
-                            <p className="font-medium text-foreground">{trainee.name}</p>
-                            <p className="text-xs text-muted-foreground">{trainee.unit}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span className="font-bold text-primary text-lg">{trainee.totalScore}</span>
-                      </td>
-                      <td>
-                        <Badge variant={stats.accuracy >= 90 ? 'default' : stats.accuracy >= 70 ? 'secondary' : 'outline'}>
-                          {stats.accuracy}%
-                        </Badge>
-                      </td>
-                      <td className="text-muted-foreground">{stats.avgTime}m</td>
-                      <td className="text-muted-foreground">{trainee.missionsCompleted}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  </CardContent>
+                </AnimatedCard>
+              );
+            })}
           </div>
-        </CardContent>
-      </AnimatedCard>
+
+          {/* Full Rankings Table */}
+          <AnimatedCard index={3} className="tactical-card">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">Full Rankings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th className="w-20">Rank</th>
+                      <th>Trainee</th>
+                      <th>
+                        <div className="flex items-center gap-1">
+                          <Target className="w-4 h-4" />
+                          Total Score
+                        </div>
+                      </th>
+                      <th>
+                        <div className="flex items-center gap-1">
+                          <Percent className="w-4 h-4" />
+                          Accuracy
+                        </div>
+                      </th>
+                      <th>
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          Avg Time
+                        </div>
+                      </th>
+                      <th>Missions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sortedTrainees.map((trainee, index) => {
+                      const rank = index + 1;
+                      const stats = getTraineeStats(trainee.id);
+                      
+                      return (
+                        <tr 
+                          key={trainee.id} 
+                          className={rank <= 3 ? 'bg-accent/5' : ''}
+                        >
+                          <td>
+                            <div className="flex items-center justify-center">
+                              {rank <= 3 ? (
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white ${
+                                  rank === 1 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' :
+                                  rank === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-500' :
+                                  'bg-gradient-to-br from-amber-600 to-amber-800'
+                                }`}>
+                                  {rank}
+                                </div>
+                              ) : (
+                                <span className="text-lg font-medium text-muted-foreground">{rank}</span>
+                              )}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">
+                                {trainee.avatar}
+                              </div>
+                              <div>
+                                <p className="font-medium text-foreground">{trainee.name}</p>
+                                <p className="text-xs text-muted-foreground">{trainee.unit}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <span className="font-bold text-primary text-lg">{trainee.totalScore}</span>
+                          </td>
+                          <td>
+                            <Badge variant={stats.accuracy >= 90 ? 'default' : stats.accuracy >= 70 ? 'secondary' : 'outline'}>
+                              {stats.accuracy}%
+                            </Badge>
+                          </td>
+                          <td className="text-muted-foreground">{stats.avgTime}m</td>
+                          <td className="text-muted-foreground">{trainee.missionsCompleted}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </AnimatedCard>
+        </TabsContent>
+
+        {/* Weapons Leaderboard Tab */}
+        <TabsContent value="weapons" className="space-y-6 mt-6">
+          {/* Weapon Filter */}
+          <AnimatedCard index={0} className="tactical-card">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium text-foreground">Filter by Weapon:</label>
+                <Select value={selectedWeapon} onValueChange={setSelectedWeapon}>
+                  <SelectTrigger className="w-60 bg-muted border-border">
+                    <Crosshair className="w-4 h-4 mr-2" />
+                    <SelectValue placeholder="Select weapon" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover">
+                    <SelectItem value="all">All Weapons</SelectItem>
+                    {weapons.map(weapon => (
+                      <SelectItem key={weapon.id} value={weapon.id}>
+                        {weapon.name} ({weapon.caliber})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedWeapon !== 'all' && (
+                  <Badge variant="secondary" className="ml-2">
+                    {getWeaponById(selectedWeapon)?.type.toUpperCase()}
+                  </Badge>
+                )}
+              </div>
+            </CardContent>
+          </AnimatedCard>
+
+          {/* Weapon Top 3 */}
+          {weaponLeaderboard.length >= 3 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {weaponLeaderboard.slice(0, 3).map((entry, index) => {
+                const position = index + 1;
+                
+                return (
+                  <AnimatedCard 
+                    key={entry.traineeId}
+                    index={position}
+                    className={`tactical-card relative overflow-hidden ${
+                      position === 1 ? 'md:order-2 ring-2 ring-accent/50' : 
+                      position === 2 ? 'md:order-1' : 'md:order-3'
+                    }`}
+                  >
+                    {position === 1 && (
+                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600" />
+                    )}
+                    <CardContent className="p-6 text-center">
+                      <div className="flex justify-center mb-4">
+                        {getRankBadge(position)}
+                      </div>
+                      <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary mx-auto mb-3">
+                        {entry.trainee?.avatar}
+                      </div>
+                      <h3 className="font-bold text-lg text-foreground mb-1">{entry.trainee?.name}</h3>
+                      <p className="text-sm text-muted-foreground mb-4">{entry.trainee?.rank} • {entry.trainee?.unit}</p>
+                      
+                      <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-border">
+                        <div>
+                          <p className="text-2xl font-bold text-primary">{entry.totalScore}</p>
+                          <p className="text-xs text-muted-foreground">Score</p>
+                        </div>
+                        <div>
+                          <p className="text-2xl font-bold text-foreground">{entry.accuracy}%</p>
+                          <p className="text-xs text-muted-foreground">Accuracy</p>
+                        </div>
+                        <div>
+                          <p className="text-2xl font-bold text-foreground">{entry.sessions}</p>
+                          <p className="text-xs text-muted-foreground">Sessions</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </AnimatedCard>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Weapon Rankings Table */}
+          <AnimatedCard index={4} className="tactical-card">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                <Crosshair className="w-5 h-5 text-primary" />
+                {selectedWeapon === 'all' ? 'All Weapons Rankings' : `${getWeaponById(selectedWeapon)?.name} Rankings`}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {weaponLeaderboard.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  No training data available for the selected weapon
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th className="w-20">Rank</th>
+                        <th>Trainee</th>
+                        <th>
+                          <div className="flex items-center gap-1">
+                            <Target className="w-4 h-4" />
+                            Total Score
+                          </div>
+                        </th>
+                        <th>
+                          <div className="flex items-center gap-1">
+                            <Percent className="w-4 h-4" />
+                            Accuracy
+                          </div>
+                        </th>
+                        <th>Sessions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {weaponLeaderboard.map((entry, index) => {
+                        const rank = index + 1;
+                        
+                        return (
+                          <tr 
+                            key={entry.traineeId} 
+                            className={rank <= 3 ? 'bg-accent/5' : ''}
+                          >
+                            <td>
+                              <div className="flex items-center justify-center">
+                                {rank <= 3 ? (
+                                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white ${
+                                    rank === 1 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' :
+                                    rank === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-500' :
+                                    'bg-gradient-to-br from-amber-600 to-amber-800'
+                                  }`}>
+                                    {rank}
+                                  </div>
+                                ) : (
+                                  <span className="text-lg font-medium text-muted-foreground">{rank}</span>
+                                )}
+                              </div>
+                            </td>
+                            <td>
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">
+                                  {entry.trainee?.avatar}
+                                </div>
+                                <div>
+                                  <p className="font-medium text-foreground">{entry.trainee?.name}</p>
+                                  <p className="text-xs text-muted-foreground">{entry.trainee?.unit}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <span className="font-bold text-primary text-lg">{entry.totalScore}</span>
+                            </td>
+                            <td>
+                              <Badge variant={entry.accuracy >= 90 ? 'default' : entry.accuracy >= 70 ? 'secondary' : 'outline'}>
+                                {entry.accuracy}%
+                              </Badge>
+                            </td>
+                            <td className="text-muted-foreground">{entry.sessions}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </AnimatedCard>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

@@ -10,6 +10,7 @@ import {
   Target,
   CheckCircle,
   XCircle,
+  Monitor,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AnimatedCard } from '@/components/ui/animated-card';
@@ -29,7 +30,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { sessionReports, trainees, missions, replayEvents, getTraineeById, getCourseById } from '@/data/mockData';
+import { sessionReports, missions, replayEvents, getCourseById, getStationById } from '@/data/mockData';
 
 export default function Reports() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -38,8 +39,8 @@ export default function Reports() {
   const [showReplay, setShowReplay] = useState(false);
 
   const filteredReports = sessionReports.filter(report => {
-    const trainee = getTraineeById(report.traineeId);
-    if (searchTerm && !trainee?.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+    const station = getStationById(report.stationId);
+    if (searchTerm && !station?.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
     if (resultFilter !== 'all' && report.result !== resultFilter) return false;
     return true;
   });
@@ -90,7 +91,7 @@ export default function Reports() {
             <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search by trainee name..."
+                placeholder="Search by station name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-muted border-border"
@@ -122,7 +123,7 @@ export default function Reports() {
               <thead>
                 <tr>
                   <th>Session ID</th>
-                  <th>Trainee</th>
+                  <th>Station</th>
                   <th>Course</th>
                   <th>Score</th>
                   <th>Result</th>
@@ -133,7 +134,7 @@ export default function Reports() {
               </thead>
               <tbody>
                 {filteredReports.map((report) => {
-                  const trainee = getTraineeById(report.traineeId);
+                  const station = getStationById(report.stationId);
                   const course = getMissionCourse(report.missionId);
                   
                   return (
@@ -145,10 +146,13 @@ export default function Reports() {
                       </td>
                       <td>
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
-                            {trainee?.avatar}
+                          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                            <Monitor className="w-4 h-4 text-primary" />
                           </div>
-                          <span className="font-medium text-foreground">{trainee?.name}</span>
+                          <div>
+                            <span className="font-medium text-foreground">{station?.name || 'N/A'}</span>
+                            <p className="text-xs text-muted-foreground">{station?.location}</p>
+                          </div>
                         </div>
                       </td>
                       <td className="text-muted-foreground">{course?.name || 'N/A'}</td>
@@ -234,8 +238,11 @@ export default function Reports() {
                     <code className="text-sm font-mono">{selectedReport.sessionId}</code>
                   </div>
                   <div className="p-4 rounded-lg bg-muted/30">
-                    <p className="text-xs text-muted-foreground mb-1">Trainee</p>
-                    <p className="font-medium">{getTraineeById(selectedReport.traineeId)?.name}</p>
+                    <p className="text-xs text-muted-foreground mb-1">Station</p>
+                    <p className="font-medium flex items-center gap-2">
+                      <Monitor className="w-4 h-4 text-primary" />
+                      {getStationById(selectedReport.stationId)?.name}
+                    </p>
                   </div>
                 </div>
 

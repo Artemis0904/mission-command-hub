@@ -254,14 +254,49 @@ export const complianceAlerts = [
 
 // Reports / Session History
 export const sessionReports = [
-  { id: 'r001', sessionId: 'SES-2026-0122-001', traineeId: 't001', missionId: 'm001', score: 96, result: 'pass', dateTime: '2026-01-22T10:30:00', duration: 28 },
-  { id: 'r002', sessionId: 'SES-2026-0122-002', traineeId: 't002', missionId: 'm001', score: 92, result: 'pass', dateTime: '2026-01-22T11:15:00', duration: 30 },
-  { id: 'r003', sessionId: 'SES-2026-0123-001', traineeId: 't004', missionId: 'm002', score: 98, result: 'pass', dateTime: '2026-01-23T14:45:00', duration: 42 },
-  { id: 'r004', sessionId: 'SES-2026-0121-001', traineeId: 't003', missionId: 'm001', score: 85, result: 'pass', dateTime: '2026-01-21T09:00:00', duration: 32 },
-  { id: 'r005', sessionId: 'SES-2026-0120-001', traineeId: 't010', missionId: 'm003', score: 88, result: 'pass', dateTime: '2026-01-20T08:30:00', duration: 25 },
-  { id: 'r006', sessionId: 'SES-2026-0121-002', traineeId: 't005', missionId: 'm002', score: 72, result: 'fail', dateTime: '2026-01-21T15:00:00', duration: 48 },
-  { id: 'r007', sessionId: 'SES-2026-0119-001', traineeId: 't006', missionId: 'm004', score: 81, result: 'pass', dateTime: '2026-01-19T13:00:00', duration: 22 },
-  { id: 'r008', sessionId: 'SES-2026-0118-001', traineeId: 't007', missionId: 'm003', score: 77, result: 'pass', dateTime: '2026-01-18T10:00:00', duration: 35 },
+  { id: 'r001', sessionId: 'SES-2026-0122-001', traineeId: 't001', missionId: 'm001', stationId: 'iwts-02', weaponId: 'w001', score: 96, result: 'pass', dateTime: '2026-01-22T10:30:00', duration: 28 },
+  { id: 'r002', sessionId: 'SES-2026-0122-002', traineeId: 't002', missionId: 'm001', stationId: 'iwts-02', weaponId: 'w002', score: 92, result: 'pass', dateTime: '2026-01-22T11:15:00', duration: 30 },
+  { id: 'r003', sessionId: 'SES-2026-0123-001', traineeId: 't004', missionId: 'm002', stationId: 'iwts-06', weaponId: 'w001', score: 98, result: 'pass', dateTime: '2026-01-23T14:45:00', duration: 42 },
+  { id: 'r004', sessionId: 'SES-2026-0121-001', traineeId: 't003', missionId: 'm001', stationId: 'iwts-03', weaponId: 'w003', score: 85, result: 'pass', dateTime: '2026-01-21T09:00:00', duration: 32 },
+  { id: 'r005', sessionId: 'SES-2026-0120-001', traineeId: 't010', missionId: 'm003', stationId: 'iwts-09', weaponId: 'w002', score: 88, result: 'pass', dateTime: '2026-01-20T08:30:00', duration: 25 },
+  { id: 'r006', sessionId: 'SES-2026-0121-002', traineeId: 't005', missionId: 'm002', stationId: 'iwts-06', weaponId: 'w004', score: 72, result: 'fail', dateTime: '2026-01-21T15:00:00', duration: 48 },
+  { id: 'r007', sessionId: 'SES-2026-0119-001', traineeId: 't006', missionId: 'm004', stationId: 'iwts-01', weaponId: 'w001', score: 81, result: 'pass', dateTime: '2026-01-19T13:00:00', duration: 22 },
+  { id: 'r008', sessionId: 'SES-2026-0118-001', traineeId: 't007', missionId: 'm003', stationId: 'iwts-09', weaponId: 'w003', score: 77, result: 'pass', dateTime: '2026-01-18T10:00:00', duration: 35 },
+];
+
+// Weapons data
+export const weapons = [
+  { id: 'w001', name: 'M4A1 Carbine', type: 'rifle', caliber: '5.56mm' },
+  { id: 'w002', name: 'M16A4', type: 'rifle', caliber: '5.56mm' },
+  { id: 'w003', name: 'M249 SAW', type: 'lmg', caliber: '5.56mm' },
+  { id: 'w004', name: 'M240B', type: 'mmg', caliber: '7.62mm' },
+  { id: 'w005', name: 'M9 Beretta', type: 'pistol', caliber: '9mm' },
+  { id: 'w006', name: 'M24 SWS', type: 'sniper', caliber: '7.62mm' },
+];
+
+export function getWeaponById(id: string) {
+  return weapons.find(w => w.id === id);
+}
+
+// Weapon scores for leaderboard
+export const weaponScores = [
+  { traineeId: 't001', weaponId: 'w001', totalScore: 285, accuracy: 94, sessions: 8 },
+  { traineeId: 't001', weaponId: 'w002', totalScore: 180, accuracy: 88, sessions: 5 },
+  { traineeId: 't002', weaponId: 'w001', totalScore: 260, accuracy: 91, sessions: 7 },
+  { traineeId: 't002', weaponId: 'w003', totalScore: 145, accuracy: 82, sessions: 4 },
+  { traineeId: 't003', weaponId: 'w001', totalScore: 210, accuracy: 85, sessions: 6 },
+  { traineeId: 't003', weaponId: 'w002', totalScore: 175, accuracy: 80, sessions: 5 },
+  { traineeId: 't004', weaponId: 'w001', totalScore: 295, accuracy: 97, sessions: 9 },
+  { traineeId: 't004', weaponId: 'w004', totalScore: 190, accuracy: 89, sessions: 5 },
+  { traineeId: 't005', weaponId: 'w002', totalScore: 155, accuracy: 72, sessions: 5 },
+  { traineeId: 't005', weaponId: 'w003', totalScore: 130, accuracy: 70, sessions: 4 },
+  { traineeId: 't006', weaponId: 'w001', totalScore: 175, accuracy: 78, sessions: 5 },
+  { traineeId: 't007', weaponId: 'w001', totalScore: 165, accuracy: 75, sessions: 5 },
+  { traineeId: 't007', weaponId: 'w006', totalScore: 140, accuracy: 82, sessions: 4 },
+  { traineeId: 't008', weaponId: 'w002', totalScore: 160, accuracy: 74, sessions: 5 },
+  { traineeId: 't009', weaponId: 'w001', totalScore: 145, accuracy: 70, sessions: 5 },
+  { traineeId: 't010', weaponId: 'w001', totalScore: 270, accuracy: 88, sessions: 8 },
+  { traineeId: 't010', weaponId: 'w006', totalScore: 185, accuracy: 90, sessions: 5 },
 ];
 
 // Replay Events (for session replay)
