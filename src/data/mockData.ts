@@ -262,13 +262,13 @@ export const scores = [
   { id: 's006', traineeId: 't005', missionId: 'm002', score: 72, accuracy: 70, timeSeconds: 2500, date: '2026-01-21', result: 'fail' },
 ];
 
-// Compliance Alerts
+// Compliance Alerts (station-based)
 export const complianceAlerts = [
-  { id: 'c001', traineeId: 't005', type: 'overdue', message: 'Qualification overdue by 3 days', severity: 'high', createdAt: '2026-01-23T08:00:00' },
-  { id: 'c002', traineeId: 't008', type: 'inactive', message: 'No training activity in 7 days', severity: 'medium', createdAt: '2026-01-22T12:00:00' },
-  { id: 'c003', traineeId: 't007', type: 'pending', message: 'Pending training completion', severity: 'low', createdAt: '2026-01-21T09:00:00' },
-  { id: 'c004', traineeId: 't003', type: 'overdue', message: 'Recertification required', severity: 'high', createdAt: '2026-01-23T06:00:00' },
-  { id: 'c005', traineeId: 't006', type: 'inactive', message: 'No activity in last 5 days', severity: 'medium', createdAt: '2026-01-22T14:00:00' },
+  { id: 'c001', stationId: 'iwts-02', type: 'overdue', message: 'Qualification course overdue by 3 days', severity: 'high', createdAt: '2026-01-23T08:00:00' },
+  { id: 'c002', stationId: 'iwts-05', type: 'inactive', message: 'No training activity in 7 days', severity: 'medium', createdAt: '2026-01-22T12:00:00' },
+  { id: 'c003', stationId: 'iwts-08', type: 'pending', message: 'Pending training completion', severity: 'low', createdAt: '2026-01-21T09:00:00' },
+  { id: 'c004', stationId: 'iwts-03', type: 'overdue', message: 'Recertification course required', severity: 'high', createdAt: '2026-01-23T06:00:00' },
+  { id: 'c005', stationId: 'iwts-06', type: 'inactive', message: 'No activity in last 5 days', severity: 'medium', createdAt: '2026-01-22T14:00:00' },
 ];
 
 // Reports / Session History
