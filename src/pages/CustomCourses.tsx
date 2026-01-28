@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { format } from 'date-fns';
 import { 
   Plus, 
@@ -25,6 +25,7 @@ import {
   Users,
   AlertTriangle,
   X,
+  CheckCircle2,
 } from 'lucide-react';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AnimatedCard } from '@/components/ui/animated-card';
@@ -47,6 +48,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import {
   AlertDialog,
@@ -123,6 +125,34 @@ export default function CustomCourses() {
   // Scheduling state
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+
+  // Course creation confirmation dialog state
+  const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
+  const [createdCourseName, setCreatedCourseName] = useState('');
+  const [createdCourseId, setCreatedCourseId] = useState('');
+  const [wasAssignedToStations, setWasAssignedToStations] = useState(false);
+  const autoCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Auto-close confirmation dialog after 5 seconds
+  useEffect(() => {
+    if (confirmationDialogOpen) {
+      autoCloseTimerRef.current = setTimeout(() => {
+        setConfirmationDialogOpen(false);
+      }, 5000);
+    }
+    return () => {
+      if (autoCloseTimerRef.current) {
+        clearTimeout(autoCloseTimerRef.current);
+      }
+    };
+  }, [confirmationDialogOpen]);
+
+  const handleConfirmationInteraction = () => {
+    // Clear auto-close timer on any interaction
+    if (autoCloseTimerRef.current) {
+      clearTimeout(autoCloseTimerRef.current);
+    }
+  };
 
   // Available stations (moved up for use in handlers)
   const availableStations = iwtsStations.filter(s => s.status !== 'offline');
@@ -253,23 +283,21 @@ export default function CustomCourses() {
 
     setCourses([...courses, newCourse]);
     
-    const scheduleText = startDate && endDate 
-      ? ` (from ${format(startDate, 'MMM d')} to ${format(endDate, 'MMM d')})`
-      : '';
-
-    const stationText = assignedStations.length > 0
-      ? assignedStations.length === availableStations.length
-        ? ' and assigned to All Simulators'
-        : ` and assigned to ${assignedStations.length} station(s)`
-      : '';
-
-    toast({
-      title: 'Course Created',
-      description: `"${courseName}" has been created with ${configuredExercises.length} exercises${scheduleText}${stationText}.`,
-    });
+    // Store info for confirmation dialog
+    setCreatedCourseName(courseName);
+    setCreatedCourseId(newCourse.id);
+    setWasAssignedToStations(assignedStations.length > 0);
+    setConfirmationDialogOpen(true);
 
     // Reset form
     handleClearAll();
+  };
+
+  const handleAssignFromConfirmation = () => {
+    handleConfirmationInteraction();
+    setConfirmationDialogOpen(false);
+    setSelectedCourseForAssign(createdCourseId);
+    setAssignDialogOpen(true);
   };
 
   const handleAssignToStation = () => {
@@ -303,7 +331,54 @@ export default function CustomCourses() {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <>
+      {/* Course Creation Confirmation Dialog */}
+      <Dialog open={confirmationDialogOpen} onOpenChange={(open) => {
+        handleConfirmationInteraction();
+        setConfirmationDialogOpen(open);
+      }}>
+        <DialogContent className="bg-background sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <CheckCircle2 className="w-8 h-8 text-primary" />
+            </div>
+            <DialogTitle className="text-center text-xl">Course Created Successfully!</DialogTitle>
+            <DialogDescription className="text-center">
+              "{createdCourseName}" has been created and saved.
+              {wasAssignedToStations 
+                ? " The course has been assigned to the selected stations."
+                : " You can assign it to stations now or later."}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-4">
+            {!wasAssignedToStations && (
+              <Button 
+                variant="outline" 
+                onClick={handleAssignFromConfirmation}
+                className="flex-1 btn-interactive"
+              >
+                <Monitor className="w-4 h-4 mr-2" />
+                Assign to Station
+              </Button>
+            )}
+            <Button 
+              onClick={() => {
+                handleConfirmationInteraction();
+                setConfirmationDialogOpen(false);
+              }}
+              className="flex-1 btn-interactive hover:glow-primary"
+            >
+              <Check className="w-4 h-4 mr-2" />
+              Done
+            </Button>
+          </DialogFooter>
+          <p className="text-xs text-muted-foreground text-center mt-2">
+            This dialog will auto-close in a few seconds
+          </p>
+        </DialogContent>
+      </Dialog>
+
+      <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -726,6 +801,7 @@ export default function CustomCourses() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
