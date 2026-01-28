@@ -285,6 +285,9 @@ export default function CustomCourses() {
   };
 
 
+  // Track which exercise type is currently open (only one at a time)
+  const [openExerciseTypeId, setOpenExerciseTypeId] = useState<string | null>(null);
+
   // Filter exercise types based on search query
   const filteredTypes = EXERCISE_TYPES.filter(type => {
     if (!searchQuery.trim()) return true;
@@ -714,6 +717,8 @@ export default function CustomCourses() {
                   onAddExercise={handleAddExercise}
                   icon={typeIcons[type.id]}
                   index={index}
+                  openTypeId={openExerciseTypeId}
+                  onOpenChange={(id) => setOpenExerciseTypeId(id)}
                 />
               ))}
             </CardContent>
@@ -730,16 +735,24 @@ function ExerciseTypeSection({
   onAddExercise,
   icon,
   index,
+  openTypeId,
+  onOpenChange,
 }: {
   type: ExerciseType;
   onAddExercise: (type: ExerciseType, config: ExerciseConfig) => void;
   icon: React.ReactNode;
   index: number;
+  openTypeId: string | null;
+  onOpenChange: (id: string | null) => void;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const isOpen = openTypeId === type.id;
+
+  const handleOpenChange = (open: boolean) => {
+    onOpenChange(open ? type.id : null);
+  };
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+    <Collapsible open={isOpen} onOpenChange={handleOpenChange}>
       <CollapsibleTrigger asChild>
         <button 
           className="w-full flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
