@@ -39,6 +39,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -94,7 +95,7 @@ const typeIcons: Record<string, React.ReactNode> = {
   'traverse-target': <MoveHorizontal className="w-4 h-4" />,
 };
 
-type ScheduleFrequency = 'daily' | 'weekly' | 'monthly' | 'none';
+
 
 // Configured exercise with type and settings
 interface ConfiguredExercise {
@@ -116,13 +117,34 @@ export default function CustomCourses() {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   
-  // Direct station assignment for new course
-  const [assignStationOnCreate, setAssignStationOnCreate] = useState('');
+  // Direct station assignment for new course - now supports multiple
+  const [assignedStations, setAssignedStations] = useState<string[]>([]);
   
   // Scheduling state
-  const [scheduleFrequency, setScheduleFrequency] = useState<ScheduleFrequency>('none');
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+
+  // Available stations (moved up for use in handlers)
+  const availableStations = iwtsStations.filter(s => s.status !== 'offline');
+
+  // Check if all stations are selected
+  const allStationsSelected = assignedStations.length === availableStations.length && availableStations.length > 0;
+
+  const handleStationToggle = (stationId: string) => {
+    setAssignedStations(prev => 
+      prev.includes(stationId) 
+        ? prev.filter(id => id !== stationId)
+        : [...prev, stationId]
+    );
+  };
+
+  const handleToggleAllStations = () => {
+    if (allStationsSelected) {
+      setAssignedStations([]);
+    } else {
+      setAssignedStations(availableStations.map(s => s.id));
+    }
+  };
 
   // Add configured exercise
   const handleAddExercise = (type: ExerciseType, config: ExerciseConfig) => {
@@ -195,10 +217,9 @@ export default function CustomCourses() {
   const handleClearAll = () => {
     setCourseName('');
     setConfiguredExercises([]);
-    setScheduleFrequency('none');
     setStartDate(undefined);
     setEndDate(undefined);
-    setAssignStationOnCreate('');
+    setAssignedStations([]);
     toast({
       title: 'Cleared',
       description: 'All course data has been cleared.',
@@ -223,9 +244,8 @@ export default function CustomCourses() {
       totalTime: getTotalTime(),
       totalTargets: configuredExercises.length,
       status: 'active' as const,
-      assignedStation: assignStationOnCreate || undefined,
-      schedule: scheduleFrequency !== 'none' ? {
-        frequency: scheduleFrequency,
+      assignedStations: assignedStations.length > 0 ? assignedStations : undefined,
+      schedule: startDate && endDate ? {
         startDate: startDate?.toISOString(),
         endDate: endDate?.toISOString(),
       } : undefined,
@@ -233,12 +253,14 @@ export default function CustomCourses() {
 
     setCourses([...courses, newCourse]);
     
-    const scheduleText = scheduleFrequency !== 'none' 
-      ? ` (${scheduleFrequency} from ${startDate ? format(startDate, 'MMM d') : ''} to ${endDate ? format(endDate, 'MMM d') : ''})`
+    const scheduleText = startDate && endDate 
+      ? ` (from ${format(startDate, 'MMM d')} to ${format(endDate, 'MMM d')})`
       : '';
 
-    const stationText = assignStationOnCreate 
-      ? ` and assigned to ${assignStationOnCreate.toUpperCase()}`
+    const stationText = assignedStations.length > 0
+      ? assignedStations.length === availableStations.length
+        ? ' and assigned to All Simulators'
+        : ` and assigned to ${assignedStations.length} station(s)`
       : '';
 
     toast({
@@ -262,7 +284,6 @@ export default function CustomCourses() {
     setSelectedCourseForAssign(null);
   };
 
-  const availableStations = iwtsStations.filter(s => s.status !== 'offline');
 
   // Filter exercise types based on search query
   const filteredTypes = EXERCISE_TYPES.filter(type => {
@@ -348,26 +369,58 @@ export default function CustomCourses() {
                 />
               </div>
 
-              {/* Direct Station Assignment */}
-              <div className="space-y-2">
+              {/* Direct Station Assignment - Multi-Select */}
+              <div className="space-y-3 p-4 rounded-lg bg-muted/30 border border-border">
                 <Label className="flex items-center gap-2">
                   <Monitor className="w-4 h-4 text-primary" />
-                  Assign to Station (Optional)
+                  Assign to Stations (Optional)
                 </Label>
-                <Select value={assignStationOnCreate} onValueChange={setAssignStationOnCreate}>
-                  <SelectTrigger className="bg-background border-border">
-                    <SelectValue placeholder="Select a station to assign" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover">
-                    <SelectItem value="none">No station</SelectItem>
-                    {availableStations.map((station) => (
-                      <SelectItem key={station.id} value={station.id}>
-                        {station.name} - {station.location}
-                        {station.status === 'in-use' && ' (In Use)'}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                
+                {/* All Simulators Option */}
+                <div className="flex items-center space-x-2 pb-2 border-b border-border">
+                  <Checkbox
+                    id="all-stations"
+                    checked={allStationsSelected}
+                    onCheckedChange={handleToggleAllStations}
+                  />
+                  <label
+                    htmlFor="all-stations"
+                    className="text-sm font-medium leading-none cursor-pointer"
+                  >
+                    All Simulators ({availableStations.length} available)
+                  </label>
+                </div>
+
+                {/* Individual Station Checkboxes */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                  {availableStations.map((station) => (
+                    <div key={station.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={station.id}
+                        checked={assignedStations.includes(station.id)}
+                        onCheckedChange={() => handleStationToggle(station.id)}
+                      />
+                      <label
+                        htmlFor={station.id}
+                        className="text-sm leading-none cursor-pointer flex items-center gap-1"
+                      >
+                        {station.name}
+                        {station.status === 'in-use' && (
+                          <Badge variant="outline" className="text-xs ml-1">In Use</Badge>
+                        )}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+
+                {assignedStations.length > 0 && (
+                  <p className="text-xs text-primary flex items-center gap-1">
+                    <Check className="w-3 h-3" />
+                    {assignedStations.length === availableStations.length 
+                      ? 'All simulators selected'
+                      : `${assignedStations.length} station(s) selected`}
+                  </p>
+                )}
               </div>
 
               {/* Schedule Section */}
@@ -377,29 +430,13 @@ export default function CustomCourses() {
                   <Label className="text-sm font-medium">Task Schedule</Label>
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="space-y-2">
-                    <Label className="text-xs text-muted-foreground">Frequency</Label>
-                    <Select value={scheduleFrequency} onValueChange={(v) => setScheduleFrequency(v as ScheduleFrequency)}>
-                      <SelectTrigger className="bg-background border-border">
-                        <SelectValue placeholder="Select frequency" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        <SelectItem value="none">No schedule</SelectItem>
-                        <SelectItem value="daily">Daily</SelectItem>
-                        <SelectItem value="weekly">Weekly</SelectItem>
-                        <SelectItem value="monthly">Monthly</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <Label className="text-xs text-muted-foreground">Start Date</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
-                          disabled={scheduleFrequency === 'none'}
                           className={cn(
                             "w-full justify-start text-left font-normal bg-background",
                             !startDate && "text-muted-foreground"
@@ -426,7 +463,6 @@ export default function CustomCourses() {
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
-                          disabled={scheduleFrequency === 'none'}
                           className={cn(
                             "w-full justify-start text-left font-normal bg-background",
                             !endDate && "text-muted-foreground"
@@ -449,10 +485,10 @@ export default function CustomCourses() {
                   </div>
                 </div>
 
-                {scheduleFrequency !== 'none' && startDate && endDate && (
+                {startDate && endDate && (
                   <p className="text-xs text-primary flex items-center gap-1">
                     <Check className="w-3 h-3" />
-                    This course will run {scheduleFrequency} from {format(startDate, "MMM d")} to {format(endDate, "MMM d, yyyy")}
+                    Scheduled from {format(startDate, "MMM d")} to {format(endDate, "MMM d, yyyy")}
                   </p>
                 )}
               </div>
@@ -552,7 +588,11 @@ export default function CustomCourses() {
                 disabled={!courseName || configuredExercises.length === 0}
               >
                 <Save className="w-4 h-4 mr-2" />
-                Save Course {assignStationOnCreate && assignStationOnCreate !== 'none' && `& Assign to ${assignStationOnCreate.toUpperCase()}`}
+                Save Course {assignedStations.length > 0 && (
+                  assignedStations.length === availableStations.length 
+                    ? '& Assign to All Simulators' 
+                    : `& Assign to ${assignedStations.length} Station(s)`
+                )}
               </Button>
             </CardContent>
           </AnimatedCard>
