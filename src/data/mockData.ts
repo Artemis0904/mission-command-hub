@@ -151,6 +151,25 @@ export const exercises = [
   { id: 'ex-qual-10', typeId: 'type-qualification', name: 'Sharpshooter', difficulty: 'hard', timeLimit: 35, targets: 20, description: 'Sharpshooter qualification' },
 ];
 
+// Station Usage Trends Data (for charts)
+export const stationUsageTrends = {
+  daily: [
+    { date: '2026-01-22', 'IWTS-01': 4, 'IWTS-02': 6, 'IWTS-03': 3, 'IWTS-05': 5, 'IWTS-06': 7, 'IWTS-09': 5, totalSessions: 30, avgUtilization: 65 },
+    { date: '2026-01-23', 'IWTS-01': 5, 'IWTS-02': 5, 'IWTS-03': 4, 'IWTS-05': 6, 'IWTS-06': 6, 'IWTS-09': 4, totalSessions: 30, avgUtilization: 62 },
+    { date: '2026-01-24', 'IWTS-01': 6, 'IWTS-02': 7, 'IWTS-03': 5, 'IWTS-05': 4, 'IWTS-06': 8, 'IWTS-09': 6, totalSessions: 36, avgUtilization: 75 },
+    { date: '2026-01-25', 'IWTS-01': 3, 'IWTS-02': 4, 'IWTS-03': 2, 'IWTS-05': 3, 'IWTS-06': 5, 'IWTS-09': 3, totalSessions: 20, avgUtilization: 42 },
+    { date: '2026-01-26', 'IWTS-01': 2, 'IWTS-02': 3, 'IWTS-03': 1, 'IWTS-05': 2, 'IWTS-06': 4, 'IWTS-09': 2, totalSessions: 14, avgUtilization: 30 },
+    { date: '2026-01-27', 'IWTS-01': 7, 'IWTS-02': 8, 'IWTS-03': 6, 'IWTS-05': 7, 'IWTS-06': 9, 'IWTS-09': 7, totalSessions: 44, avgUtilization: 88 },
+    { date: '2026-01-28', 'IWTS-01': 5, 'IWTS-02': 6, 'IWTS-03': 4, 'IWTS-05': 5, 'IWTS-06': 7, 'IWTS-09': 5, totalSessions: 32, avgUtilization: 68 },
+  ],
+  weekly: [
+    { week: 'Week 1', 'IWTS-01': 28, 'IWTS-02': 35, 'IWTS-03': 22, 'IWTS-05': 30, 'IWTS-06': 40, 'IWTS-09': 28, totalSessions: 183, avgUtilization: 62 },
+    { week: 'Week 2', 'IWTS-01': 32, 'IWTS-02': 38, 'IWTS-03': 25, 'IWTS-05': 33, 'IWTS-06': 42, 'IWTS-09': 30, totalSessions: 200, avgUtilization: 68 },
+    { week: 'Week 3', 'IWTS-01': 30, 'IWTS-02': 36, 'IWTS-03': 28, 'IWTS-05': 35, 'IWTS-06': 45, 'IWTS-09': 32, totalSessions: 206, avgUtilization: 72 },
+    { week: 'Week 4', 'IWTS-01': 35, 'IWTS-02': 40, 'IWTS-03': 30, 'IWTS-05': 38, 'IWTS-06': 48, 'IWTS-09': 35, totalSessions: 226, avgUtilization: 78 },
+  ],
+};
+
 // Helper to get exercises by type
 export function getExercisesByType(typeId: string) {
   return exercises.filter(e => e.typeId === typeId);

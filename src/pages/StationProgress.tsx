@@ -18,20 +18,24 @@ import {
   Wifi,
   WifiOff,
   Play,
+  Calendar,
 } from 'lucide-react';
-import { CardContent } from '@/components/ui/card';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AnimatedCard } from '@/components/ui/animated-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { iwtsStations, stationProgress, sessionReports, customCourses, getCourseById } from '@/data/mockData';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
+import { iwtsStations, stationProgress, sessionReports, customCourses, getCourseById, stationUsageTrends } from '@/data/mockData';
 import { AnimatedCounter } from '@/hooks/useAnimatedCounter';
 
 interface StationProfile {
@@ -43,6 +47,7 @@ interface StationProfile {
 export default function StationProgress() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStation, setSelectedStation] = useState<StationProfile | null>(null);
+  const [trendView, setTrendView] = useState<'daily' | 'weekly'>('daily');
 
   // Merge station data with progress
   const stationsWithProgress = iwtsStations.map(station => {
@@ -98,6 +103,18 @@ export default function StationProgress() {
   const offlineCount = stationsWithProgress.filter(s => s.status === 'offline').length;
   const totalExercises = stationsWithProgress.reduce((sum, s) => sum + (s.assignedExercises || 0), 0);
   const completedExercises = stationsWithProgress.reduce((sum, s) => sum + (s.completedExercises || 0), 0);
+
+  const trendData = trendView === 'daily' ? stationUsageTrends.daily : stationUsageTrends.weekly;
+  const xAxisKey = trendView === 'daily' ? 'date' : 'week';
+
+  const chartConfig = {
+    'IWTS-01': { label: 'IWTS-01', color: 'hsl(210 95% 55%)' },
+    'IWTS-02': { label: 'IWTS-02', color: 'hsl(170 75% 45%)' },
+    'IWTS-03': { label: 'IWTS-03', color: 'hsl(280 70% 55%)' },
+    'IWTS-05': { label: 'IWTS-05', color: 'hsl(45 95% 55%)' },
+    'IWTS-06': { label: 'IWTS-06', color: 'hsl(340 75% 55%)' },
+    'IWTS-09': { label: 'IWTS-09', color: 'hsl(190 85% 50%)' },
+  };
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -203,8 +220,102 @@ export default function StationProgress() {
         </AnimatedCard>
       </div>
 
-      {/* Station Table */}
+      {/* Usage Trends Chart */}
       <AnimatedCard index={4} className="tactical-card">
+        <CardHeader className="pb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <div className="icon-gradient-accent p-2 rounded-xl">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+              Usage Trends
+            </CardTitle>
+            <Tabs value={trendView} onValueChange={(v) => setTrendView(v as 'daily' | 'weekly')} className="w-auto">
+              <TabsList className="bg-muted/50">
+                <TabsTrigger value="daily" className="text-sm gap-1.5">
+                  <Calendar className="w-3.5 h-3.5" />
+                  Daily
+                </TabsTrigger>
+                <TabsTrigger value="weekly" className="text-sm gap-1.5">
+                  <BarChart3 className="w-3.5 h-3.5" />
+                  Weekly
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <ChartContainer config={chartConfig} className="h-[300px] w-full">
+            {trendView === 'daily' ? (
+              <AreaChart data={trendData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="fillIWTS01" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(210 95% 55%)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(210 95% 55%)" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="fillIWTS02" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(170 75% 45%)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(170 75% 45%)" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="fillIWTS06" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(340 75% 55%)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(340 75% 55%)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                <XAxis 
+                  dataKey={xAxisKey} 
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(value) => trendView === 'daily' ? value.slice(5) : value}
+                />
+                <YAxis 
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Area type="monotone" dataKey="IWTS-01" stroke="hsl(210 95% 55%)" fill="url(#fillIWTS01)" strokeWidth={2} />
+                <Area type="monotone" dataKey="IWTS-02" stroke="hsl(170 75% 45%)" fill="url(#fillIWTS02)" strokeWidth={2} />
+                <Area type="monotone" dataKey="IWTS-06" stroke="hsl(340 75% 55%)" fill="url(#fillIWTS06)" strokeWidth={2} />
+              </AreaChart>
+            ) : (
+              <BarChart data={trendData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                <XAxis 
+                  dataKey={xAxisKey} 
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis 
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="IWTS-01" fill="hsl(210 95% 55%)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="IWTS-02" fill="hsl(170 75% 45%)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="IWTS-05" fill="hsl(45 95% 55%)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="IWTS-06" fill="hsl(340 75% 55%)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="IWTS-09" fill="hsl(190 85% 50%)" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            )}
+          </ChartContainer>
+          <div className="flex flex-wrap justify-center gap-4 mt-4">
+            {Object.entries(chartConfig).slice(0, trendView === 'daily' ? 3 : 5).map(([key, config]) => (
+              <div key={key} className="flex items-center gap-2 text-xs text-muted-foreground">
+                <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: config.color }} />
+                {config.label}
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </AnimatedCard>
+
+      {/* Station Table */}
+      <AnimatedCard index={5} className="tactical-card">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="data-table">
