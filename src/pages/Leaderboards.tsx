@@ -9,6 +9,10 @@ import {
   Crown,
   Award,
   Crosshair,
+  Sparkles,
+  TrendingUp,
+  Users,
+  Star,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AnimatedCard } from '@/components/ui/animated-card';
@@ -22,6 +26,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { trainees, scores, weapons, weaponScores, getWeaponById } from '@/data/mockData';
+import { AnimatedCounter } from '@/hooks/useAnimatedCounter';
 
 type LeaderboardView = 'overall' | 'weapons';
 
@@ -43,7 +48,7 @@ export default function Leaderboards() {
     
     return {
       accuracy: Math.round(totalAccuracy / traineeScores.length),
-      avgTime: Math.round(totalTime / traineeScores.length / 60), // Convert to minutes
+      avgTime: Math.round(totalTime / traineeScores.length / 60),
     };
   };
 
@@ -53,7 +58,6 @@ export default function Leaderboards() {
       ? weaponScores 
       : weaponScores.filter(ws => ws.weaponId === selectedWeapon);
 
-    // Aggregate by trainee if viewing all weapons
     if (selectedWeapon === 'all') {
       const traineeAggregates = new Map<string, { totalScore: number; accuracy: number; sessions: number }>();
       
@@ -97,26 +101,26 @@ export default function Leaderboards() {
   const getRankBadge = (rank: number) => {
     if (rank === 1) {
       return (
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-lg">
-          <Crown className="w-6 h-6 text-white" />
+        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow-lg shadow-yellow-500/30">
+          <Crown className="w-7 h-7 text-white" />
         </div>
       );
     } else if (rank === 2) {
       return (
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 flex items-center justify-center shadow-lg">
-          <Medal className="w-6 h-6 text-white" />
+        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center shadow-lg">
+          <Medal className="w-7 h-7 text-gray-700" />
         </div>
       );
     } else if (rank === 3) {
       return (
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center shadow-lg">
-          <Award className="w-6 h-6 text-white" />
+        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-600 to-amber-700 flex items-center justify-center shadow-lg">
+          <Award className="w-7 h-7 text-white" />
         </div>
       );
     }
     return (
-      <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-        <span className="text-lg font-bold text-muted-foreground">{rank}</span>
+      <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center">
+        <span className="text-xl font-bold text-muted-foreground">{rank}</span>
       </div>
     );
   };
@@ -126,19 +130,21 @@ export default function Leaderboards() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Trophy className="w-7 h-7 text-accent" />
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-3">
+            <div className="p-2 rounded-xl shadow-lg" style={{ background: 'linear-gradient(135deg, hsl(38 95% 55%) 0%, hsl(25 90% 50%) 100%)' }}>
+              <Trophy className="w-6 h-6 text-white" />
+            </div>
             Leaderboards
           </h1>
-          <p className="text-muted-foreground">Top performing trainees by score and accuracy</p>
+          <p className="text-muted-foreground mt-1">Top performing trainees by score and accuracy</p>
         </div>
         <div className="flex gap-3">
           <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="w-40 bg-muted border-border">
+            <SelectTrigger className="w-40 bg-muted border-border rounded-xl">
               <Filter className="w-4 h-4 mr-2" />
               <SelectValue placeholder="Date Range" />
             </SelectTrigger>
-            <SelectContent className="bg-popover">
+            <SelectContent className="bg-popover rounded-xl">
               <SelectItem value="all">All Time</SelectItem>
               <SelectItem value="week">This Week</SelectItem>
               <SelectItem value="month">This Month</SelectItem>
@@ -150,12 +156,12 @@ export default function Leaderboards() {
 
       {/* Leaderboard Tabs */}
       <Tabs value={leaderboardView} onValueChange={(v) => setLeaderboardView(v as LeaderboardView)}>
-        <TabsList className="bg-muted">
-          <TabsTrigger value="overall" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+        <TabsList className="bg-muted rounded-xl p-1">
+          <TabsTrigger value="overall" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Trophy className="w-4 h-4 mr-2" />
             Overall Rankings
           </TabsTrigger>
-          <TabsTrigger value="weapons" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+          <TabsTrigger value="weapons" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Crosshair className="w-4 h-4 mr-2" />
             By Weapon
           </TabsTrigger>
@@ -173,19 +179,19 @@ export default function Leaderboards() {
                 <AnimatedCard 
                   key={trainee.id}
                   index={position - 1}
-                  className={`tactical-card relative overflow-hidden ${
-                    position === 1 ? 'md:order-2 ring-2 ring-accent/50' : 
+                  className={`tactical-card relative overflow-hidden group ${
+                    position === 1 ? 'md:order-2 ring-2 ring-[hsl(var(--status-warning))]/50' : 
                     position === 2 ? 'md:order-1' : 'md:order-3'
                   }`}
                 >
                   {position === 1 && (
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600" />
+                    <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500" />
                   )}
                   <CardContent className="p-6 text-center">
-                    <div className="flex justify-center mb-4">
+                    <div className="flex justify-center mb-4 group-hover:scale-105 transition-transform duration-300">
                       {getRankBadge(position)}
                     </div>
-                    <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary mx-auto mb-3">
+                    <div className="icon-gradient-primary w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-3 group-hover:scale-105 transition-transform duration-300">
                       {trainee.avatar}
                     </div>
                     <h3 className="font-bold text-lg text-foreground mb-1">{trainee.name}</h3>
@@ -193,7 +199,9 @@ export default function Leaderboards() {
                     
                     <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-border">
                       <div>
-                        <p className="text-2xl font-bold text-primary">{trainee.totalScore}</p>
+                        <p className="text-2xl font-bold text-primary">
+                          <AnimatedCounter value={trainee.totalScore} duration={1200} delay={position * 100} />
+                        </p>
                         <p className="text-xs text-muted-foreground">Score</p>
                       </div>
                       <div>
@@ -214,7 +222,12 @@ export default function Leaderboards() {
           {/* Full Rankings Table */}
           <AnimatedCard index={3} className="tactical-card">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">Full Rankings</CardTitle>
+              <CardTitle className="text-lg font-semibold flex items-center gap-3">
+                <div className="icon-container-primary w-9 h-9">
+                  <Users className="w-5 h-5" />
+                </div>
+                Full Rankings
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
@@ -252,17 +265,17 @@ export default function Leaderboards() {
                       return (
                         <tr 
                           key={trainee.id} 
-                          className={rank <= 3 ? 'bg-accent/5' : ''}
+                          className={`group ${rank <= 3 ? 'bg-[hsl(var(--status-warning))]/5' : ''}`}
                         >
                           <td>
                             <div className="flex items-center justify-center">
                               {rank <= 3 ? (
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white ${
-                                  rank === 1 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' :
-                                  rank === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-500' :
-                                  'bg-gradient-to-br from-amber-600 to-amber-800'
+                                <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold text-white group-hover:scale-110 transition-transform ${
+                                  rank === 1 ? 'bg-gradient-to-br from-yellow-400 to-amber-500 shadow-md' :
+                                  rank === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-gray-800' :
+                                  'bg-gradient-to-br from-amber-600 to-amber-700'
                                 }`}>
-                                  {rank}
+                                  {rank === 1 ? <Crown className="w-4 h-4" /> : rank === 2 ? <Medal className="w-4 h-4" /> : <Star className="w-4 h-4" />}
                                 </div>
                               ) : (
                                 <span className="text-lg font-medium text-muted-foreground">{rank}</span>
@@ -271,7 +284,7 @@ export default function Leaderboards() {
                           </td>
                           <td>
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">
+                              <div className="icon-gradient-primary w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold group-hover:scale-105 transition-transform">
                                 {trainee.avatar}
                               </div>
                               <div>
@@ -281,15 +294,24 @@ export default function Leaderboards() {
                             </div>
                           </td>
                           <td>
-                            <span className="font-bold text-primary text-lg">{trainee.totalScore}</span>
+                            <span className="font-bold text-primary text-lg flex items-center gap-1">
+                              <Sparkles className="w-4 h-4" />
+                              {trainee.totalScore}
+                            </span>
                           </td>
                           <td>
-                            <Badge variant={stats.accuracy >= 90 ? 'default' : stats.accuracy >= 70 ? 'secondary' : 'outline'}>
+                            <Badge 
+                              variant={stats.accuracy >= 90 ? 'default' : stats.accuracy >= 70 ? 'secondary' : 'outline'}
+                              className="rounded-lg"
+                            >
                               {stats.accuracy}%
                             </Badge>
                           </td>
                           <td className="text-muted-foreground">{stats.avgTime}m</td>
-                          <td className="text-muted-foreground">{trainee.missionsCompleted}</td>
+                          <td className="text-muted-foreground flex items-center gap-1">
+                            <Crosshair className="w-3.5 h-3.5" />
+                            {trainee.missionsCompleted}
+                          </td>
                         </tr>
                       );
                     })}
@@ -306,13 +328,15 @@ export default function Leaderboards() {
           <AnimatedCard index={0} className="tactical-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium text-foreground">Filter by Weapon:</label>
+                <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                  <Crosshair className="w-4 h-4 text-primary" />
+                  Filter by Weapon:
+                </label>
                 <Select value={selectedWeapon} onValueChange={setSelectedWeapon}>
-                  <SelectTrigger className="w-60 bg-muted border-border">
-                    <Crosshair className="w-4 h-4 mr-2" />
+                  <SelectTrigger className="w-60 bg-muted border-border rounded-xl">
                     <SelectValue placeholder="Select weapon" />
                   </SelectTrigger>
-                  <SelectContent className="bg-popover">
+                  <SelectContent className="bg-popover rounded-xl">
                     <SelectItem value="all">All Weapons</SelectItem>
                     {weapons.map(weapon => (
                       <SelectItem key={weapon.id} value={weapon.id}>
@@ -322,7 +346,7 @@ export default function Leaderboards() {
                   </SelectContent>
                 </Select>
                 {selectedWeapon !== 'all' && (
-                  <Badge variant="secondary" className="ml-2">
+                  <Badge variant="secondary" className="ml-2 rounded-lg">
                     {getWeaponById(selectedWeapon)?.type.toUpperCase()}
                   </Badge>
                 )}
@@ -340,19 +364,19 @@ export default function Leaderboards() {
                   <AnimatedCard 
                     key={entry.traineeId}
                     index={position}
-                    className={`tactical-card relative overflow-hidden ${
-                      position === 1 ? 'md:order-2 ring-2 ring-accent/50' : 
+                    className={`tactical-card relative overflow-hidden group ${
+                      position === 1 ? 'md:order-2 ring-2 ring-[hsl(var(--status-warning))]/50' : 
                       position === 2 ? 'md:order-1' : 'md:order-3'
                     }`}
                   >
                     {position === 1 && (
-                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600" />
+                      <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500" />
                     )}
                     <CardContent className="p-6 text-center">
-                      <div className="flex justify-center mb-4">
+                      <div className="flex justify-center mb-4 group-hover:scale-105 transition-transform duration-300">
                         {getRankBadge(position)}
                       </div>
-                      <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary mx-auto mb-3">
+                      <div className="icon-gradient-primary w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-3 group-hover:scale-105 transition-transform duration-300">
                         {entry.trainee?.avatar}
                       </div>
                       <h3 className="font-bold text-lg text-foreground mb-1">{entry.trainee?.name}</h3>
@@ -360,7 +384,9 @@ export default function Leaderboards() {
                       
                       <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-border">
                         <div>
-                          <p className="text-2xl font-bold text-primary">{entry.totalScore}</p>
+                          <p className="text-2xl font-bold text-primary">
+                            <AnimatedCounter value={entry.totalScore} duration={1200} delay={position * 100} />
+                          </p>
                           <p className="text-xs text-muted-foreground">Score</p>
                         </div>
                         <div>
@@ -382,8 +408,10 @@ export default function Leaderboards() {
           {/* Weapon Rankings Table */}
           <AnimatedCard index={4} className="tactical-card">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                <Crosshair className="w-5 h-5 text-primary" />
+              <CardTitle className="text-lg font-semibold flex items-center gap-3">
+                <div className="icon-container-primary w-9 h-9">
+                  <Crosshair className="w-5 h-5" />
+                </div>
                 {selectedWeapon === 'all' ? 'All Weapons Rankings' : `${getWeaponById(selectedWeapon)?.name} Rankings`}
               </CardTitle>
             </CardHeader>
@@ -421,17 +449,17 @@ export default function Leaderboards() {
                         return (
                           <tr 
                             key={entry.traineeId} 
-                            className={rank <= 3 ? 'bg-accent/5' : ''}
+                            className={`group ${rank <= 3 ? 'bg-[hsl(var(--status-warning))]/5' : ''}`}
                           >
                             <td>
                               <div className="flex items-center justify-center">
                                 {rank <= 3 ? (
-                                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white ${
-                                    rank === 1 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' :
-                                    rank === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-500' :
-                                    'bg-gradient-to-br from-amber-600 to-amber-800'
+                                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold text-white group-hover:scale-110 transition-transform ${
+                                    rank === 1 ? 'bg-gradient-to-br from-yellow-400 to-amber-500 shadow-md' :
+                                    rank === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-gray-800' :
+                                    'bg-gradient-to-br from-amber-600 to-amber-700'
                                   }`}>
-                                    {rank}
+                                    {rank === 1 ? <Crown className="w-4 h-4" /> : rank === 2 ? <Medal className="w-4 h-4" /> : <Star className="w-4 h-4" />}
                                   </div>
                                 ) : (
                                   <span className="text-lg font-medium text-muted-foreground">{rank}</span>
@@ -440,7 +468,7 @@ export default function Leaderboards() {
                             </td>
                             <td>
                               <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">
+                                <div className="icon-gradient-primary w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold group-hover:scale-105 transition-transform">
                                   {entry.trainee?.avatar}
                                 </div>
                                 <div>
@@ -450,10 +478,16 @@ export default function Leaderboards() {
                               </div>
                             </td>
                             <td>
-                              <span className="font-bold text-primary text-lg">{entry.totalScore}</span>
+                              <span className="font-bold text-primary text-lg flex items-center gap-1">
+                                <Sparkles className="w-4 h-4" />
+                                {entry.totalScore}
+                              </span>
                             </td>
                             <td>
-                              <Badge variant={entry.accuracy >= 90 ? 'default' : entry.accuracy >= 70 ? 'secondary' : 'outline'}>
+                              <Badge 
+                                variant={entry.accuracy >= 90 ? 'default' : entry.accuracy >= 70 ? 'secondary' : 'outline'}
+                                className="rounded-lg"
+                              >
                                 {entry.accuracy}%
                               </Badge>
                             </td>

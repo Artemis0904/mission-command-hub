@@ -2,14 +2,17 @@ import { useState } from 'react';
 import { 
   AlertTriangle, 
   Bell,
-  Mail,
   AlertCircle,
   Clock,
   UserX,
-  CheckCircle,
+  CheckCircle2,
   Send,
   Shield,
   Filter,
+  Flame,
+  ShieldAlert,
+  CircleAlert,
+  Info,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AnimatedCard } from '@/components/ui/animated-card';
@@ -24,6 +27,7 @@ import {
 } from '@/components/ui/select';
 import { complianceAlerts, getTraineeById } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
+import { AnimatedCounter } from '@/hooks/useAnimatedCounter';
 
 export default function Compliance() {
   const { toast } = useToast();
@@ -46,7 +50,7 @@ export default function Compliance() {
     switch (type) {
       case 'overdue': return <Clock className="w-5 h-5" />;
       case 'inactive': return <UserX className="w-5 h-5" />;
-      case 'pending': return <AlertCircle className="w-5 h-5" />;
+      case 'pending': return <CircleAlert className="w-5 h-5" />;
       default: return <AlertTriangle className="w-5 h-5" />;
     }
   };
@@ -55,7 +59,7 @@ export default function Compliance() {
     switch (severity) {
       case 'high': return 'bg-destructive/10 border-destructive/30 text-destructive';
       case 'medium': return 'bg-accent/10 border-accent/30 text-accent';
-      case 'low': return 'bg-status-info/10 border-status-info/30 text-status-info';
+      case 'low': return 'bg-[hsl(var(--status-info))]/10 border-[hsl(var(--status-info))]/30 text-[hsl(var(--status-info))]';
       default: return 'bg-muted border-border';
     }
   };
@@ -89,19 +93,21 @@ export default function Compliance() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <AlertTriangle className="w-7 h-7 text-destructive" />
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-3">
+            <div className="p-2 rounded-xl shadow-lg" style={{ background: 'linear-gradient(135deg, hsl(0 75% 55%) 0%, hsl(15 80% 50%) 100%)' }}>
+              <ShieldAlert className="w-6 h-6 text-white" />
+            </div>
             Compliance & Alerts
           </h1>
-          <p className="text-muted-foreground">Monitor training compliance and manage alerts</p>
+          <p className="text-muted-foreground mt-1">Monitor training compliance and manage alerts</p>
         </div>
         <div className="flex gap-3">
           <Select value={severityFilter} onValueChange={setSeverityFilter}>
-            <SelectTrigger className="w-36 bg-muted border-border">
+            <SelectTrigger className="w-36 bg-muted border-border rounded-xl">
               <Filter className="w-4 h-4 mr-2" />
               <SelectValue placeholder="Severity" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-popover rounded-xl">
               <SelectItem value="all">All Severity</SelectItem>
               <SelectItem value="high">High</SelectItem>
               <SelectItem value="medium">Medium</SelectItem>
@@ -109,10 +115,10 @@ export default function Compliance() {
             </SelectContent>
           </Select>
           <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-36 bg-muted border-border">
+            <SelectTrigger className="w-36 bg-muted border-border rounded-xl">
               <SelectValue placeholder="Type" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-popover rounded-xl">
               <SelectItem value="all">All Types</SelectItem>
               <SelectItem value="overdue">Overdue</SelectItem>
               <SelectItem value="inactive">Inactive</SelectItem>
@@ -124,43 +130,58 @@ export default function Compliance() {
 
       {/* Alert Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <AnimatedCard index={0} className="tactical-card-hover border-destructive/30">
+        <AnimatedCard index={0} className="tactical-card-hover border-destructive/30 group">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">High Priority</p>
-                <p className="metric-value text-destructive">{alertCounts.high}</p>
+                <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                  <Flame className="w-3.5 h-3.5" />
+                  High Priority
+                </p>
+                <p className="metric-value text-destructive mt-1">
+                  <AnimatedCounter value={alertCounts.high} duration={1000} delay={100} />
+                </p>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-destructive/10 flex items-center justify-center">
-                <AlertTriangle className="w-6 h-6 text-destructive" />
+              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(0 75% 55%) 0%, hsl(15 80% 50%) 100%)' }}>
+                <AlertTriangle className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>
         </AnimatedCard>
 
-        <AnimatedCard index={1} className="tactical-card-hover border-accent/30">
+        <AnimatedCard index={1} className="tactical-card-hover border-accent/30 group">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Medium Priority</p>
-                <p className="metric-value text-accent">{alertCounts.medium}</p>
+                <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  Medium Priority
+                </p>
+                <p className="metric-value text-accent mt-1">
+                  <AnimatedCounter value={alertCounts.medium} duration={1000} delay={200} />
+                </p>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-accent" />
+              <div className="icon-gradient-accent p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <AlertCircle className="w-6 h-6" />
               </div>
             </div>
           </CardContent>
         </AnimatedCard>
 
-        <AnimatedCard index={2} className="tactical-card-hover border-status-info/30">
+        <AnimatedCard index={2} className="tactical-card-hover border-[hsl(var(--status-info))]/30 group">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Low Priority</p>
-                <p className="metric-value text-status-info">{alertCounts.low}</p>
+                <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                  <Info className="w-3.5 h-3.5" />
+                  Low Priority
+                </p>
+                <p className="metric-value text-[hsl(var(--status-info))] mt-1">
+                  <AnimatedCounter value={alertCounts.low} duration={1000} delay={300} />
+                </p>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-status-info/10 flex items-center justify-center">
-                <Bell className="w-6 h-6 text-status-info" />
+              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(210 95% 55%) 0%, hsl(220 90% 60%) 100%)' }}>
+                <Bell className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>
@@ -170,7 +191,12 @@ export default function Compliance() {
       {/* Alerts List */}
       <AnimatedCard index={3} className="tactical-card">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">Active Alerts</CardTitle>
+          <CardTitle className="text-lg font-semibold flex items-center gap-3">
+            <div className="icon-container-danger w-9 h-9">
+              <Bell className="w-5 h-5" />
+            </div>
+            Active Alerts
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {filteredAlerts.length > 0 ? (
@@ -180,7 +206,7 @@ export default function Compliance() {
               return (
                 <div
                   key={alert.id}
-                  className={`p-4 rounded-lg border ${getSeverityColor(alert.severity)}`}
+                  className={`p-4 rounded-xl border transition-all duration-200 hover:-translate-x-0.5 ${getSeverityColor(alert.severity)}`}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${getSeverityColor(alert.severity)}`}>
@@ -190,13 +216,16 @@ export default function Compliance() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-semibold text-foreground">{trainee?.name}</span>
-                        <Badge variant={
-                          alert.severity === 'high' ? 'destructive' :
-                          alert.severity === 'medium' ? 'default' : 'secondary'
-                        }>
+                        <Badge 
+                          variant={
+                            alert.severity === 'high' ? 'destructive' :
+                            alert.severity === 'medium' ? 'default' : 'secondary'
+                          }
+                          className="rounded-lg"
+                        >
                           {alert.severity}
                         </Badge>
-                        <Badge variant="outline" className="capitalize">{alert.type}</Badge>
+                        <Badge variant="outline" className="capitalize rounded-lg">{alert.type}</Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">{alert.message}</p>
                       <p className="text-xs text-muted-foreground mt-1">
@@ -208,7 +237,7 @@ export default function Compliance() {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        className="btn-interactive hover:glow-primary"
+                        className="btn-interactive hover:glow-primary rounded-lg"
                         onClick={() => handleSendReminder(alert.traineeId)}
                       >
                         <Send className="w-4 h-4 mr-1" />
@@ -217,7 +246,7 @@ export default function Compliance() {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        className="btn-interactive hover:glow-accent"
+                        className="btn-interactive hover:glow-accent rounded-lg"
                         onClick={() => handleEscalate(alert.traineeId)}
                       >
                         <Shield className="w-4 h-4 mr-1" />
@@ -226,10 +255,10 @@ export default function Compliance() {
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        className="btn-interactive"
+                        className="btn-interactive rounded-lg"
                         onClick={() => handleExcuse(alert.traineeId)}
                       >
-                        <CheckCircle className="w-4 h-4 mr-1" />
+                        <CheckCircle2 className="w-4 h-4 mr-1" />
                         Excuse
                       </Button>
                     </div>
@@ -248,13 +277,20 @@ export default function Compliance() {
       {/* Compliance Summary */}
       <AnimatedCard index={4} className="tactical-card">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">Compliance Overview</CardTitle>
+          <CardTitle className="text-lg font-semibold flex items-center gap-3">
+            <div className="icon-container-primary w-9 h-9">
+              <Shield className="w-5 h-5" />
+            </div>
+            Compliance Overview
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-4 rounded-lg bg-muted/30">
-              <div className="flex items-center gap-2 mb-2">
-                <Clock className="w-5 h-5 text-destructive" />
+            <div className="p-4 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors group">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="icon-container-danger w-10 h-10 group-hover:scale-105 transition-transform">
+                  <Clock className="w-5 h-5" />
+                </div>
                 <span className="font-medium text-foreground">Overdue Training</span>
               </div>
               <p className="text-sm text-muted-foreground">
@@ -262,9 +298,11 @@ export default function Compliance() {
               </p>
             </div>
             
-            <div className="p-4 rounded-lg bg-muted/30">
-              <div className="flex items-center gap-2 mb-2">
-                <UserX className="w-5 h-5 text-accent" />
+            <div className="p-4 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors group">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="icon-container-accent w-10 h-10 group-hover:scale-105 transition-transform">
+                  <UserX className="w-5 h-5" />
+                </div>
                 <span className="font-medium text-foreground">Inactive Trainees</span>
               </div>
               <p className="text-sm text-muted-foreground">
@@ -272,9 +310,11 @@ export default function Compliance() {
               </p>
             </div>
             
-            <div className="p-4 rounded-lg bg-muted/30">
-              <div className="flex items-center gap-2 mb-2">
-                <AlertCircle className="w-5 h-5 text-status-info" />
+            <div className="p-4 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors group">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="icon-container w-10 h-10 bg-[hsl(var(--status-info))]/10 text-[hsl(var(--status-info))] group-hover:scale-105 transition-transform">
+                  <CircleAlert className="w-5 h-5" />
+                </div>
                 <span className="font-medium text-foreground">Pending Completion</span>
               </div>
               <p className="text-sm text-muted-foreground">
