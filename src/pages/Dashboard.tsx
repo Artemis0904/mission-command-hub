@@ -28,6 +28,7 @@ import { AnimatedCard } from '@/components/ui/animated-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
+import { AnimatedCounter } from '@/hooks/useAnimatedCounter';
 import { dashboardStats, missions, trainees, complianceAlerts, getTraineeById, getCourseById, iwtsStations } from '@/data/mockData';
 
 export default function Dashboard() {
@@ -67,7 +68,9 @@ export default function Dashboard() {
                   <CircleDot className="w-3.5 h-3.5" />
                   IWTS Stations
                 </p>
-                <p className="metric-value text-foreground mt-1">{dashboardStats.totalStations}</p>
+                <p className="metric-value text-foreground mt-1">
+                  <AnimatedCounter value={dashboardStats.totalStations} duration={1200} delay={100} />
+                </p>
               </div>
               <div className="icon-gradient-primary p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
                 <Monitor className="w-6 h-6" />
@@ -76,9 +79,9 @@ export default function Dashboard() {
             <div className="mt-4 flex items-center gap-3 text-xs">
               <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[hsl(var(--status-active))]/10 text-[hsl(var(--status-active))]">
                 <Activity className="w-3 h-3" />
-                {stationsInUse} in use
+                <AnimatedCounter value={stationsInUse} duration={1000} delay={300} /> in use
               </span>
-              <span className="text-muted-foreground">{activeStations} available</span>
+              <span className="text-muted-foreground"><AnimatedCounter value={activeStations} duration={1000} delay={400} /> available</span>
             </div>
           </CardContent>
         </AnimatedCard>
@@ -91,7 +94,9 @@ export default function Dashboard() {
                   <Clock className="w-3.5 h-3.5" />
                   Upcoming Missions
                 </p>
-                <p className="metric-value text-foreground mt-1">{dashboardStats.upcomingMissions}</p>
+                <p className="metric-value text-foreground mt-1">
+                  <AnimatedCounter value={dashboardStats.upcomingMissions} duration={1200} delay={200} />
+                </p>
               </div>
               <div className="icon-gradient-accent p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
                 <Calendar className="w-6 h-6" />
@@ -100,7 +105,7 @@ export default function Dashboard() {
             <div className="mt-4 flex items-center gap-3 text-xs">
               <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-accent/10 text-accent">
                 <Crosshair className="w-3 h-3" />
-                {todaysMissions.length} today
+                <AnimatedCounter value={todaysMissions.length} duration={800} delay={500} /> today
               </span>
             </div>
           </CardContent>
@@ -114,7 +119,9 @@ export default function Dashboard() {
                   <Sparkles className="w-3.5 h-3.5" />
                   Custom Courses
                 </p>
-                <p className="metric-value text-foreground mt-1">{dashboardStats.customCourses}</p>
+                <p className="metric-value text-foreground mt-1">
+                  <AnimatedCounter value={dashboardStats.customCourses} duration={1200} delay={300} />
+                </p>
               </div>
               <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(210 95% 55%) 0%, hsl(230 90% 60%) 100%)' }}>
                 <BookOpen className="w-6 h-6 text-white" />
@@ -137,7 +144,9 @@ export default function Dashboard() {
                   <BarChart3 className="w-3.5 h-3.5" />
                   Reports Generated
                 </p>
-                <p className="metric-value text-foreground mt-1">{dashboardStats.recentReports}</p>
+                <p className="metric-value text-foreground mt-1">
+                  <AnimatedCounter value={dashboardStats.recentReports} duration={1200} delay={400} />
+                </p>
               </div>
               <div className="icon-gradient-success p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
                 <FileBarChart className="w-6 h-6" />
