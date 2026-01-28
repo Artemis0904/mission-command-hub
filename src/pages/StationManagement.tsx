@@ -8,7 +8,12 @@ import {
   MapPin,
   Check,
   X,
-  Settings,
+  Zap,
+  CircleDot,
+  Radio,
+  Wifi,
+  WifiOff,
+  Crosshair,
 } from 'lucide-react';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AnimatedCard } from '@/components/ui/animated-card';
@@ -43,13 +48,29 @@ export default function StationManagement() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'idle':
-        return <Power className="w-5 h-5 text-primary" />;
+        return (
+          <div className="icon-container-primary w-10 h-10">
+            <Wifi className="w-5 h-5" />
+          </div>
+        );
       case 'in-use':
-        return <Activity className="w-5 h-5 text-accent" />;
+        return (
+          <div className="icon-container-accent w-10 h-10">
+            <Activity className="w-5 h-5" />
+          </div>
+        );
       case 'offline':
-        return <PowerOff className="w-5 h-5 text-muted-foreground" />;
+        return (
+          <div className="icon-container w-10 h-10 bg-muted text-muted-foreground">
+            <WifiOff className="w-5 h-5" />
+          </div>
+        );
       default:
-        return <Power className="w-5 h-5" />;
+        return (
+          <div className="icon-container-primary w-10 h-10">
+            <Power className="w-5 h-5" />
+          </div>
+        );
     }
   };
 
@@ -110,46 +131,61 @@ export default function StationManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Monitor className="w-7 h-7 text-primary" />
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-3">
+            <div className="icon-gradient-primary p-2 rounded-xl">
+              <Monitor className="w-6 h-6" />
+            </div>
             IWTS Stations
           </h1>
-          <p className="text-muted-foreground">Manage and monitor all 10 IWTS training stations</p>
+          <p className="text-muted-foreground mt-1">Manage and monitor all 10 IWTS training stations</p>
+        </div>
+        <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-card border border-border">
+          <div className="w-2 h-2 rounded-full bg-[hsl(var(--status-active))] animate-pulse" />
+          <span className="text-sm font-medium text-muted-foreground">{idleCount + inUseCount} Online</span>
         </div>
       </div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-3 gap-4">
-        <AnimatedCard index={0} className="tactical-card">
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Power className="w-6 h-6 text-primary" />
+        <AnimatedCard index={0} className="tactical-card-hover group">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="icon-gradient-primary p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <Wifi className="w-6 h-6" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{idleCount}</p>
-              <p className="text-sm text-muted-foreground">Idle</p>
+              <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                <CircleDot className="w-3 h-3" />
+                Idle
+              </p>
             </div>
           </CardContent>
         </AnimatedCard>
-        <AnimatedCard index={1} className="tactical-card">
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-              <Activity className="w-6 h-6 text-accent" />
+        <AnimatedCard index={1} className="tactical-card-hover group">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="icon-gradient-accent p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <Activity className="w-6 h-6" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{inUseCount}</p>
-              <p className="text-sm text-muted-foreground">In Use</p>
+              <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                <Zap className="w-3 h-3" />
+                In Use
+              </p>
             </div>
           </CardContent>
         </AnimatedCard>
-        <AnimatedCard index={2} className="tactical-card">
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
-              <PowerOff className="w-6 h-6 text-muted-foreground" />
+        <AnimatedCard index={2} className="tactical-card-hover group">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="p-3 rounded-xl shadow-md bg-muted group-hover:scale-110 transition-transform duration-300">
+              <WifiOff className="w-6 h-6 text-muted-foreground" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{offlineCount}</p>
-              <p className="text-sm text-muted-foreground">Offline</p>
+              <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                <Radio className="w-3 h-3" />
+                Offline
+              </p>
             </div>
           </CardContent>
         </AnimatedCard>
@@ -167,18 +203,20 @@ export default function StationManagement() {
               key={station.id}
               index={index + 3}
               className={cn(
-                "tactical-card transition-all",
+                "tactical-card transition-all group",
                 station.status === 'offline' && "opacity-60"
               )}
             >
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg font-bold">{station.name}</CardTitle>
-                  {getStatusIcon(station.status)}
+                  <div className="group-hover:scale-110 transition-transform duration-200">
+                    {getStatusIcon(station.status)}
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Badge className={cn("w-full justify-center py-1", getStatusColor(station.status))}>
+                <Badge className={cn("w-full justify-center py-1.5 rounded-lg", getStatusColor(station.status))}>
                   {station.status === 'idle' ? 'Idle' : station.status === 'in-use' ? 'In Use' : 'Offline'}
                 </Badge>
 
@@ -189,18 +227,20 @@ export default function StationManagement() {
 
                 {/* Assigned Course */}
                 {assignedCourse ? (
-                  <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+                  <div className="p-3 rounded-xl bg-primary/5 border border-primary/20">
                     <div className="flex items-center gap-2 mb-1">
-                      <BookOpen className="w-4 h-4 text-primary" />
+                      <div className="icon-container-primary w-7 h-7">
+                        <Crosshair className="w-3.5 h-3.5" />
+                      </div>
                       <span className="text-sm font-medium text-foreground">{assignedCourse.name}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground ml-9">
                       {assignedCourse.exerciseIds.length} exercises • {assignedCourse.totalTime} min
                     </p>
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="w-full mt-2 text-destructive hover:text-destructive"
+                      className="w-full mt-2 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg"
                       onClick={() => handleClearAssignment(station.id)}
                     >
                       <X className="w-3 h-3 mr-1" />
@@ -208,7 +248,7 @@ export default function StationManagement() {
                     </Button>
                   </div>
                 ) : (
-                  <div className="p-3 rounded-lg border border-dashed border-border text-center">
+                  <div className="p-3 rounded-xl border border-dashed border-border text-center">
                     <p className="text-xs text-muted-foreground mb-2">No course assigned</p>
                     <Dialog open={assignDialogOpen && selectedStationId === station.id} onOpenChange={(open) => {
                       setAssignDialogOpen(open);
@@ -218,7 +258,7 @@ export default function StationManagement() {
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="w-full btn-interactive hover:glow-primary"
+                          className="w-full btn-interactive hover:glow-primary rounded-lg"
                           disabled={station.status === 'offline'}
                           onClick={() => setSelectedStationId(station.id)}
                         >
@@ -226,18 +266,23 @@ export default function StationManagement() {
                           Assign Course
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="bg-background">
+                      <DialogContent className="bg-background rounded-2xl">
                         <DialogHeader>
-                          <DialogTitle>Assign Course to {station.name}</DialogTitle>
+                          <DialogTitle className="flex items-center gap-3">
+                            <div className="icon-gradient-primary p-2 rounded-xl">
+                              <BookOpen className="w-5 h-5" />
+                            </div>
+                            Assign Course to {station.name}
+                          </DialogTitle>
                         </DialogHeader>
                         <div className="py-4">
                           <Select value={selectedCourseId} onValueChange={setSelectedCourseId}>
-                            <SelectTrigger className="bg-muted border-border">
+                            <SelectTrigger className="bg-muted border-border rounded-xl">
                               <SelectValue placeholder="Select a course" />
                             </SelectTrigger>
-                            <SelectContent className="bg-popover">
+                            <SelectContent className="bg-popover rounded-xl">
                               {customCourses.map((course) => (
-                                <SelectItem key={course.id} value={course.id}>
+                                <SelectItem key={course.id} value={course.id} className="rounded-lg">
                                   {course.name} ({course.exerciseIds.length} exercises)
                                 </SelectItem>
                               ))}
@@ -245,10 +290,10 @@ export default function StationManagement() {
                           </Select>
                         </div>
                         <DialogFooter>
-                          <Button variant="outline" onClick={() => setAssignDialogOpen(false)}>
+                          <Button variant="outline" onClick={() => setAssignDialogOpen(false)} className="rounded-xl">
                             Cancel
                           </Button>
-                          <Button onClick={handleAssignCourse} disabled={!selectedCourseId} className="btn-interactive glow-primary">
+                          <Button onClick={handleAssignCourse} disabled={!selectedCourseId} className="btn-interactive glow-primary rounded-xl">
                             <Check className="w-4 h-4 mr-2" />
                             Assign
                           </Button>
