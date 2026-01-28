@@ -704,7 +704,7 @@ export default function CustomCourses() {
               </div>
               <p className="text-sm text-muted-foreground">Select type • Configure • Add to course</p>
             </CardHeader>
-            <CardContent className="space-y-2 max-h-[700px] overflow-y-auto">
+            <CardContent className="space-y-2">
               {filteredTypes.length === 0 && searchQuery && (
                 <div className="text-center py-8 text-muted-foreground">
                   No exercise types found for "{searchQuery}"
