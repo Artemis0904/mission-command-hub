@@ -35,7 +35,7 @@ const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/custom-courses', label: 'Custom Courses', icon: BookOpen },
   { path: '/stations', label: 'Stations', icon: Monitor },
-  { path: '/trainee-progress', label: 'Progress', icon: Users },
+  { path: '/station-progress', label: 'Station Progress', icon: Monitor },
   { path: '/leaderboards', label: 'Leaderboards', icon: Trophy },
   { path: '/compliance', label: 'Alerts', icon: AlertTriangle },
   { path: '/reports', label: 'Reports', icon: FileBarChart },

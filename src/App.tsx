@@ -10,7 +10,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import CustomCourses from "./pages/CustomCourses";
 import StationManagement from "./pages/StationManagement";
-import TraineeProgress from "./pages/TraineeProgress";
+import StationProgress from "./pages/StationProgress";
 import Leaderboards from "./pages/Leaderboards";
 import Compliance from "./pages/Compliance";
 import Reports from "./pages/Reports";
@@ -35,7 +35,7 @@ function AppRoutes() {
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/custom-courses" element={<ProtectedRoute><CustomCourses /></ProtectedRoute>} />
       <Route path="/stations" element={<ProtectedRoute><StationManagement /></ProtectedRoute>} />
-      <Route path="/trainee-progress" element={<ProtectedRoute><TraineeProgress /></ProtectedRoute>} />
+      <Route path="/station-progress" element={<ProtectedRoute><StationProgress /></ProtectedRoute>} />
       <Route path="/leaderboards" element={<ProtectedRoute><Leaderboards /></ProtectedRoute>} />
       <Route path="/compliance" element={<ProtectedRoute><Compliance /></ProtectedRoute>} />
       <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
