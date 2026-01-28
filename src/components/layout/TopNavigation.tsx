@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useTheme } from '@/hooks/useTheme';
 import {
   LayoutDashboard,
   BookOpen,
@@ -13,6 +14,8 @@ import {
   User,
   Target,
   Menu,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -22,8 +25,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
+  DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
 
 const navItems = [
@@ -40,6 +45,7 @@ export default function TopNavigation() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => {
@@ -57,14 +63,24 @@ export default function TopNavigation() {
           to={item.path}
           onClick={() => mobile && setMobileOpen(false)}
           className={cn(
-            'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all',
+            'group flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200',
             mobile ? 'w-full' : '',
             isActive(item.path)
-              ? 'bg-primary/10 text-primary'
+              ? 'bg-primary/15 text-primary shadow-sm'
               : 'text-muted-foreground hover:bg-muted hover:text-foreground'
           )}
         >
-          <item.icon className="w-4 h-4" />
+          <div className={cn(
+            'p-1.5 rounded-lg transition-all duration-200',
+            isActive(item.path) 
+              ? 'bg-primary/20' 
+              : 'bg-transparent group-hover:bg-primary/10'
+          )}>
+            <item.icon className={cn(
+              'w-4 h-4 transition-all duration-200',
+              isActive(item.path) ? 'text-primary' : 'group-hover:text-primary'
+            )} />
+          </div>
           <span>{item.label}</span>
         </Link>
       ))}
@@ -72,14 +88,14 @@ export default function TopNavigation() {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm border-b border-border">
+    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         {/* Logo */}
-        <Link to="/dashboard" className="flex items-center gap-2 mr-6">
-          <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-            <Target className="w-5 h-5 text-primary" />
+        <Link to="/dashboard" className="flex items-center gap-3 mr-6 group">
+          <div className="icon-gradient-primary p-2 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-200">
+            <Target className="w-5 h-5" />
           </div>
-          <span className="font-bold text-foreground hidden sm:block">IWTS Control</span>
+          <span className="font-bold text-foreground hidden sm:block text-lg">IWTS Control</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -88,36 +104,62 @@ export default function TopNavigation() {
         </nav>
 
         {/* Right Side */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {/* Notifications */}
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="w-5 h-5 text-muted-foreground" />
-            <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+          <Button variant="ghost" size="icon" className="relative group">
+            <div className="icon-container-primary w-10 h-10 group-hover:scale-105 transition-transform">
+              <Bell className="w-5 h-5" />
+            </div>
+            <span className="absolute top-0 right-0 w-5 h-5 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full flex items-center justify-center shadow-md badge-pulse">
               3
             </span>
           </Button>
 
-          {/* User Menu */}
+          {/* User Menu with Theme Toggle */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-2 px-2">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                  <User className="w-4 h-4 text-primary" />
+              <Button variant="ghost" className="flex items-center gap-3 px-3 py-2 h-auto rounded-xl hover:bg-muted/80 transition-all duration-200">
+                <div className="icon-gradient-primary w-9 h-9 rounded-full flex items-center justify-center">
+                  <User className="w-4 h-4" />
                 </div>
                 <div className="text-left hidden md:block">
-                  <p className="text-sm font-medium text-foreground">{user?.username}</p>
+                  <p className="text-sm font-semibold text-foreground">{user?.username}</p>
+                  <p className="text-xs text-muted-foreground capitalize">{user?.role}</p>
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-popover">
-              <DropdownMenuItem className="text-muted-foreground">
-                <User className="w-4 h-4 mr-2" />
-                {user?.role}
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-destructive">
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
+            <DropdownMenuContent align="end" className="w-56 bg-popover rounded-xl shadow-xl border border-border p-2">
+              <DropdownMenuLabel className="text-xs text-muted-foreground font-medium px-2">
+                Settings
+              </DropdownMenuLabel>
+              
+              {/* Theme Toggle */}
+              <div className="flex items-center justify-between px-2 py-2.5 rounded-lg hover:bg-muted/50 transition-colors">
+                <div className="flex items-center gap-3">
+                  {theme === 'dark' ? (
+                    <Moon className="w-4 h-4 text-primary" />
+                  ) : (
+                    <Sun className="w-4 h-4 text-accent" />
+                  )}
+                  <span className="text-sm font-medium">
+                    {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
+                  </span>
+                </div>
+                <Switch 
+                  checked={theme === 'dark'} 
+                  onCheckedChange={toggleTheme}
+                  className="data-[state=checked]:bg-primary"
+                />
+              </div>
+              
+              <DropdownMenuSeparator className="my-2" />
+              
+              <DropdownMenuItem 
+                onClick={handleLogout} 
+                className="text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg cursor-pointer px-2 py-2.5"
+              >
+                <LogOut className="w-4 h-4 mr-3" />
+                <span className="font-medium">Logout</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -129,7 +171,7 @@ export default function TopNavigation() {
                 <Menu className="w-5 h-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-64 bg-background">
+            <SheetContent side="right" className="w-72 bg-background border-l border-border">
               <div className="flex flex-col gap-2 mt-6">
                 <NavLinks mobile />
               </div>
