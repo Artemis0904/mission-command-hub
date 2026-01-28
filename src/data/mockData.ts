@@ -317,6 +317,20 @@ export const replayEvents = {
   ],
 };
 
+// Station Progress (exercises assigned vs completed per station)
+export const stationProgress = [
+  { stationId: 'iwts-01', sessionId: 'SES-2026-0119-001', assignedExercises: 8, completedExercises: 6, avgScore: 81, lastActivity: '2026-01-19T13:00:00', status: 'idle' },
+  { stationId: 'iwts-02', sessionId: 'SES-2026-0122-002', assignedExercises: 12, completedExercises: 11, avgScore: 94, lastActivity: '2026-01-22T11:15:00', status: 'in-use' },
+  { stationId: 'iwts-03', sessionId: 'SES-2026-0121-001', assignedExercises: 6, completedExercises: 6, avgScore: 85, lastActivity: '2026-01-21T09:00:00', status: 'idle' },
+  { stationId: 'iwts-04', sessionId: 'SES-2026-0115-001', assignedExercises: 10, completedExercises: 3, avgScore: 72, lastActivity: '2026-01-15T14:00:00', status: 'offline' },
+  { stationId: 'iwts-05', sessionId: 'SES-2026-0120-003', assignedExercises: 15, completedExercises: 12, avgScore: 88, lastActivity: '2026-01-20T16:00:00', status: 'idle' },
+  { stationId: 'iwts-06', sessionId: 'SES-2026-0123-001', assignedExercises: 14, completedExercises: 14, avgScore: 98, lastActivity: '2026-01-23T14:45:00', status: 'in-use' },
+  { stationId: 'iwts-07', sessionId: 'SES-2026-0118-002', assignedExercises: 9, completedExercises: 7, avgScore: 79, lastActivity: '2026-01-18T11:30:00', status: 'idle' },
+  { stationId: 'iwts-08', sessionId: 'SES-2026-0117-001', assignedExercises: 5, completedExercises: 5, avgScore: 90, lastActivity: '2026-01-17T10:00:00', status: 'idle' },
+  { stationId: 'iwts-09', sessionId: 'SES-2026-0120-001', assignedExercises: 11, completedExercises: 10, avgScore: 88, lastActivity: '2026-01-20T08:30:00', status: 'in-use' },
+  { stationId: 'iwts-10', sessionId: 'SES-2026-0114-001', assignedExercises: 8, completedExercises: 2, avgScore: 65, lastActivity: '2026-01-14T09:00:00', status: 'offline' },
+];
+
 // Dashboard Stats
 export const dashboardStats = {
   totalStations: 10,
