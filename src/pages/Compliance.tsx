@@ -4,7 +4,7 @@ import {
   Bell,
   AlertCircle,
   Clock,
-  UserX,
+  Monitor,
   CheckCircle2,
   Send,
   Shield,
@@ -25,7 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { complianceAlerts, getTraineeById } from '@/data/mockData';
+import { complianceAlerts, getStationById } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
 import { AnimatedCounter } from '@/hooks/useAnimatedCounter';
 
@@ -49,7 +49,7 @@ export default function Compliance() {
   const getAlertIcon = (type: string) => {
     switch (type) {
       case 'overdue': return <Clock className="w-5 h-5" />;
-      case 'inactive': return <UserX className="w-5 h-5" />;
+      case 'inactive': return <Monitor className="w-5 h-5" />;
       case 'pending': return <CircleAlert className="w-5 h-5" />;
       default: return <AlertTriangle className="w-5 h-5" />;
     }
@@ -64,27 +64,27 @@ export default function Compliance() {
     }
   };
 
-  const handleSendReminder = (traineeId: string) => {
-    const trainee = getTraineeById(traineeId);
+  const handleSendReminder = (stationId: string) => {
+    const station = getStationById(stationId);
     toast({
       title: 'Reminder Sent',
-      description: `Notification sent to ${trainee?.name}.`,
+      description: `Notification sent to ${station?.name} operators.`,
     });
   };
 
-  const handleEscalate = (traineeId: string) => {
-    const trainee = getTraineeById(traineeId);
+  const handleEscalate = (stationId: string) => {
+    const station = getStationById(stationId);
     toast({
       title: 'Escalated to Admin',
-      description: `Alert for ${trainee?.name} has been escalated.`,
+      description: `Alert for ${station?.name} has been escalated.`,
     });
   };
 
-  const handleExcuse = (traineeId: string) => {
-    const trainee = getTraineeById(traineeId);
+  const handleMarkResolved = (stationId: string) => {
+    const station = getStationById(stationId);
     toast({
-      title: 'Marked as Excused',
-      description: `${trainee?.name} has been marked as excused.`,
+      title: 'Marked as Resolved',
+      description: `${station?.name} alert has been resolved.`,
     });
   };
 
@@ -201,7 +201,7 @@ export default function Compliance() {
         <CardContent className="space-y-4">
           {filteredAlerts.length > 0 ? (
             filteredAlerts.map((alert) => {
-              const trainee = getTraineeById(alert.traineeId);
+              const station = getStationById(alert.stationId);
               
               return (
                 <div
@@ -215,7 +215,8 @@ export default function Compliance() {
                     
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-semibold text-foreground">{trainee?.name}</span>
+                        <Monitor className="w-4 h-4 text-primary" />
+                        <span className="font-semibold text-foreground">{station?.name}</span>
                         <Badge 
                           variant={
                             alert.severity === 'high' ? 'destructive' :
@@ -229,7 +230,7 @@ export default function Compliance() {
                       </div>
                       <p className="text-sm text-muted-foreground">{alert.message}</p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {trainee?.rank} • {trainee?.unit}
+                        Location: {station?.location}
                       </p>
                     </div>
 
@@ -238,7 +239,7 @@ export default function Compliance() {
                         variant="outline" 
                         size="sm"
                         className="btn-interactive hover:glow-primary rounded-lg"
-                        onClick={() => handleSendReminder(alert.traineeId)}
+                        onClick={() => handleSendReminder(alert.stationId)}
                       >
                         <Send className="w-4 h-4 mr-1" />
                         Remind
@@ -247,7 +248,7 @@ export default function Compliance() {
                         variant="outline" 
                         size="sm"
                         className="btn-interactive hover:glow-accent rounded-lg"
-                        onClick={() => handleEscalate(alert.traineeId)}
+                        onClick={() => handleEscalate(alert.stationId)}
                       >
                         <Shield className="w-4 h-4 mr-1" />
                         Escalate
@@ -256,10 +257,10 @@ export default function Compliance() {
                         variant="ghost" 
                         size="sm"
                         className="btn-interactive rounded-lg"
-                        onClick={() => handleExcuse(alert.traineeId)}
+                        onClick={() => handleMarkResolved(alert.stationId)}
                       >
                         <CheckCircle2 className="w-4 h-4 mr-1" />
-                        Excuse
+                        Resolve
                       </Button>
                     </div>
                   </div>
@@ -294,19 +295,19 @@ export default function Compliance() {
                 <span className="font-medium text-foreground">Overdue Training</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                {complianceAlerts.filter(a => a.type === 'overdue').length} trainees have overdue training assignments that require immediate attention.
+                {complianceAlerts.filter(a => a.type === 'overdue').length} stations have overdue training courses that require immediate attention.
               </p>
             </div>
             
             <div className="p-4 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors group">
               <div className="flex items-center gap-3 mb-3">
                 <div className="icon-container-accent w-10 h-10 group-hover:scale-105 transition-transform">
-                  <UserX className="w-5 h-5" />
+                  <Monitor className="w-5 h-5" />
                 </div>
-                <span className="font-medium text-foreground">Inactive Trainees</span>
+                <span className="font-medium text-foreground">Inactive Stations</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                {complianceAlerts.filter(a => a.type === 'inactive').length} trainees have not logged any training activity in the past 7 days.
+                {complianceAlerts.filter(a => a.type === 'inactive').length} stations have not logged any training activity in the past 7 days.
               </p>
             </div>
             
@@ -318,7 +319,7 @@ export default function Compliance() {
                 <span className="font-medium text-foreground">Pending Completion</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                {complianceAlerts.filter(a => a.type === 'pending').length} trainees have training modules pending completion.
+                {complianceAlerts.filter(a => a.type === 'pending').length} stations have training courses pending completion.
               </p>
             </div>
           </div>

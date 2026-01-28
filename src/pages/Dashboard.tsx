@@ -29,7 +29,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedCounter } from '@/hooks/useAnimatedCounter';
-import { dashboardStats, missions, trainees, complianceAlerts, getTraineeById, getCourseById, iwtsStations } from '@/data/mockData';
+import { dashboardStats, missions, trainees, complianceAlerts, getStationById, getCourseById, iwtsStations } from '@/data/mockData';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -334,7 +334,7 @@ export default function Dashboard() {
           <CardContent>
             <div className="space-y-3">
               {complianceAlerts.slice(0, 3).map((alert) => {
-                const trainee = getTraineeById(alert.traineeId);
+                const station = getStationById(alert.stationId);
                 return (
                   <div key={alert.id} className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-200 hover:-translate-x-0.5 group ${
                     alert.severity === 'high' 
@@ -350,7 +350,7 @@ export default function Dashboard() {
                         <Flame className="w-4 h-4" />
                       </div>
                       <div>
-                        <p className="font-medium text-foreground">{trainee?.name}</p>
+                        <p className="font-medium text-foreground">{station?.name}</p>
                         <p className="text-sm text-muted-foreground">{alert.message}</p>
                       </div>
                     </div>
