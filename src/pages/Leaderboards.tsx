@@ -140,7 +140,7 @@ export default function Leaderboards() {
         </div>
         <div className="flex gap-3">
           <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="w-40 bg-muted border-border rounded-xl">
+            <SelectTrigger className="w-40 bg-card border-border rounded-xl">
               <Filter className="w-4 h-4 mr-2" />
               <SelectValue placeholder="Date Range" />
             </SelectTrigger>
