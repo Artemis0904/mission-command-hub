@@ -145,12 +145,12 @@ export default function StationManagement() {
         </div>
       </div>
 
-      {/* Stats Row */}
+      {/* Stats Row - Color-coded */}
       <div className="grid grid-cols-3 gap-4">
-        <AnimatedCard index={0} className="tactical-card-hover group">
+        <AnimatedCard index={0} className="tactical-card-hover group border-l-4 border-l-blue-500">
           <CardContent className="p-5 flex items-center gap-4">
-            <div className="icon-gradient-primary p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-              <Wifi className="w-6 h-6" />
+            <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(210 95% 55%) 0%, hsl(230 85% 60%) 100%)' }}>
+              <Wifi className="w-6 h-6 text-white" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{idleCount}</p>
@@ -161,10 +161,10 @@ export default function StationManagement() {
             </div>
           </CardContent>
         </AnimatedCard>
-        <AnimatedCard index={1} className="tactical-card-hover group">
+        <AnimatedCard index={1} className="tactical-card-hover group border-l-4 border-l-emerald-500">
           <CardContent className="p-5 flex items-center gap-4">
-            <div className="icon-gradient-accent p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-              <Activity className="w-6 h-6" />
+            <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(150 70% 45%) 0%, hsl(170 65% 45%) 100%)' }}>
+              <Activity className="w-6 h-6 text-white" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{inUseCount}</p>
@@ -175,10 +175,10 @@ export default function StationManagement() {
             </div>
           </CardContent>
         </AnimatedCard>
-        <AnimatedCard index={2} className="tactical-card-hover group">
+        <AnimatedCard index={2} className="tactical-card-hover group border-l-4 border-l-slate-400">
           <CardContent className="p-5 flex items-center gap-4">
-            <div className="p-3 rounded-xl shadow-md bg-muted group-hover:scale-110 transition-transform duration-300">
-              <WifiOff className="w-6 h-6 text-muted-foreground" />
+            <div className="p-3 rounded-xl shadow-md bg-slate-200 dark:bg-slate-700 group-hover:scale-110 transition-transform duration-300">
+              <WifiOff className="w-6 h-6 text-slate-600 dark:text-slate-300" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{offlineCount}</p>

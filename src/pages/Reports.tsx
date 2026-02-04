@@ -77,8 +77,8 @@ export default function Reports() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-3">
-            <div className="icon-gradient-primary p-2 rounded-xl">
-              <BarChart3 className="w-6 h-6" />
+            <div className="p-2 rounded-xl shadow-lg" style={{ background: 'linear-gradient(135deg, hsl(270 85% 60%) 0%, hsl(290 80% 55%) 100%)' }}>
+              <BarChart3 className="w-6 h-6 text-white" />
             </div>
             Reports & Replay
           </h1>

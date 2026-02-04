@@ -128,9 +128,9 @@ export default function Compliance() {
         </div>
       </div>
 
-      {/* Alert Stats */}
+      {/* Alert Stats - Distinct colors */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <AnimatedCard index={0} className="tactical-card-hover border-destructive/30 group">
+        <AnimatedCard index={0} className="tactical-card-hover border-l-4 border-l-rose-500 group">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -138,18 +138,18 @@ export default function Compliance() {
                   <Flame className="w-3.5 h-3.5" />
                   High Priority
                 </p>
-                <p className="metric-value text-destructive mt-1">
+                <p className="metric-value text-rose-600 dark:text-rose-400 mt-1">
                   <AnimatedCounter value={alertCounts.high} duration={1000} delay={100} />
                 </p>
               </div>
-              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(0 75% 55%) 0%, hsl(15 80% 50%) 100%)' }}>
+              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(350 80% 55%) 0%, hsl(10 85% 50%) 100%)' }}>
                 <AlertTriangle className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>
         </AnimatedCard>
 
-        <AnimatedCard index={1} className="tactical-card-hover border-accent/30 group">
+        <AnimatedCard index={1} className="tactical-card-hover border-l-4 border-l-amber-500 group">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -157,18 +157,18 @@ export default function Compliance() {
                   <AlertCircle className="w-3.5 h-3.5" />
                   Medium Priority
                 </p>
-                <p className="metric-value text-accent mt-1">
+                <p className="metric-value text-amber-600 dark:text-amber-400 mt-1">
                   <AnimatedCounter value={alertCounts.medium} duration={1000} delay={200} />
                 </p>
               </div>
-              <div className="icon-gradient-accent p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <AlertCircle className="w-6 h-6" />
+              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(38 95% 55%) 0%, hsl(25 90% 50%) 100%)' }}>
+                <AlertCircle className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>
         </AnimatedCard>
 
-        <AnimatedCard index={2} className="tactical-card-hover border-[hsl(var(--status-info))]/30 group">
+        <AnimatedCard index={2} className="tactical-card-hover border-l-4 border-l-sky-500 group">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -176,11 +176,11 @@ export default function Compliance() {
                   <Info className="w-3.5 h-3.5" />
                   Low Priority
                 </p>
-                <p className="metric-value text-[hsl(var(--status-info))] mt-1">
+                <p className="metric-value text-sky-600 dark:text-sky-400 mt-1">
                   <AnimatedCounter value={alertCounts.low} duration={1000} delay={300} />
                 </p>
               </div>
-              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(210 95% 55%) 0%, hsl(220 90% 60%) 100%)' }}>
+              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(200 90% 55%) 0%, hsl(210 85% 60%) 100%)' }}>
                 <Bell className="w-6 h-6 text-white" />
               </div>
             </div>

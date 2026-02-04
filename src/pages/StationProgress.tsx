@@ -140,9 +140,9 @@ export default function StationProgress() {
         </div>
       </div>
 
-      {/* Stats Overview */}
+      {/* Stats Overview - Color-coded cards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <AnimatedCard index={0} className="tactical-card-hover group">
+        <AnimatedCard index={0} className="tactical-card-hover group border-l-4 border-l-blue-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -154,14 +154,14 @@ export default function StationProgress() {
                   <AnimatedCounter value={iwtsStations.length} duration={1000} />
                 </p>
               </div>
-              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(210 95% 55%) 0%, hsl(230 90% 60%) 100%)' }}>
+              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(210 95% 55%) 0%, hsl(230 85% 60%) 100%)' }}>
                 <Monitor className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>
         </AnimatedCard>
 
-        <AnimatedCard index={1} className="tactical-card-hover group">
+        <AnimatedCard index={1} className="tactical-card-hover group border-l-4 border-l-emerald-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -169,18 +169,18 @@ export default function StationProgress() {
                   <Sparkles className="w-3.5 h-3.5" />
                   In Use
                 </p>
-                <p className="metric-value text-[hsl(var(--status-active))] mt-1">
+                <p className="metric-value text-emerald-600 dark:text-emerald-400 mt-1">
                   <AnimatedCounter value={inUseCount} duration={1000} delay={100} />
                 </p>
               </div>
-              <div className="icon-gradient-success p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Play className="w-6 h-6" />
+              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(150 70% 45%) 0%, hsl(170 65% 45%) 100%)' }}>
+                <Play className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>
         </AnimatedCard>
 
-        <AnimatedCard index={2} className="tactical-card-hover group">
+        <AnimatedCard index={2} className="tactical-card-hover group border-l-4 border-l-cyan-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -188,18 +188,18 @@ export default function StationProgress() {
                   <Clock className="w-3.5 h-3.5" />
                   Idle
                 </p>
-                <p className="metric-value text-[hsl(var(--status-info))] mt-1">
+                <p className="metric-value text-cyan-600 dark:text-cyan-400 mt-1">
                   <AnimatedCounter value={idleCount} duration={1000} delay={200} />
                 </p>
               </div>
-              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(210 95% 55%) 0%, hsl(220 90% 60%) 100%)' }}>
+              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(190 85% 50%) 0%, hsl(200 80% 55%) 100%)' }}>
                 <Wifi className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>
         </AnimatedCard>
 
-        <AnimatedCard index={3} className="tactical-card-hover group">
+        <AnimatedCard index={3} className="tactical-card-hover group border-l-4 border-l-violet-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -207,13 +207,13 @@ export default function StationProgress() {
                   <Target className="w-3.5 h-3.5" />
                   Exercises Done
                 </p>
-                <p className="metric-value text-primary mt-1">
+                <p className="metric-value text-violet-600 dark:text-violet-400 mt-1">
                   <AnimatedCounter value={completedExercises} duration={1200} delay={300} />
                   <span className="text-muted-foreground text-lg">/{totalExercises}</span>
                 </p>
               </div>
-              <div className="icon-gradient-primary p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Crosshair className="w-6 h-6" />
+              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(270 85% 60%) 0%, hsl(290 80% 55%) 100%)' }}>
+                <Crosshair className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>

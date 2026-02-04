@@ -58,9 +58,9 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Stats Grid - Color-coded cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <AnimatedCard index={0} className="tactical-card-hover cursor-pointer group" onClick={() => navigate('/stations')}>
+        <AnimatedCard index={0} className="tactical-card-hover cursor-pointer group border-l-4 border-l-blue-500" onClick={() => navigate('/stations')}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -72,12 +72,12 @@ export default function Dashboard() {
                   <AnimatedCounter value={dashboardStats.totalStations} duration={1200} delay={100} />
                 </p>
               </div>
-              <div className="icon-gradient-primary p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Monitor className="w-6 h-6" />
+              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(210 95% 55%) 0%, hsl(230 85% 60%) 100%)' }}>
+                <Monitor className="w-6 h-6 text-white" />
               </div>
             </div>
             <div className="mt-4 flex items-center gap-3 text-xs">
-              <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[hsl(var(--status-active))]/10 text-[hsl(var(--status-active))]">
+              <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                 <Activity className="w-3 h-3" />
                 <AnimatedCounter value={stationsInUse} duration={1000} delay={300} /> in use
               </span>
@@ -86,7 +86,7 @@ export default function Dashboard() {
           </CardContent>
         </AnimatedCard>
 
-        <AnimatedCard index={1} className="tactical-card-hover group">
+        <AnimatedCard index={1} className="tactical-card-hover group border-l-4 border-l-amber-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -98,12 +98,12 @@ export default function Dashboard() {
                   <AnimatedCounter value={dashboardStats.upcomingMissions} duration={1200} delay={200} />
                 </p>
               </div>
-              <div className="icon-gradient-accent p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Calendar className="w-6 h-6" />
+              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(38 95% 55%) 0%, hsl(25 90% 50%) 100%)' }}>
+                <Calendar className="w-6 h-6 text-white" />
               </div>
             </div>
             <div className="mt-4 flex items-center gap-3 text-xs">
-              <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-accent/10 text-accent">
+              <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
                 <Crosshair className="w-3 h-3" />
                 <AnimatedCounter value={todaysMissions.length} duration={800} delay={500} /> today
               </span>
@@ -111,7 +111,7 @@ export default function Dashboard() {
           </CardContent>
         </AnimatedCard>
 
-        <AnimatedCard index={2} className="tactical-card-hover cursor-pointer group" onClick={() => navigate('/custom-courses')}>
+        <AnimatedCard index={2} className="tactical-card-hover cursor-pointer group border-l-4 border-l-violet-500" onClick={() => navigate('/custom-courses')}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -123,12 +123,12 @@ export default function Dashboard() {
                   <AnimatedCounter value={dashboardStats.customCourses} duration={1200} delay={300} />
                 </p>
               </div>
-              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(210 95% 55%) 0%, hsl(230 90% 60%) 100%)' }}>
+              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(270 85% 60%) 0%, hsl(290 80% 55%) 100%)' }}>
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
             </div>
             <div className="mt-4 flex items-center gap-3 text-xs">
-              <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[hsl(var(--status-info))]/10 text-[hsl(var(--status-info))]">
+              <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400">
                 <TrendingUp className="w-3 h-3" />
                 Active courses
               </span>
@@ -136,7 +136,7 @@ export default function Dashboard() {
           </CardContent>
         </AnimatedCard>
 
-        <AnimatedCard index={3} className="tactical-card-hover group">
+        <AnimatedCard index={3} className="tactical-card-hover group border-l-4 border-l-emerald-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -148,8 +148,8 @@ export default function Dashboard() {
                   <AnimatedCounter value={dashboardStats.recentReports} duration={1200} delay={400} />
                 </p>
               </div>
-              <div className="icon-gradient-success p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <FileBarChart className="w-6 h-6" />
+              <div className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: 'linear-gradient(135deg, hsl(150 70% 45%) 0%, hsl(170 65% 45%) 100%)' }}>
+                <FileBarChart className="w-6 h-6 text-white" />
               </div>
             </div>
             <div className="mt-4 flex items-center gap-3 text-xs">
