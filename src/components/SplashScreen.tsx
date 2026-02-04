@@ -7,7 +7,7 @@ interface SplashScreenProps {
   duration?: number;
 }
 
-export default function SplashScreen({ onComplete, duration = 3500 }: SplashScreenProps) {
+export default function SplashScreen({ onComplete, duration = 3000 }: SplashScreenProps) {
   const [phase, setPhase] = useState<'enter' | 'glow' | 'exit'>('enter');
   const [progress, setProgress] = useState(0);
 
@@ -19,7 +19,7 @@ export default function SplashScreen({ onComplete, duration = 3500 }: SplashScre
       const newProgress = Math.min((elapsed / duration) * 100, 100);
       setProgress(newProgress);
 
-      if (newProgress < 25) {
+      if (newProgress < 30) {
         setPhase('enter');
       } else if (newProgress < 85) {
         setPhase('glow');
@@ -38,387 +38,143 @@ export default function SplashScreen({ onComplete, duration = 3500 }: SplashScre
 
   return (
     <div className="fixed inset-0 z-[100] bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950 flex flex-col items-center justify-center overflow-hidden">
-      
-      {/* Animated grid background */}
-      <div className="absolute inset-0 opacity-20">
-        <div 
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(34,211,238,0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(34,211,238,0.1) 1px, transparent 1px)
-            `,
-            backgroundSize: '50px 50px',
-            animation: 'gridMove 20s linear infinite',
-          }}
-        />
-      </div>
-
-      {/* Floating particles */}
+      {/* Animated background particles */}
       <div className="absolute inset-0 overflow-hidden">
-        {[...Array(40)].map((_, i) => (
+        {[...Array(30)].map((_, i) => (
           <div
             key={i}
-            className="absolute rounded-full"
+            className="absolute w-1 h-1 bg-cyan-400/40 rounded-full"
             style={{
-              width: `${2 + Math.random() * 4}px`,
-              height: `${2 + Math.random() * 4}px`,
-              background: `rgba(34,211,238,${0.3 + Math.random() * 0.5})`,
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animation: `particleFloat ${4 + Math.random() * 6}s ease-in-out infinite, particlePulse ${2 + Math.random() * 2}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 3}s`,
-              boxShadow: '0 0 10px rgba(34,211,238,0.5)',
+              animation: `float ${3 + Math.random() * 4}s ease-in-out infinite`,
+              animationDelay: `${Math.random() * 2}s`,
             }}
           />
         ))}
       </div>
 
-      {/* Rotating outer ring */}
+      {/* Radial glow behind logo */}
       <div 
         className={cn(
-          "absolute w-[500px] h-[500px] rounded-full transition-all duration-1000",
+          "absolute w-[600px] h-[600px] rounded-full transition-all duration-1000",
           phase === 'enter' && "opacity-0 scale-50",
           phase === 'glow' && "opacity-100 scale-100",
           phase === 'exit' && "opacity-0 scale-150"
         )}
         style={{
-          border: '1px solid rgba(34,211,238,0.2)',
-          animation: phase === 'glow' ? 'spinSlow 30s linear infinite' : 'none',
-        }}
-      >
-        {/* Ring dots */}
-        {[...Array(8)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-2 h-2 bg-cyan-400 rounded-full"
-            style={{
-              top: '50%',
-              left: '50%',
-              transform: `rotate(${i * 45}deg) translateX(250px) translateY(-50%)`,
-              boxShadow: '0 0 15px rgba(34,211,238,0.8)',
-              animation: 'dotPulse 1.5s ease-in-out infinite',
-              animationDelay: `${i * 0.15}s`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Inner rotating ring */}
-      <div 
-        className={cn(
-          "absolute w-[350px] h-[350px] rounded-full transition-all duration-1000",
-          phase === 'enter' && "opacity-0 scale-50",
-          phase === 'glow' && "opacity-100 scale-100",
-          phase === 'exit' && "opacity-0 scale-150"
-        )}
-        style={{
-          border: '1px dashed rgba(34,211,238,0.3)',
-          animation: phase === 'glow' ? 'spinReverse 20s linear infinite' : 'none',
+          background: 'radial-gradient(circle, rgba(34,211,238,0.15) 0%, rgba(34,211,238,0.05) 40%, transparent 70%)',
         }}
       />
 
-      {/* Pulsing glow layers */}
-      <div 
-        className={cn(
-          "absolute w-[400px] h-[400px] rounded-full transition-all duration-700",
-          phase === 'enter' && "opacity-0 scale-0",
-          phase === 'glow' && "opacity-100 scale-100",
-          phase === 'exit' && "opacity-0 scale-200"
-        )}
-        style={{
-          background: 'radial-gradient(circle, rgba(34,211,238,0.2) 0%, rgba(34,211,238,0.05) 40%, transparent 70%)',
-          animation: phase === 'glow' ? 'pulseGlow 2s ease-in-out infinite' : 'none',
-        }}
-      />
-      
-      <div 
-        className={cn(
-          "absolute w-[300px] h-[300px] rounded-full transition-all duration-700 delay-100",
-          phase === 'enter' && "opacity-0 scale-0",
-          phase === 'glow' && "opacity-100 scale-100",
-          phase === 'exit' && "opacity-0 scale-200"
-        )}
-        style={{
-          background: 'radial-gradient(circle, rgba(34,211,238,0.25) 0%, transparent 60%)',
-          animation: phase === 'glow' ? 'pulseGlow 2s ease-in-out infinite 0.5s' : 'none',
-        }}
-      />
-
-      {/* Scanning beam */}
+      {/* Scanning lines effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div 
-          className="absolute w-full h-32 bg-gradient-to-b from-transparent via-cyan-400/10 to-transparent"
+          className="absolute w-full h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent"
           style={{
-            top: `${-20 + (progress * 1.4)}%`,
-            transition: 'top 0.05s linear',
+            top: `${(progress * 1.2) % 120}%`,
+            transition: 'top 0.1s linear',
+          }}
+        />
+        <div 
+          className="absolute w-full h-px bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent"
+          style={{
+            top: `${((progress * 1.2) + 20) % 120}%`,
+            transition: 'top 0.1s linear',
           }}
         />
       </div>
 
-      {/* Logo container */}
+      {/* Logo container with animations */}
       <div className="relative z-10 flex flex-col items-center">
-        
-        {/* Hexagonal frame */}
+        {/* Glowing ring around logo */}
         <div 
           className={cn(
-            "absolute -inset-12 transition-all duration-700",
-            phase === 'enter' && "opacity-0 scale-75 rotate-12",
-            phase === 'glow' && "opacity-100 scale-100 rotate-0",
-            phase === 'exit' && "opacity-0 scale-110 -rotate-6"
+            "absolute -inset-8 rounded-3xl transition-all duration-700",
+            phase === 'enter' && "opacity-0 scale-90",
+            phase === 'glow' && "opacity-100 scale-100",
+            phase === 'exit' && "opacity-0 scale-110"
           )}
-        >
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            <defs>
-              <linearGradient id="hexGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="rgba(34,211,238,0.5)" />
-                <stop offset="50%" stopColor="rgba(34,211,238,0.1)" />
-                <stop offset="100%" stopColor="rgba(34,211,238,0.5)" />
-              </linearGradient>
-            </defs>
-            <polygon 
-              points="100,10 180,55 180,145 100,190 20,145 20,55" 
-              fill="none" 
-              stroke="url(#hexGradient)" 
-              strokeWidth="1"
-              style={{
-                animation: phase === 'glow' ? 'hexPulse 3s ease-in-out infinite' : 'none',
-              }}
-            />
-          </svg>
-        </div>
+          style={{
+            background: 'linear-gradient(135deg, rgba(34,211,238,0.1) 0%, transparent 50%, rgba(34,211,238,0.1) 100%)',
+            boxShadow: phase === 'glow' ? '0 0 60px rgba(34,211,238,0.3), inset 0 0 60px rgba(34,211,238,0.1)' : 'none',
+          }}
+        />
 
-        {/* Main logo with layered animations */}
+        {/* Main logo with animation */}
         <div
           className={cn(
             "relative transition-all duration-700 ease-out",
-            phase === 'enter' && "opacity-0 scale-50",
-            phase === 'glow' && "opacity-100 scale-100",
-            phase === 'exit' && "opacity-0 scale-125"
+            phase === 'enter' && "opacity-0 scale-75 translate-y-8",
+            phase === 'glow' && "opacity-100 scale-100 translate-y-0",
+            phase === 'exit' && "opacity-0 scale-110 -translate-y-4"
           )}
         >
-          {/* Shadow/blur layer */}
-          <img 
-            src={zenLogo} 
-            alt="" 
-            className={cn(
-              "absolute inset-0 w-72 h-auto blur-xl transition-opacity duration-500",
-              phase === 'glow' ? "opacity-60" : "opacity-0"
-            )}
-            style={{
-              filter: 'brightness(1.5) hue-rotate(-10deg)',
-              animation: phase === 'glow' ? 'logoPulse 2s ease-in-out infinite' : 'none',
-            }}
-          />
-          
-          {/* Main logo */}
           <img 
             src={zenLogo} 
             alt="ZEN Technologies" 
-            className="relative w-72 h-auto drop-shadow-2xl"
+            className="w-64 h-auto drop-shadow-2xl"
             style={{
               filter: phase === 'glow' 
-                ? 'drop-shadow(0 0 20px rgba(34,211,238,0.6)) drop-shadow(0 0 40px rgba(34,211,238,0.4)) drop-shadow(0 0 60px rgba(34,211,238,0.2))'
+                ? 'drop-shadow(0 0 30px rgba(34,211,238,0.5)) drop-shadow(0 0 60px rgba(34,211,238,0.3))'
                 : 'none',
-              animation: phase === 'glow' ? 'logoFloat 3s ease-in-out infinite' : 'none',
             }}
           />
           
-          {/* Shimmer overlay */}
+          {/* Reflection effect */}
           <div 
             className={cn(
-              "absolute inset-0 overflow-hidden rounded-lg transition-opacity duration-500",
-              phase === 'glow' ? "opacity-100" : "opacity-0"
+              "absolute -bottom-4 left-0 right-0 h-32 overflow-hidden opacity-30 transition-opacity duration-500",
+              phase === 'glow' ? "opacity-20" : "opacity-0"
             )}
+            style={{
+              transform: 'scaleY(-1)',
+              maskImage: 'linear-gradient(to top, black 0%, transparent 60%)',
+              WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 60%)',
+            }}
           >
-            <div 
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
-              style={{
-                animation: phase === 'glow' ? 'shimmer 2.5s ease-in-out infinite' : 'none',
-              }}
+            <img 
+              src={zenLogo} 
+              alt="" 
+              className="w-64 h-auto blur-sm"
             />
           </div>
         </div>
 
-        {/* Reflection */}
+        {/* Loading indicator */}
         <div 
           className={cn(
-            "mt-4 overflow-hidden transition-opacity duration-500",
-            phase === 'glow' ? "opacity-25" : "opacity-0"
-          )}
-          style={{
-            transform: 'scaleY(-1) perspective(100px) rotateX(30deg)',
-            maskImage: 'linear-gradient(to top, black 0%, transparent 50%)',
-            WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 50%)',
-          }}
-        >
-          <img 
-            src={zenLogo} 
-            alt="" 
-            className="w-72 h-auto blur-sm opacity-60"
-          />
-        </div>
-
-        {/* Loading bar */}
-        <div 
-          className={cn(
-            "mt-12 w-56 transition-all duration-500",
-            phase === 'enter' && "opacity-0 translate-y-8",
+            "mt-16 w-48 transition-all duration-500",
+            phase === 'enter' && "opacity-0 translate-y-4",
             phase === 'glow' && "opacity-100 translate-y-0",
             phase === 'exit' && "opacity-0 -translate-y-4"
           )}
         >
-          <div className="relative h-1.5 bg-slate-800/80 rounded-full overflow-hidden backdrop-blur-sm">
-            {/* Animated background */}
+          <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
             <div 
-              className="absolute inset-0 opacity-30"
-              style={{
-                background: 'linear-gradient(90deg, transparent, rgba(34,211,238,0.3), transparent)',
-                animation: 'loadingBg 1.5s ease-in-out infinite',
-              }}
-            />
-            {/* Progress fill */}
-            <div 
-              className="relative h-full rounded-full transition-all duration-100 ease-out"
+              className="h-full bg-gradient-to-r from-cyan-500 via-cyan-400 to-cyan-500 rounded-full transition-all duration-100"
               style={{ 
                 width: `${progress}%`,
-                background: 'linear-gradient(90deg, rgba(34,211,238,0.8), rgba(34,211,238,1), rgba(34,211,238,0.8))',
-                boxShadow: '0 0 20px rgba(34,211,238,0.8), 0 0 40px rgba(34,211,238,0.4)',
+                boxShadow: '0 0 20px rgba(34,211,238,0.6)',
               }}
             />
           </div>
-          
-          {/* Loading text with typewriter effect */}
-          <div className="flex items-center justify-center gap-2 mt-4">
-            <span className="text-cyan-400/70 text-xs font-light tracking-[0.3em] uppercase">
-              Initializing
-            </span>
-            <span className="flex gap-1">
-              {[0, 1, 2].map((i) => (
-                <span 
-                  key={i}
-                  className="w-1 h-1 bg-cyan-400/70 rounded-full"
-                  style={{
-                    animation: 'dotBounce 1s ease-in-out infinite',
-                    animationDelay: `${i * 0.2}s`,
-                  }}
-                />
-              ))}
-            </span>
-          </div>
-          
-          {/* Percentage */}
-          <p className="text-center text-cyan-300 text-2xl font-mono mt-3 tabular-nums">
-            {Math.round(progress)}%
+          <p className="text-center text-cyan-400/70 text-sm mt-4 font-light tracking-widest">
+            LOADING
           </p>
         </div>
       </div>
 
-      {/* Animated corner brackets */}
-      {[
-        { pos: 'top-6 left-6', rotate: '0deg', delay: '0s' },
-        { pos: 'top-6 right-6', rotate: '90deg', delay: '0.1s' },
-        { pos: 'bottom-6 right-6', rotate: '180deg', delay: '0.2s' },
-        { pos: 'bottom-6 left-6', rotate: '270deg', delay: '0.3s' },
-      ].map((corner, i) => (
-        <div 
-          key={i}
-          className={cn(
-            "absolute w-20 h-20 transition-all duration-700",
-            corner.pos,
-            phase === 'enter' && "opacity-0 scale-0",
-            phase === 'glow' && "opacity-100 scale-100",
-            phase === 'exit' && "opacity-0 scale-150"
-          )}
-          style={{ 
-            transform: `rotate(${corner.rotate})`,
-            transitionDelay: corner.delay,
-          }}
-        >
-          <svg viewBox="0 0 40 40" className="w-full h-full">
-            <path 
-              d="M 0 15 L 0 0 L 15 0" 
-              fill="none" 
-              stroke="rgba(34,211,238,0.5)" 
-              strokeWidth="2"
-              style={{
-                animation: phase === 'glow' ? 'cornerPulse 2s ease-in-out infinite' : 'none',
-                animationDelay: corner.delay,
-              }}
-            />
-          </svg>
-        </div>
-      ))}
+      {/* Corner accents */}
+      <div className="absolute top-8 left-8 w-16 h-16 border-l-2 border-t-2 border-cyan-500/30 rounded-tl-lg" />
+      <div className="absolute top-8 right-8 w-16 h-16 border-r-2 border-t-2 border-cyan-500/30 rounded-tr-lg" />
+      <div className="absolute bottom-8 left-8 w-16 h-16 border-l-2 border-b-2 border-cyan-500/30 rounded-bl-lg" />
+      <div className="absolute bottom-8 right-8 w-16 h-16 border-r-2 border-b-2 border-cyan-500/30 rounded-br-lg" />
 
-      {/* Vignette */}
-      <div 
-        className="absolute inset-0 pointer-events-none" 
-        style={{
-          background: 'radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.6) 100%)',
-        }} 
-      />
-
-      {/* CSS Animations */}
-      <style>{`
-        @keyframes gridMove {
-          0% { transform: translate(0, 0); }
-          100% { transform: translate(50px, 50px); }
-        }
-        @keyframes particleFloat {
-          0%, 100% { transform: translateY(0) translateX(0); }
-          25% { transform: translateY(-20px) translateX(10px); }
-          50% { transform: translateY(-10px) translateX(-10px); }
-          75% { transform: translateY(-30px) translateX(5px); }
-        }
-        @keyframes particlePulse {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.8; }
-        }
-        @keyframes spinSlow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes spinReverse {
-          from { transform: rotate(360deg); }
-          to { transform: rotate(0deg); }
-        }
-        @keyframes dotPulse {
-          0%, 100% { transform: rotate(inherit) translateX(250px) translateY(-50%) scale(1); opacity: 0.5; }
-          50% { transform: rotate(inherit) translateX(250px) translateY(-50%) scale(1.5); opacity: 1; }
-        }
-        @keyframes pulseGlow {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.1); opacity: 0.7; }
-        }
-        @keyframes hexPulse {
-          0%, 100% { stroke-opacity: 0.5; }
-          50% { stroke-opacity: 1; }
-        }
-        @keyframes logoFloat {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-8px); }
-        }
-        @keyframes logoPulse {
-          0%, 100% { opacity: 0.4; transform: scale(1); }
-          50% { opacity: 0.7; transform: scale(1.05); }
-        }
-        @keyframes shimmer {
-          0% { transform: translateX(-200%) skewX(-12deg); }
-          100% { transform: translateX(200%) skewX(-12deg); }
-        }
-        @keyframes cornerPulse {
-          0%, 100% { stroke-opacity: 0.3; }
-          50% { stroke-opacity: 0.8; }
-        }
-        @keyframes dotBounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-4px); }
-        }
-        @keyframes loadingBg {
-          0%, 100% { transform: translateX(-100%); }
-          50% { transform: translateX(100%); }
-        }
-      `}</style>
+      {/* Subtle vignette */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%)',
+      }} />
     </div>
   );
 }
