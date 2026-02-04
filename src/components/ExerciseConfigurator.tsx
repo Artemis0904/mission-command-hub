@@ -44,14 +44,13 @@ const VEHICLE_TARGETS = [
 export type Position = 'standing' | 'crouching' | 'prone';
 
 export interface ExerciseConfig {
-  scenarioTime: number; // in seconds
+  scenarioTime: number;
   targetId: string;
-  range: number; // in meters
+  range: number;
   bullets: number;
   position: Position;
-  // Optional fields based on exercise type
-  groupingSize?: number; // threshold in cm
-  speed?: number; // speed setting 1-10
+  groupingSize?: number;
+  speed?: number;
 }
 
 export interface ExerciseType {
@@ -149,13 +148,8 @@ export function ExerciseConfigurator({
     speed: exerciseType.hasSpeed ? 5 : undefined,
   });
 
-  const availableTargets = exerciseType.includesVehicles 
-    ? [...TARGETS, ...VEHICLE_TARGETS]
-    : TARGETS;
-
   const handleAddExercise = () => {
     onAddExercise(exerciseType, config);
-    // Reset to defaults
     setConfig({
       scenarioTime: 60,
       targetId: 'figure-11',
@@ -174,15 +168,15 @@ export function ExerciseConfigurator({
   };
 
   return (
-    <div className={cn("space-y-4 p-4 rounded-lg bg-muted/30 border border-border", className)}>
+    <div className={cn("space-y-4 p-4 rounded-xl bg-muted/20 border border-border/50", className)}>
       {/* Scenario Time */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label className="flex items-center gap-2 text-sm">
-            <Timer className="w-4 h-4 text-primary" />
+          <Label className="flex items-center gap-2 text-xs">
+            <Timer className="w-3.5 h-3.5 text-blue-500" />
             Scenario Time
           </Label>
-          <Badge variant="secondary" className="font-mono">
+          <Badge variant="secondary" className="font-mono text-xs h-5">
             {formatTime(config.scenarioTime)}
           </Badge>
         </div>
@@ -194,7 +188,7 @@ export function ExerciseConfigurator({
           step={15}
           className="w-full"
         />
-        <div className="flex justify-between text-xs text-muted-foreground">
+        <div className="flex justify-between text-[10px] text-muted-foreground">
           <span>0:15</span>
           <span>5:00</span>
         </div>
@@ -202,23 +196,23 @@ export function ExerciseConfigurator({
 
       {/* Target Selection */}
       <div className="space-y-2">
-        <Label className="flex items-center gap-2 text-sm">
-          <Target className="w-4 h-4 text-primary" />
-          Select Target
+        <Label className="flex items-center gap-2 text-xs">
+          <Target className="w-3.5 h-3.5 text-emerald-500" />
+          Target
         </Label>
         <Select 
           value={config.targetId} 
           onValueChange={(value) => setConfig(prev => ({ ...prev, targetId: value }))}
         >
-          <SelectTrigger className="bg-background border-border">
+          <SelectTrigger className="bg-background/50 border-border/50 h-9 text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="bg-popover">
             {exerciseType.includesVehicles && (
-              <div className="px-2 py-1 text-xs text-muted-foreground font-medium">Human Targets</div>
+              <div className="px-2 py-1 text-[10px] text-muted-foreground font-medium">Human Targets</div>
             )}
             {TARGETS.map(target => (
-              <SelectItem key={target.id} value={target.id}>
+              <SelectItem key={target.id} value={target.id} className="text-xs">
                 <span className="flex items-center gap-2">
                   <User className="w-3 h-3" />
                   {target.name}
@@ -227,9 +221,9 @@ export function ExerciseConfigurator({
             ))}
             {exerciseType.includesVehicles && (
               <>
-                <div className="px-2 py-1 text-xs text-muted-foreground font-medium mt-2">Vehicle Targets</div>
+                <div className="px-2 py-1 text-[10px] text-muted-foreground font-medium mt-2">Vehicle Targets</div>
                 {VEHICLE_TARGETS.map(target => (
-                  <SelectItem key={target.id} value={target.id}>
+                  <SelectItem key={target.id} value={target.id} className="text-xs">
                     <span className="flex items-center gap-2">
                       <Car className="w-3 h-3" />
                       {target.name}
@@ -245,11 +239,11 @@ export function ExerciseConfigurator({
       {/* Range */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label className="flex items-center gap-2 text-sm">
-            <Crosshair className="w-4 h-4 text-primary" />
+          <Label className="flex items-center gap-2 text-xs">
+            <Crosshair className="w-3.5 h-3.5 text-rose-500" />
             Range
           </Label>
-          <Badge variant="secondary" className="font-mono">
+          <Badge variant="secondary" className="font-mono text-xs h-5">
             {config.range}m
           </Badge>
         </div>
@@ -261,7 +255,7 @@ export function ExerciseConfigurator({
           step={25}
           className="w-full"
         />
-        <div className="flex justify-between text-xs text-muted-foreground">
+        <div className="flex justify-between text-[10px] text-muted-foreground">
           <span>25m</span>
           <span>800m</span>
         </div>
@@ -269,23 +263,23 @@ export function ExerciseConfigurator({
 
       {/* Bullets Counter */}
       <div className="space-y-2">
-        <Label className="flex items-center gap-2 text-sm">
-          <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center">
-            <div className="w-2 h-2 rounded-full bg-primary" />
+        <Label className="flex items-center gap-2 text-xs">
+          <div className="w-3.5 h-3.5 rounded-full bg-amber-500/20 flex items-center justify-center">
+            <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
           </div>
-          Bullets
+          Rounds
         </Label>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="icon"
             className="h-8 w-8"
             onClick={() => setConfig(prev => ({ ...prev, bullets: Math.max(1, prev.bullets - 1) }))}
           >
-            <Minus className="w-4 h-4" />
+            <Minus className="w-3 h-3" />
           </Button>
           <div className="flex-1 text-center">
-            <span className="text-2xl font-bold text-primary">{config.bullets}</span>
+            <span className="text-xl font-bold text-amber-500">{config.bullets}</span>
           </div>
           <Button
             variant="outline"
@@ -293,23 +287,25 @@ export function ExerciseConfigurator({
             className="h-8 w-8"
             onClick={() => setConfig(prev => ({ ...prev, bullets: Math.min(30, prev.bullets + 1) }))}
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3 h-3" />
           </Button>
         </div>
       </div>
 
       {/* Position Selection */}
       <div className="space-y-2">
-        <Label className="text-sm">Select Position</Label>
-        <div className="grid grid-cols-3 gap-2">
+        <Label className="text-xs">Position</Label>
+        <div className="grid grid-cols-3 gap-1.5">
           {(['standing', 'crouching', 'prone'] as Position[]).map((pos) => (
             <Button
               key={pos}
               variant={config.position === pos ? 'default' : 'outline'}
               size="sm"
               className={cn(
-                "capitalize",
-                config.position === pos && "bg-primary text-primary-foreground"
+                "capitalize text-xs h-8",
+                config.position === pos 
+                  ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0" 
+                  : ""
               )}
               onClick={() => setConfig(prev => ({ ...prev, position: pos }))}
             >
@@ -323,15 +319,15 @@ export function ExerciseConfigurator({
       {exerciseType.hasGrouping && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="flex items-center gap-2 text-sm">
-              <Circle className="w-4 h-4 text-primary" />
+            <Label className="flex items-center gap-2 text-xs">
+              <Circle className="w-3.5 h-3.5 text-amber-500" />
               Grouping Threshold
             </Label>
-            <Badge variant="secondary" className="font-mono">
+            <Badge variant="secondary" className="font-mono text-xs h-5">
               {config.groupingSize}cm
             </Badge>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Slider
               value={[config.groupingSize || 10]}
               onValueChange={([value]) => setConfig(prev => ({ ...prev, groupingSize: value }))}
@@ -341,10 +337,10 @@ export function ExerciseConfigurator({
               className="flex-1"
             />
             <div 
-              className="w-12 h-12 rounded-full border-2 border-primary flex items-center justify-center text-xs text-primary"
+              className="rounded-full border-2 border-amber-500 flex items-center justify-center text-[10px] text-amber-500 font-medium transition-all"
               style={{ 
-                width: `${Math.max(24, (config.groupingSize || 10) * 2)}px`,
-                height: `${Math.max(24, (config.groupingSize || 10) * 2)}px`,
+                width: `${Math.max(24, (config.groupingSize || 10) * 1.5)}px`,
+                height: `${Math.max(24, (config.groupingSize || 10) * 1.5)}px`,
               }}
             >
               {config.groupingSize}
@@ -357,15 +353,15 @@ export function ExerciseConfigurator({
       {exerciseType.hasSpeed && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="flex items-center gap-2 text-sm">
+            <Label className="flex items-center gap-2 text-xs">
               {exerciseType.id === 'rotate' ? (
-                <RotateCw className="w-4 h-4 text-primary" />
+                <RotateCw className="w-3.5 h-3.5 text-cyan-500" />
               ) : (
-                <Gauge className="w-4 h-4 text-primary" />
+                <Gauge className="w-3.5 h-3.5 text-cyan-500" />
               )}
-              {exerciseType.id === 'rotate' ? 'Rotation Speed' : 'Movement Speed'}
+              {exerciseType.id === 'rotate' ? 'Rotation' : 'Movement'} Speed
             </Label>
-            <Badge variant="secondary" className="font-mono">
+            <Badge variant="secondary" className="font-mono text-xs h-5">
               Level {config.speed}
             </Badge>
           </div>
@@ -377,7 +373,7 @@ export function ExerciseConfigurator({
             step={1}
             className="w-full"
           />
-          <div className="flex justify-between text-xs text-muted-foreground">
+          <div className="flex justify-between text-[10px] text-muted-foreground">
             <span>Slow</span>
             <span>Fast</span>
           </div>
@@ -387,10 +383,10 @@ export function ExerciseConfigurator({
       {/* Add Button */}
       <Button 
         onClick={handleAddExercise}
-        className="w-full btn-interactive hover:glow-primary"
+        className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
       >
         <Plus className="w-4 h-4 mr-2" />
-        Add Exercise
+        Add to Course
       </Button>
     </div>
   );
