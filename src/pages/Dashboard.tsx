@@ -377,46 +377,66 @@ export default function Dashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <Button 
-              variant="outline" 
-              className="h-auto py-5 flex flex-col gap-3 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-lg group rounded-xl"
+            <button 
+              className="h-auto py-6 px-4 flex flex-col items-center gap-3 rounded-2xl cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] group
+                bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/30 dark:border-white/10
+                shadow-[0_4px_16px_rgba(0,0,0,0.06),inset_0_1px_1px_rgba(255,255,255,0.4)]
+                dark:shadow-[0_4px_16px_rgba(0,0,0,0.2),inset_0_1px_1px_rgba(255,255,255,0.1)]
+                hover:shadow-[0_12px_32px_rgba(99,102,241,0.2),inset_0_1px_1px_rgba(255,255,255,0.5)]
+                hover:border-violet-400/50 dark:hover:border-violet-400/30"
               onClick={() => navigate('/custom-courses')}
             >
-              <div className="icon-container-primary w-12 h-12 group-hover:scale-110 transition-transform duration-300">
-                <BookOpen className="w-6 h-6" />
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                style={{ background: 'linear-gradient(135deg, hsl(270 85% 60%) 0%, hsl(290 80% 55%) 100%)' }}>
+                <BookOpen className="w-7 h-7 text-white" />
               </div>
-              <span className="font-medium">Create Course</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-auto py-5 flex flex-col gap-3 transition-all duration-300 hover:-translate-y-1.5 hover:border-accent/50 hover:shadow-lg group rounded-xl"
+              <span className="font-medium text-foreground">Create Course</span>
+            </button>
+            <button 
+              className="h-auto py-6 px-4 flex flex-col items-center gap-3 rounded-2xl cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] group
+                bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/30 dark:border-white/10
+                shadow-[0_4px_16px_rgba(0,0,0,0.06),inset_0_1px_1px_rgba(255,255,255,0.4)]
+                dark:shadow-[0_4px_16px_rgba(0,0,0,0.2),inset_0_1px_1px_rgba(255,255,255,0.1)]
+                hover:shadow-[0_12px_32px_rgba(251,146,60,0.2),inset_0_1px_1px_rgba(255,255,255,0.5)]
+                hover:border-amber-400/50 dark:hover:border-amber-400/30"
               onClick={() => navigate('/stations')}
             >
-              <div className="icon-container-accent w-12 h-12 group-hover:scale-110 transition-transform duration-300">
-                <Monitor className="w-6 h-6" />
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                style={{ background: 'linear-gradient(135deg, hsl(38 95% 55%) 0%, hsl(25 90% 50%) 100%)' }}>
+                <Monitor className="w-7 h-7 text-white" />
               </div>
-              <span className="font-medium">Manage Stations</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-auto py-5 flex flex-col gap-3 transition-all duration-300 hover:-translate-y-1.5 hover:border-[hsl(var(--status-info))]/50 hover:shadow-lg group rounded-xl"
+              <span className="font-medium text-foreground">Manage Stations</span>
+            </button>
+            <button 
+              className="h-auto py-6 px-4 flex flex-col items-center gap-3 rounded-2xl cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] group
+                bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/30 dark:border-white/10
+                shadow-[0_4px_16px_rgba(0,0,0,0.06),inset_0_1px_1px_rgba(255,255,255,0.4)]
+                dark:shadow-[0_4px_16px_rgba(0,0,0,0.2),inset_0_1px_1px_rgba(255,255,255,0.1)]
+                hover:shadow-[0_12px_32px_rgba(59,130,246,0.2),inset_0_1px_1px_rgba(255,255,255,0.5)]
+                hover:border-blue-400/50 dark:hover:border-blue-400/30"
               onClick={() => navigate('/reports')}
             >
-              <div className="icon-container w-12 h-12 bg-[hsl(var(--status-info))]/10 text-[hsl(var(--status-info))] group-hover:scale-110 transition-transform duration-300">
-                <Gauge className="w-6 h-6" />
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                style={{ background: 'linear-gradient(135deg, hsl(210 95% 55%) 0%, hsl(220 90% 60%) 100%)' }}>
+                <Gauge className="w-7 h-7 text-white" />
               </div>
-              <span className="font-medium">View Reports</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-auto py-5 flex flex-col gap-3 transition-all duration-300 hover:-translate-y-1.5 hover:border-[hsl(var(--status-active))]/50 hover:shadow-lg group rounded-xl"
-              onClick={() => navigate('/trainee-progress')}
+              <span className="font-medium text-foreground">View Reports</span>
+            </button>
+            <button 
+              className="h-auto py-6 px-4 flex flex-col items-center gap-3 rounded-2xl cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] group
+                bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/30 dark:border-white/10
+                shadow-[0_4px_16px_rgba(0,0,0,0.06),inset_0_1px_1px_rgba(255,255,255,0.4)]
+                dark:shadow-[0_4px_16px_rgba(0,0,0,0.2),inset_0_1px_1px_rgba(255,255,255,0.1)]
+                hover:shadow-[0_12px_32px_rgba(34,197,94,0.2),inset_0_1px_1px_rgba(255,255,255,0.5)]
+                hover:border-emerald-400/50 dark:hover:border-emerald-400/30"
+              onClick={() => navigate('/station-progress')}
             >
-              <div className="icon-container-success w-12 h-12 group-hover:scale-110 transition-transform duration-300">
-                <Users className="w-6 h-6" />
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                style={{ background: 'linear-gradient(135deg, hsl(150 70% 45%) 0%, hsl(170 65% 45%) 100%)' }}>
+                <Users className="w-7 h-7 text-white" />
               </div>
-              <span className="font-medium">Track Progress</span>
-            </Button>
+              <span className="font-medium text-foreground">Track Progress</span>
+            </button>
           </div>
         </CardContent>
       </AnimatedCard>
