@@ -57,24 +57,25 @@ export default function TopNavigation() {
 
   const NavLinks = ({ mobile = false }: { mobile?: boolean }) => (
     <>
-      {navItems.map((item) => (
+      {navItems.map((item, index) => (
         <Link
           key={item.path}
           to={item.path}
           onClick={() => mobile && setMobileOpen(false)}
           className={cn(
             'group flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200',
-            mobile ? 'w-full' : '',
+            mobile ? 'w-full opacity-0 animate-stagger-fade' : '',
             isActive(item.path)
               ? 'bg-primary/15 text-primary shadow-sm'
-              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+              : 'text-muted-foreground hover:bg-muted hover:text-foreground hover:-translate-y-0.5'
           )}
+          style={mobile ? { animationDelay: `${index * 50}ms`, animationFillMode: 'forwards' } : undefined}
         >
           <div className={cn(
             'p-1.5 rounded-lg transition-all duration-200',
             isActive(item.path) 
               ? 'bg-primary/20' 
-              : 'bg-transparent group-hover:bg-primary/10'
+              : 'bg-transparent group-hover:bg-primary/10 group-hover:scale-110'
           )}>
             <item.icon className={cn(
               'w-4 h-4 transition-all duration-200',
@@ -88,11 +89,11 @@ export default function TopNavigation() {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
+    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-md border-b border-border shadow-sm animate-fade-in-down">
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         {/* Logo */}
         <Link to="/dashboard" className="flex items-center gap-3 mr-6 group">
-          <div className="icon-gradient-primary p-2 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-200">
+          <div className="icon-gradient-primary p-2 rounded-xl shadow-md group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
             <Target className="w-5 h-5" />
           </div>
           <span className="font-bold text-foreground hidden sm:block text-lg">IWTS Control</span>
