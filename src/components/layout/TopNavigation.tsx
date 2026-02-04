@@ -106,7 +106,7 @@ export default function TopNavigation() {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-md border-b border-border shadow-sm animate-fade-in-down">
+    <header className="sticky top-0 z-50 w-full border-b border-white/20 dark:border-white/10 shadow-lg animate-fade-in-down bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl backdrop-saturate-150">
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         {/* Logo */}
         <Link to="/dashboard" className="flex items-center gap-3 mr-6 group">

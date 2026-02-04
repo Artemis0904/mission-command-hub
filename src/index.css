@@ -6,11 +6,11 @@
 
 @layer base {
   :root {
-    /* Light Mode - Clean, bright, professional */
-    --background: 220 20% 97%;
+    /* Light Mode - iOS-inspired with liquid glass */
+    --background: 220 25% 96%;
     --foreground: 220 25% 12%;
 
-    /* Cards with subtle depth */
+    /* Glass card base */
     --card: 0 0% 100%;
     --card-foreground: 220 25% 12%;
 
@@ -39,7 +39,7 @@
     --input: 220 15% 90%;
     --ring: 250 85% 60%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
     /* Status colors - vibrant and clear */
     --status-active: 150 70% 45%;
@@ -64,18 +64,24 @@
     --gradient-accent: linear-gradient(135deg, hsl(15 90% 60%) 0%, hsl(35 90% 55%) 100%);
     --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 20% 98%) 100%);
     --gradient-success: linear-gradient(135deg, hsl(150 70% 45%) 0%, hsl(170 65% 45%) 100%);
+    
+    /* Liquid glass background */
+    --glass-bg: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.4) 0%, 
+      rgba(255, 255, 255, 0.1) 50%, 
+      rgba(255, 255, 255, 0.3) 100%);
   }
 
   .dark {
-    /* Dark Mode - Rich, modern, comfortable */
-    --background: 230 25% 9%;
+    /* Dark Mode - iOS-inspired liquid glass */
+    --background: 230 25% 8%;
     --foreground: 220 20% 95%;
 
-    /* Elevated cards */
-    --card: 230 22% 14%;
+    /* Glass card base */
+    --card: 230 22% 18%;
     --card-foreground: 220 20% 95%;
 
-    --popover: 230 22% 16%;
+    --popover: 230 22% 20%;
     --popover-foreground: 220 20% 95%;
 
     /* Vibrant violet primary */
@@ -96,7 +102,7 @@
     --destructive: 0 70% 55%;
     --destructive-foreground: 220 20% 95%;
 
-    --border: 230 20% 22%;
+    --border: 230 20% 25%;
     --input: 230 20% 18%;
     --ring: 250 85% 65%;
 
@@ -109,7 +115,7 @@
     --status-offline: 230 15% 30%;
 
     /* Sidebar */
-    --sidebar-background: 230 25% 7%;
+    --sidebar-background: 230 25% 6%;
     --sidebar-foreground: 220 20% 88%;
     --sidebar-primary: 250 85% 65%;
     --sidebar-primary-foreground: 230 25% 9%;
@@ -123,6 +129,12 @@
     --gradient-accent: linear-gradient(135deg, hsl(15 85% 55%) 0%, hsl(35 85% 50%) 100%);
     --gradient-card: linear-gradient(180deg, hsl(230 22% 16%) 0%, hsl(230 22% 12%) 100%);
     --gradient-success: linear-gradient(135deg, hsl(150 65% 50%) 0%, hsl(170 60% 45%) 100%);
+    
+    /* Liquid glass background for dark */
+    --glass-bg: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.08) 0%, 
+      rgba(255, 255, 255, 0.02) 50%, 
+      rgba(255, 255, 255, 0.05) 100%);
   }
 
   .light {
@@ -229,17 +241,41 @@
     @apply bg-[hsl(var(--status-offline))] text-muted-foreground;
   }
 
-  /* Modern card with glass morphism effect */
+  /* iOS-style Liquid Glass Cards */
   .tactical-card {
-    @apply rounded-xl border;
-    background: hsl(var(--card) / 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-color: hsl(var(--border) / 0.5);
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 4px 24px -4px hsl(var(--foreground) / 0.06), 
-                0 2px 8px -2px hsl(var(--foreground) / 0.03),
-                inset 0 1px 0 hsl(var(--background) / 0.5);
+    @apply rounded-2xl relative overflow-hidden;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--card) / 0.4) 0%,
+      hsl(var(--card) / 0.2) 50%,
+      hsl(var(--card) / 0.3) 100%
+    );
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid hsl(var(--foreground) / 0.08);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 
+      0 8px 32px hsl(var(--foreground) / 0.08),
+      0 2px 8px hsl(var(--foreground) / 0.04),
+      inset 0 1px 1px hsl(var(--background) / 0.6),
+      inset 0 -1px 1px hsl(var(--foreground) / 0.05);
+  }
+
+  /* Top highlight reflection */
+  .tactical-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(
+      180deg,
+      hsl(var(--background) / 0.3) 0%,
+      transparent 100%
+    );
+    pointer-events: none;
+    border-radius: inherit;
   }
 
   .tactical-card-hover {
@@ -247,12 +283,19 @@
   }
 
   .tactical-card-hover:hover {
-    background: hsl(var(--card) / 0.85);
-    border-color: hsl(var(--primary) / 0.4);
-    transform: translateY(-6px) scale(1.01);
-    box-shadow: 0 20px 40px -12px hsl(var(--primary) / 0.2),
-                0 8px 16px -6px hsl(var(--foreground) / 0.08),
-                inset 0 1px 0 hsl(var(--background) / 0.6);
+    background: linear-gradient(
+      135deg,
+      hsl(var(--card) / 0.5) 0%,
+      hsl(var(--card) / 0.3) 50%,
+      hsl(var(--card) / 0.4) 100%
+    );
+    border-color: hsl(var(--primary) / 0.3);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+      0 24px 48px hsl(var(--primary) / 0.15),
+      0 12px 24px hsl(var(--foreground) / 0.1),
+      inset 0 1px 2px hsl(var(--background) / 0.8),
+      inset 0 -1px 1px hsl(var(--foreground) / 0.05);
   }
 
   .tactical-card-hover:active {
