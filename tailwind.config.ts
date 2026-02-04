@@ -166,6 +166,10 @@ export default {
           from: { opacity: "0", transform: "translateY(12px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        "shimmer": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -189,6 +193,7 @@ export default {
         "pop": "pop 0.3s ease-out",
         "slide-fade-in": "slide-fade-in 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
         "stagger-fade": "stagger-fade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "shimmer": "shimmer 1.5s ease-in-out infinite",
       },
       boxShadow: {
         "tactical": "0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
