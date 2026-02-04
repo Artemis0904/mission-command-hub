@@ -16,6 +16,7 @@ import {
   Menu,
   Sun,
   Moon,
+  Power,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -51,6 +52,22 @@ export default function TopNavigation() {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const handleExitToDesktop = () => {
+    // This will be used when packaged as a desktop app (Electron/Tauri)
+    // Check if running in Electron
+    if ((window as any).electronAPI?.quit) {
+      (window as any).electronAPI.quit();
+    } 
+    // Check if running in Tauri
+    else if ((window as any).__TAURI__) {
+      (window as any).__TAURI__.process.exit(0);
+    }
+    // Fallback: try to close window (works in some contexts)
+    else {
+      window.close();
+    }
   };
 
   const isActive = (path: string) => location.pathname === path;
@@ -161,6 +178,14 @@ export default function TopNavigation() {
               >
                 <LogOut className="w-4 h-4 mr-3" />
                 <span className="font-medium">Logout</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem 
+                onClick={handleExitToDesktop} 
+                className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg cursor-pointer px-2 py-2.5"
+              >
+                <Power className="w-4 h-4 mr-3" />
+                <span className="font-medium">Exit to Desktop</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
