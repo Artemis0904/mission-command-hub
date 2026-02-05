@@ -2,15 +2,12 @@ import { useState } from 'react';
 import { 
   Trophy, 
   Medal,
-  Target,
   Clock,
   Percent,
   Filter,
   Crown,
   Award,
   Crosshair,
-  Sparkles,
-  TrendingUp,
   Users,
   Star,
 } from 'lucide-react';
@@ -136,7 +133,7 @@ export default function Leaderboards() {
             </div>
             Leaderboards
           </h1>
-          <p className="text-muted-foreground mt-1">Top performing trainees by score and accuracy</p>
+          <p className="text-muted-foreground mt-1">Top performing trainees by accuracy</p>
         </div>
         <div className="flex gap-3">
           <Select value={dateRange} onValueChange={setDateRange}>
@@ -197,13 +194,7 @@ export default function Leaderboards() {
                     <h3 className="font-bold text-lg text-foreground mb-1">{trainee.name}</h3>
                     <p className="text-sm text-muted-foreground mb-4">{trainee.rank} • {trainee.unit}</p>
                     
-                    <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-border">
-                      <div>
-                        <p className="text-2xl font-bold text-primary">
-                          <AnimatedCounter value={trainee.totalScore} duration={1200} delay={position * 100} />
-                        </p>
-                        <p className="text-xs text-muted-foreground">Score</p>
-                      </div>
+                    <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-border">
                       <div>
                         <p className="text-2xl font-bold text-foreground">{stats.accuracy}%</p>
                         <p className="text-xs text-muted-foreground">Accuracy</p>
@@ -370,13 +361,7 @@ export default function Leaderboards() {
                       <h3 className="font-bold text-lg text-foreground mb-1">{entry.trainee?.name}</h3>
                       <p className="text-sm text-muted-foreground mb-4">{entry.trainee?.rank} • {entry.trainee?.unit}</p>
                       
-                      <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-border">
-                        <div>
-                          <p className="text-2xl font-bold text-primary">
-                            <AnimatedCounter value={entry.totalScore} duration={1200} delay={position * 100} />
-                          </p>
-                          <p className="text-xs text-muted-foreground">Score</p>
-                        </div>
+                      <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-border">
                         <div>
                           <p className="text-2xl font-bold text-foreground">{entry.accuracy}%</p>
                           <p className="text-xs text-muted-foreground">Accuracy</p>
