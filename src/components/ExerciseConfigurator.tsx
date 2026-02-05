@@ -189,30 +189,121 @@ export function ExerciseConfigurator({
 
   return (
     <div className={cn("space-y-4 p-4 rounded-xl bg-muted/20 border border-border/50", className)}>
-      {/* Scenario Time */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label className="flex items-center gap-2 text-xs">
-            <Timer className="w-3.5 h-3.5 text-blue-500" />
-            Scenario Time
-          </Label>
-          <Badge variant="secondary" className="font-mono text-xs h-5">
-            {formatTime(config.scenarioTime)}
-          </Badge>
+      {/* Number of Snaps, Up Time, Down Time - only for Snap Shot Target (at top) */}
+      {exerciseType.isSnapShot && (
+        <>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2 text-xs">
+              <Zap className="w-3.5 h-3.5 text-yellow-500" />
+              Number of Snaps
+            </Label>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setConfig(prev => ({ ...prev, numberOfSnaps: Math.max(1, (prev.numberOfSnaps || 5) - 1) }))}
+              >
+                <Minus className="w-3 h-3" />
+              </Button>
+              <div className="flex-1 text-center">
+                <span className="text-xl font-bold text-yellow-500">{config.numberOfSnaps}</span>
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setConfig(prev => ({ ...prev, numberOfSnaps: Math.min(30, (prev.numberOfSnaps || 5) + 1) }))}
+              >
+                <Plus className="w-3 h-3" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2 text-xs">
+              <ArrowUp className="w-3.5 h-3.5 text-emerald-500" />
+              Up Time (seconds)
+            </Label>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setConfig(prev => ({ ...prev, upTime: Math.max(1, (prev.upTime || 3) - 1) }))}
+              >
+                <Minus className="w-3 h-3" />
+              </Button>
+              <div className="flex-1 text-center">
+                <span className="text-xl font-bold text-emerald-500">{config.upTime}s</span>
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setConfig(prev => ({ ...prev, upTime: Math.min(60, (prev.upTime || 3) + 1) }))}
+              >
+                <Plus className="w-3 h-3" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2 text-xs">
+              <ArrowDown className="w-3.5 h-3.5 text-rose-500" />
+              Down Time (seconds)
+            </Label>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setConfig(prev => ({ ...prev, downTime: Math.max(1, (prev.downTime || 2) - 1) }))}
+              >
+                <Minus className="w-3 h-3" />
+              </Button>
+              <div className="flex-1 text-center">
+                <span className="text-xl font-bold text-rose-500">{config.downTime}s</span>
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setConfig(prev => ({ ...prev, downTime: Math.min(60, (prev.downTime || 2) + 1) }))}
+              >
+                <Plus className="w-3 h-3" />
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Scenario Time - hide for snap shot */}
+      {!exerciseType.isSnapShot && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label className="flex items-center gap-2 text-xs">
+              <Timer className="w-3.5 h-3.5 text-blue-500" />
+              Scenario Time
+            </Label>
+            <Badge variant="secondary" className="font-mono text-xs h-5">
+              {formatTime(config.scenarioTime)}
+            </Badge>
+          </div>
+          <Slider
+            value={[config.scenarioTime]}
+            onValueChange={([value]) => setConfig(prev => ({ ...prev, scenarioTime: value }))}
+            min={15}
+            max={300}
+            step={15}
+            className="w-full"
+          />
+          <div className="flex justify-between text-[10px] text-muted-foreground">
+            <span>0:15</span>
+            <span>5:00</span>
+          </div>
         </div>
-        <Slider
-          value={[config.scenarioTime]}
-          onValueChange={([value]) => setConfig(prev => ({ ...prev, scenarioTime: value }))}
-          min={15}
-          max={300}
-          step={15}
-          className="w-full"
-        />
-        <div className="flex justify-between text-[10px] text-muted-foreground">
-          <span>0:15</span>
-          <span>5:00</span>
-        </div>
-      </div>
+      )}
 
       {/* Target Selection */}
       <div className="space-y-2">
@@ -281,6 +372,29 @@ export function ExerciseConfigurator({
         </div>
       </div>
 
+      {/* Position Selection */}
+      <div className="space-y-2">
+        <Label className="text-xs">Position</Label>
+        <div className="grid grid-cols-3 gap-1.5">
+          {(['standing', 'crouching', 'prone'] as Position[]).map((pos) => (
+            <Button
+              key={pos}
+              variant={config.position === pos ? 'default' : 'outline'}
+              size="sm"
+              className={cn(
+                "capitalize text-xs h-8",
+                config.position === pos 
+                  ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0" 
+                  : ""
+              )}
+              onClick={() => setConfig(prev => ({ ...prev, position: pos }))}
+            >
+              {pos}
+            </Button>
+          ))}
+        </div>
+      </div>
+
       {/* Bullets Counter - hide for snap shot */}
       {!exerciseType.isSnapShot && (
         <div className="space-y-2">
@@ -314,60 +428,6 @@ export function ExerciseConfigurator({
         </div>
       )}
 
-      {/* Number of Snaps - only for Snap Shot Target */}
-      {exerciseType.isSnapShot && (
-        <div className="space-y-2">
-          <Label className="flex items-center gap-2 text-xs">
-            <Zap className="w-3.5 h-3.5 text-yellow-500" />
-            Number of Snaps
-          </Label>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setConfig(prev => ({ ...prev, numberOfSnaps: Math.max(1, (prev.numberOfSnaps || 5) - 1) }))}
-            >
-              <Minus className="w-3 h-3" />
-            </Button>
-            <div className="flex-1 text-center">
-              <span className="text-xl font-bold text-yellow-500">{config.numberOfSnaps}</span>
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setConfig(prev => ({ ...prev, numberOfSnaps: Math.min(30, (prev.numberOfSnaps || 5) + 1) }))}
-            >
-              <Plus className="w-3 h-3" />
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Position Selection */}
-      <div className="space-y-2">
-        <Label className="text-xs">Position</Label>
-        <div className="grid grid-cols-3 gap-1.5">
-          {(['standing', 'crouching', 'prone'] as Position[]).map((pos) => (
-            <Button
-              key={pos}
-              variant={config.position === pos ? 'default' : 'outline'}
-              size="sm"
-              className={cn(
-                "capitalize text-xs h-8",
-                config.position === pos 
-                  ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0" 
-                  : ""
-              )}
-              onClick={() => setConfig(prev => ({ ...prev, position: pos }))}
-            >
-              {pos}
-            </Button>
-          ))}
-        </div>
-      </div>
-
       {/* Grouping Size (only for Grouping type) */}
       {exerciseType.hasGrouping && (
         <div className="space-y-2">
@@ -400,67 +460,6 @@ export function ExerciseConfigurator({
             </div>
           </div>
         </div>
-      )}
-
-      {/* Up Time & Down Time - only for Snap Shot Target */}
-      {exerciseType.isSnapShot && (
-        <>
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-xs">
-              <ArrowUp className="w-3.5 h-3.5 text-emerald-500" />
-              Up Time (seconds)
-            </Label>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setConfig(prev => ({ ...prev, upTime: Math.max(1, (prev.upTime || 3) - 1) }))}
-              >
-                <Minus className="w-3 h-3" />
-              </Button>
-              <div className="flex-1 text-center">
-                <span className="text-xl font-bold text-emerald-500">{config.upTime}s</span>
-              </div>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setConfig(prev => ({ ...prev, upTime: Math.min(60, (prev.upTime || 3) + 1) }))}
-              >
-                <Plus className="w-3 h-3" />
-              </Button>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-xs">
-              <ArrowDown className="w-3.5 h-3.5 text-rose-500" />
-              Down Time (seconds)
-            </Label>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setConfig(prev => ({ ...prev, downTime: Math.max(1, (prev.downTime || 2) - 1) }))}
-              >
-                <Minus className="w-3 h-3" />
-              </Button>
-              <div className="flex-1 text-center">
-                <span className="text-xl font-bold text-rose-500">{config.downTime}s</span>
-              </div>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setConfig(prev => ({ ...prev, downTime: Math.min(60, (prev.downTime || 2) + 1) }))}
-              >
-                <Plus className="w-3 h-3" />
-              </Button>
-            </div>
-          </div>
-        </>
       )}
 
       {/* Speed (for rotating/moving types) */}
