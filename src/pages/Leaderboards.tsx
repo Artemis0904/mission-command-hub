@@ -417,12 +417,6 @@ export default function Leaderboards() {
                         <th>Trainee</th>
                         <th>
                           <div className="flex items-center gap-1">
-                            <Target className="w-4 h-4" />
-                            Total Score
-                          </div>
-                        </th>
-                        <th>
-                          <div className="flex items-center gap-1">
                             <Percent className="w-4 h-4" />
                             Accuracy
                           </div>
@@ -464,12 +458,6 @@ export default function Leaderboards() {
                                   <p className="text-xs text-muted-foreground">{entry.trainee?.unit}</p>
                                 </div>
                               </div>
-                            </td>
-                            <td>
-                              <span className="font-bold text-primary text-lg flex items-center gap-1">
-                                <Sparkles className="w-4 h-4" />
-                                {entry.totalScore}
-                              </span>
                             </td>
                             <td>
                               <Badge 
