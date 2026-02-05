@@ -10,6 +10,9 @@ import {
   Minus,
   User,
   Car,
+  Zap,
+  ArrowUp,
+  ArrowDown,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -51,6 +54,9 @@ export interface ExerciseConfig {
   position: Position;
   groupingSize?: number;
   speed?: number;
+  numberOfSnaps?: number;
+  upTime?: number;
+  downTime?: number;
 }
 
 export interface ExerciseType {
@@ -61,6 +67,7 @@ export interface ExerciseType {
   hasSpeed?: boolean;
   hasGrouping?: boolean;
   includesVehicles?: boolean;
+  isSnapShot?: boolean;
 }
 
 export const EXERCISE_TYPES: ExerciseType[] = [
@@ -125,6 +132,13 @@ export const EXERCISE_TYPES: ExerciseType[] = [
     description: 'Traversing field of fire exercise',
     icon: 'move-horizontal',
   },
+  { 
+    id: 'snap-shot-target', 
+    name: 'Snap Shot Target', 
+    description: 'Quick reaction snap shooting exercise',
+    icon: 'zap',
+    isSnapShot: true,
+  },
 ];
 
 interface ExerciseConfiguratorProps {
@@ -146,6 +160,9 @@ export function ExerciseConfigurator({
     position: 'standing',
     groupingSize: exerciseType.hasGrouping ? 10 : undefined,
     speed: exerciseType.hasSpeed ? 5 : undefined,
+    numberOfSnaps: exerciseType.isSnapShot ? 5 : undefined,
+    upTime: exerciseType.isSnapShot ? 3 : undefined,
+    downTime: exerciseType.isSnapShot ? 2 : undefined,
   });
 
   const handleAddExercise = () => {
@@ -158,6 +175,9 @@ export function ExerciseConfigurator({
       position: 'standing',
       groupingSize: exerciseType.hasGrouping ? 10 : undefined,
       speed: exerciseType.hasSpeed ? 5 : undefined,
+      numberOfSnaps: exerciseType.isSnapShot ? 5 : undefined,
+      upTime: exerciseType.isSnapShot ? 3 : undefined,
+      downTime: exerciseType.isSnapShot ? 2 : undefined,
     });
   };
 
@@ -261,36 +281,69 @@ export function ExerciseConfigurator({
         </div>
       </div>
 
-      {/* Bullets Counter */}
-      <div className="space-y-2">
-        <Label className="flex items-center gap-2 text-xs">
-          <div className="w-3.5 h-3.5 rounded-full bg-amber-500/20 flex items-center justify-center">
-            <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+      {/* Bullets Counter - hide for snap shot */}
+      {!exerciseType.isSnapShot && (
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2 text-xs">
+            <div className="w-3.5 h-3.5 rounded-full bg-amber-500/20 flex items-center justify-center">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+            </div>
+            Rounds
+          </Label>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setConfig(prev => ({ ...prev, bullets: Math.max(1, prev.bullets - 1) }))}
+            >
+              <Minus className="w-3 h-3" />
+            </Button>
+            <div className="flex-1 text-center">
+              <span className="text-xl font-bold text-amber-500">{config.bullets}</span>
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setConfig(prev => ({ ...prev, bullets: Math.min(30, prev.bullets + 1) }))}
+            >
+              <Plus className="w-3 h-3" />
+            </Button>
           </div>
-          Rounds
-        </Label>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => setConfig(prev => ({ ...prev, bullets: Math.max(1, prev.bullets - 1) }))}
-          >
-            <Minus className="w-3 h-3" />
-          </Button>
-          <div className="flex-1 text-center">
-            <span className="text-xl font-bold text-amber-500">{config.bullets}</span>
-          </div>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => setConfig(prev => ({ ...prev, bullets: Math.min(30, prev.bullets + 1) }))}
-          >
-            <Plus className="w-3 h-3" />
-          </Button>
         </div>
-      </div>
+      )}
+
+      {/* Number of Snaps - only for Snap Shot Target */}
+      {exerciseType.isSnapShot && (
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2 text-xs">
+            <Zap className="w-3.5 h-3.5 text-yellow-500" />
+            Number of Snaps
+          </Label>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setConfig(prev => ({ ...prev, numberOfSnaps: Math.max(1, (prev.numberOfSnaps || 5) - 1) }))}
+            >
+              <Minus className="w-3 h-3" />
+            </Button>
+            <div className="flex-1 text-center">
+              <span className="text-xl font-bold text-yellow-500">{config.numberOfSnaps}</span>
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setConfig(prev => ({ ...prev, numberOfSnaps: Math.min(30, (prev.numberOfSnaps || 5) + 1) }))}
+            >
+              <Plus className="w-3 h-3" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Position Selection */}
       <div className="space-y-2">
@@ -347,6 +400,67 @@ export function ExerciseConfigurator({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Up Time & Down Time - only for Snap Shot Target */}
+      {exerciseType.isSnapShot && (
+        <>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2 text-xs">
+              <ArrowUp className="w-3.5 h-3.5 text-emerald-500" />
+              Up Time (seconds)
+            </Label>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setConfig(prev => ({ ...prev, upTime: Math.max(1, (prev.upTime || 3) - 1) }))}
+              >
+                <Minus className="w-3 h-3" />
+              </Button>
+              <div className="flex-1 text-center">
+                <span className="text-xl font-bold text-emerald-500">{config.upTime}s</span>
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setConfig(prev => ({ ...prev, upTime: Math.min(60, (prev.upTime || 3) + 1) }))}
+              >
+                <Plus className="w-3 h-3" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2 text-xs">
+              <ArrowDown className="w-3.5 h-3.5 text-rose-500" />
+              Down Time (seconds)
+            </Label>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setConfig(prev => ({ ...prev, downTime: Math.max(1, (prev.downTime || 2) - 1) }))}
+              >
+                <Minus className="w-3 h-3" />
+              </Button>
+              <div className="flex-1 text-center">
+                <span className="text-xl font-bold text-rose-500">{config.downTime}s</span>
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setConfig(prev => ({ ...prev, downTime: Math.min(60, (prev.downTime || 2) + 1) }))}
+              >
+                <Plus className="w-3 h-3" />
+              </Button>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Speed (for rotating/moving types) */}
