@@ -134,6 +134,11 @@ const typeIconsConfig: Record<string, { icon: React.ReactNode; color: string; bg
     color: 'text-teal-500', 
     bg: 'bg-teal-500/10' 
   },
+  'snap-shot-target': { 
+    icon: <Zap className="w-4 h-4" />, 
+    color: 'text-yellow-500', 
+    bg: 'bg-yellow-500/10' 
+  },
 };
 
 // Configured exercise with type and settings
