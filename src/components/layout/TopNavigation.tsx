@@ -107,7 +107,12 @@ export default function TopNavigation() {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/20 dark:border-white/10 shadow-lg animate-fade-in-down bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl backdrop-saturate-150">
+    <header className={cn(
+      "sticky top-0 z-50 w-full border-b shadow-lg animate-fade-in-down backdrop-blur-xl backdrop-saturate-150",
+      theme === 'army' 
+        ? 'bg-[hsl(90_12%_15%/0.85)] border-[hsl(80_20%_30%/0.3)]' 
+        : 'bg-white/60 dark:bg-slate-900/60 border-white/20 dark:border-white/10'
+    )}>
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         {/* Logo */}
         <Link to="/dashboard" className="flex items-center gap-3 mr-6 group">
