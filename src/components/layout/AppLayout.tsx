@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import TopNavigation from './TopNavigation';
 import { useTheme } from '@/hooks/useTheme';
-import camoBg from '@/assets/camo-bg.jpg';
+import armyBg from '@/assets/army-bg.jpg';
 
 interface AppLayoutProps {
   children: ReactNode;
