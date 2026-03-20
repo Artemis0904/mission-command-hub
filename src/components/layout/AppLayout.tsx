@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import TopNavigation from './TopNavigation';
 import { useTheme } from '@/hooks/useTheme';
-import camoBg from '@/assets/camo-bg.jpg';
+import armyBg from '@/assets/army-bg.jpg';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -16,8 +16,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
       <div className="fixed inset-0 -z-10">
         {theme === 'army' ? (
           <>
-            <img src={camoBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-black/40" />
+            <img src={armyBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-[hsl(90_15%_8%/0.3)]" />
           </>
         ) : (
           <>
