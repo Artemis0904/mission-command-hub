@@ -628,9 +628,214 @@
       background-position: -200% 0;
     }
   }
+
+  /* ============================================
+     ARMY MODE - Global Component Overrides
+     ============================================ */
+
+  /* Army mode: rustic rough edges on cards */
+  .army .tactical-card,
+  .army .tactical-card-hover {
+    @apply rounded-sm;
+    border: 2px solid hsl(80 20% 28% / 0.6);
+    border-image: none;
+    box-shadow: 
+      0 4px 16px hsl(0 0% 0% / 0.35),
+      inset 0 1px 0 hsl(80 20% 35% / 0.15),
+      inset 0 -1px 0 hsl(0 0% 0% / 0.2);
+    position: relative;
+  }
+
+  /* Worn edge effect via pseudo-elements */
+  .army .tactical-card::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border: 1px solid hsl(80 15% 22% / 0.5);
+    border-radius: inherit;
+    pointer-events: none;
+    mask-image: linear-gradient(
+      135deg,
+      rgba(0,0,0,0.8) 0%,
+      rgba(0,0,0,0.3) 20%,
+      rgba(0,0,0,0.9) 40%,
+      rgba(0,0,0,0.4) 60%,
+      rgba(0,0,0,0.7) 80%,
+      rgba(0,0,0,0.5) 100%
+    );
+  }
+
+  /* Army: remove glass reflection on cards */
+  .army .tactical-card::before {
+    background: linear-gradient(
+      180deg,
+      hsl(80 15% 25% / 0.1) 0%,
+      transparent 100%
+    );
+    height: 30%;
+  }
+
+  /* Army buttons */
+  .army button[class*="bg-primary"],
+  .army [class*="btn-interactive"] {
+    @apply rounded-sm;
+  }
+
+  .army .btn-interactive:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 4px 12px hsl(0 0% 0% / 0.3);
+  }
+
+  /* Army data tables */
+  .army .data-table th {
+    background: hsl(90 12% 12% / 0.9);
+    border-bottom: 2px solid hsl(80 30% 30% / 0.5);
+    @apply text-[hsl(80_20%_65%)] uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .army .data-table td {
+    border-color: hsl(80 15% 22% / 0.3);
+  }
+
+  .army .data-table tr:hover td {
+    background: hsl(80 12% 16% / 0.5);
+  }
+
+  /* Army badges */
+  .army [class*="Badge"],
+  .army .badge {
+    @apply rounded-sm;
+    letter-spacing: 0.05em;
+  }
+
+  /* Army inputs and selects */
+  .army input,
+  .army select,
+  .army textarea,
+  .army [role="combobox"] {
+    @apply rounded-sm;
+    background: hsl(90 10% 14%) !important;
+    border-color: hsl(80 15% 28%) !important;
+  }
+
+  .army input:focus,
+  .army select:focus,
+  .army textarea:focus {
+    border-color: hsl(80 50% 40%) !important;
+    box-shadow: 0 0 0 2px hsl(80 50% 40% / 0.2) !important;
+  }
+
+  /* Army dialogs */
+  .army [role="dialog"] {
+    @apply rounded-sm;
+    background: hsl(90 12% 14%) !important;
+    border: 2px solid hsl(80 20% 28% / 0.6) !important;
+  }
+
+  /* Army icon containers */
+  .army .icon-gradient-primary {
+    background: linear-gradient(135deg, hsl(80 50% 35%) 0%, hsl(100 40% 30%) 100%);
+    @apply rounded-sm;
+  }
+
+  .army .icon-gradient-accent {
+    background: linear-gradient(135deg, hsl(45 70% 40%) 0%, hsl(35 65% 35%) 100%);
+    @apply rounded-sm;
+  }
+
+  .army .icon-gradient-success {
+    background: linear-gradient(135deg, hsl(120 45% 32%) 0%, hsl(140 40% 28%) 100%);
+    @apply rounded-sm;
+  }
+
+  .army .icon-container {
+    @apply rounded-sm;
+  }
+
+  /* Army tabs */
+  .army [role="tablist"] {
+    background: hsl(90 10% 12%) !important;
+    @apply rounded-sm;
+  }
+
+  .army [role="tab"] {
+    @apply rounded-sm;
+  }
+
+  .army [role="tab"][data-state="active"] {
+    background: hsl(80 50% 35%) !important;
+  }
+
+  /* Army progress bars */
+  .army [role="progressbar"] {
+    @apply rounded-sm;
+    background: hsl(90 10% 20%);
+  }
+
+  .army [role="progressbar"] > div {
+    background: hsl(80 50% 38%);
+  }
+
+  /* Army scrollbar */
+  .army ::-webkit-scrollbar-track {
+    background: hsl(90 10% 12%);
+  }
+
+  .army ::-webkit-scrollbar-thumb {
+    background: hsl(80 15% 28%);
+    border-radius: 2px;
+  }
+
+  /* Army select dropdown */
+  .army [role="listbox"] {
+    @apply rounded-sm;
+    background: hsl(90 12% 14%) !important;
+    border: 1px solid hsl(80 15% 28%) !important;
+  }
+
+  /* Army quick action buttons (dashboard) */
+  .army button[class*="rounded-2xl"] {
+    @apply rounded-sm;
+    background: hsl(90 12% 14% / 0.85) !important;
+    border: 1px solid hsl(80 20% 28% / 0.5) !important;
+    box-shadow: 0 4px 12px hsl(0 0% 0% / 0.3) !important;
+  }
+
+  .army button[class*="rounded-2xl"]:hover {
+    background: hsl(90 12% 18% / 0.9) !important;
+    border-color: hsl(80 50% 40% / 0.5) !important;
+    box-shadow: 0 8px 20px hsl(0 0% 0% / 0.4) !important;
+  }
+
+  /* Army border-left accents → olive/khaki tones */
+  .army [class*="border-l-blue-500"] { border-left-color: hsl(80 50% 40%); }
+  .army [class*="border-l-emerald-500"] { border-left-color: hsl(120 40% 35%); }
+  .army [class*="border-l-amber-500"] { border-left-color: hsl(45 70% 40%); }
+  .army [class*="border-l-violet-500"] { border-left-color: hsl(80 30% 50%); }
+  .army [class*="border-l-slate-400"] { border-left-color: hsl(80 10% 35%); }
+  .army [class*="border-l-rose-500"] { border-left-color: hsl(0 50% 40%); }
+  .army [class*="border-l-cyan-500"] { border-left-color: hsl(170 40% 35%); }
+  .army [class*="border-l-sky-500"] { border-left-color: hsl(180 35% 35%); }
+
+  /* Army: muted stat colors */
+  .army [class*="text-emerald-"] { color: hsl(120 40% 50%) !important; }
+  .army [class*="text-amber-"] { color: hsl(45 70% 50%) !important; }
+  .army [class*="text-cyan-"] { color: hsl(170 40% 45%) !important; }
+  .army [class*="text-violet-"] { color: hsl(80 30% 55%) !important; }
+  .army [class*="text-rose-"] { color: hsl(0 50% 50%) !important; }
+  .army [class*="text-sky-"] { color: hsl(180 35% 45%) !important; }
+
+  /* Army glow overrides */
+  .army .glow-primary {
+    box-shadow: 0 0 16px hsl(80 50% 40% / 0.25);
+  }
+
+  .army .glow-accent {
+    box-shadow: 0 0 16px hsl(45 70% 40% / 0.25);
+  }
 }
 
-@layer utilities {
   /* Glow effects */
   .glow-primary {
     box-shadow: 0 0 24px hsl(var(--primary) / 0.35);
