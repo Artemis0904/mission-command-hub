@@ -312,7 +312,7 @@
     @apply bg-[hsl(var(--status-offline))] text-muted-foreground;
   }
 
-  /* iOS-style Liquid Glass Cards */
+  /* iOS-style Liquid Glass Cards / Army tactical cards */
   .tactical-card {
     @apply rounded-2xl relative overflow-hidden;
     background: linear-gradient(
