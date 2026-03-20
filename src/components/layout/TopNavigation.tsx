@@ -81,23 +81,30 @@ export default function TopNavigation() {
           to={item.path}
           onClick={() => mobile && setMobileOpen(false)}
           className={cn(
-            'group flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200',
+            'group flex items-center gap-2.5 px-3 py-2 text-sm font-medium transition-all duration-200',
             mobile ? 'w-full opacity-0 animate-stagger-fade' : '',
+            theme === 'army' ? 'rounded-lg' : 'rounded-xl',
             isActive(item.path)
-              ? 'bg-primary/15 text-primary shadow-sm'
-              : 'text-muted-foreground hover:bg-muted hover:text-foreground hover:-translate-y-0.5'
+              ? theme === 'army' 
+                ? 'bg-green-800/50 text-green-300 border border-green-600/30 shadow-[0_0_8px_rgba(74,222,128,0.15)]'
+                : 'bg-primary/15 text-primary shadow-sm'
+              : theme === 'army'
+                ? 'text-green-500/60 hover:bg-green-800/30 hover:text-green-300'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground hover:-translate-y-0.5'
           )}
           style={mobile ? { animationDelay: `${index * 50}ms`, animationFillMode: 'forwards' } : undefined}
         >
           <div className={cn(
             'p-1.5 rounded-lg transition-all duration-200',
             isActive(item.path) 
-              ? 'bg-primary/20' 
-              : 'bg-transparent group-hover:bg-primary/10 group-hover:scale-110'
+              ? theme === 'army' ? 'bg-green-700/40' : 'bg-primary/20'
+              : theme === 'army' ? 'bg-transparent group-hover:bg-green-700/30' : 'bg-transparent group-hover:bg-primary/10 group-hover:scale-110'
           )}>
             <item.icon className={cn(
               'w-4 h-4 transition-all duration-200',
-              isActive(item.path) ? 'text-primary' : 'group-hover:text-primary'
+              isActive(item.path) 
+                ? theme === 'army' ? 'text-green-400' : 'text-primary'
+                : theme === 'army' ? 'group-hover:text-green-400' : 'group-hover:text-primary'
             )} />
           </div>
           <span>{item.label}</span>
