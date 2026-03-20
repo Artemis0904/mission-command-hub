@@ -119,7 +119,10 @@ export default function TopNavigation() {
           <div className="icon-gradient-primary p-2 rounded-xl shadow-md group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
             <Target className="w-5 h-5" />
           </div>
-          <span className="font-bold text-foreground hidden sm:block text-lg">IWTS Control</span>
+          <span className={cn(
+            "font-bold hidden sm:block text-lg",
+            theme === 'army' ? 'font-mono uppercase tracking-widest text-[hsl(80_20%_85%)]' : 'text-foreground'
+          )}>IWTS Control</span>
         </Link>
 
         {/* Desktop Navigation */}
