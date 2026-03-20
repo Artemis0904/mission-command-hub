@@ -17,6 +17,7 @@ import {
   Sun,
   Moon,
   Power,
+  Shield,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -46,7 +47,7 @@ export default function TopNavigation() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => {
@@ -106,14 +107,22 @@ export default function TopNavigation() {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/20 dark:border-white/10 shadow-lg animate-fade-in-down bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl backdrop-saturate-150">
+    <header className={cn(
+      "sticky top-0 z-50 w-full border-b shadow-lg animate-fade-in-down backdrop-blur-xl backdrop-saturate-150",
+      theme === 'army' 
+        ? 'bg-[hsl(90_12%_15%/0.85)] border-[hsl(80_20%_30%/0.3)]' 
+        : 'bg-white/60 dark:bg-slate-900/60 border-white/20 dark:border-white/10'
+    )}>
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         {/* Logo */}
         <Link to="/dashboard" className="flex items-center gap-3 mr-6 group">
           <div className="icon-gradient-primary p-2 rounded-xl shadow-md group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
             <Target className="w-5 h-5" />
           </div>
-          <span className="font-bold text-foreground hidden sm:block text-lg">IWTS Control</span>
+          <span className={cn(
+            "font-bold hidden sm:block text-lg",
+            theme === 'army' ? 'font-mono uppercase tracking-widest text-[hsl(80_20%_85%)]' : 'text-foreground'
+          )}>IWTS Control</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -151,23 +160,30 @@ export default function TopNavigation() {
                 Settings
               </DropdownMenuLabel>
               
-              {/* Theme Toggle */}
-              <div className="flex items-center justify-between px-2 py-2.5 rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="flex items-center gap-3">
-                  {theme === 'dark' ? (
-                    <Moon className="w-4 h-4 text-primary" />
-                  ) : (
-                    <Sun className="w-4 h-4 text-accent" />
-                  )}
-                  <span className="text-sm font-medium">
-                    {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
-                  </span>
+              {/* Theme Selector */}
+              <div className="px-2 py-1.5">
+                <p className="text-xs text-muted-foreground mb-2">Theme</p>
+                <div className="flex gap-1">
+                  {([
+                    { key: 'light' as const, icon: Sun, label: 'Light' },
+                    { key: 'dark' as const, icon: Moon, label: 'Dark' },
+                    { key: 'army' as const, icon: Shield, label: 'Army' },
+                  ]).map(({ key, icon: Icon, label }) => (
+                    <button
+                      key={key}
+                      onClick={() => setTheme(key)}
+                      className={cn(
+                        'flex-1 flex flex-col items-center gap-1 py-2 px-2 rounded-lg text-xs font-medium transition-all duration-200',
+                        theme === key 
+                          ? 'bg-primary/15 text-primary' 
+                          : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                      )}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {label}
+                    </button>
+                  ))}
                 </div>
-                <Switch 
-                  checked={theme === 'dark'} 
-                  onCheckedChange={toggleTheme}
-                  className="data-[state=checked]:bg-primary"
-                />
               </div>
               
               <DropdownMenuSeparator className="my-2" />

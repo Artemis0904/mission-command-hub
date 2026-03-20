@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-type Theme = 'light' | 'dark';
+type Theme = 'light' | 'dark' | 'army';
 
 interface ThemeContextType {
   theme: Theme;
@@ -10,21 +10,27 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const themeOrder: Theme[] = ['light', 'dark', 'army'];
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     const stored = localStorage.getItem('iwts-theme');
-    return (stored as Theme) || 'light';
+    if (stored === 'light' || stored === 'dark' || stored === 'army') return stored;
+    return 'light';
   });
 
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.remove('light', 'dark');
+    root.classList.remove('light', 'dark', 'army');
     root.classList.add(theme);
     localStorage.setItem('iwts-theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setThemeState(prev => prev === 'light' ? 'dark' : 'light');
+    setThemeState(prev => {
+      const idx = themeOrder.indexOf(prev);
+      return themeOrder[(idx + 1) % themeOrder.length];
+    });
   };
 
   const setTheme = (newTheme: Theme) => {
