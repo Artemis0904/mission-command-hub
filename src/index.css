@@ -836,6 +836,7 @@
   }
 }
 
+@layer utilities {
   /* Glow effects */
   .glow-primary {
     box-shadow: 0 0 24px hsl(var(--primary) / 0.35);
