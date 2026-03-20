@@ -245,16 +245,21 @@
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
-  /* Army mode: monospace military font */
+  /* Army mode: stencil military font */
   .army body,
   .army {
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-family: 'Black Ops One', 'Impact', 'Arial Black', sans-serif;
+  }
+
+  .army p, .army span, .army td, .army th, .army li, .army label, .army input, .army select, .army textarea {
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
     letter-spacing: 0.02em;
   }
 
   .army h1, .army h2, .army h3, .army h4, .army h5, .army h6 {
+    font-family: 'Black Ops One', 'Impact', 'Arial Black', sans-serif;
     @apply font-bold uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
   }
 
   /* Consistent heading styles */
