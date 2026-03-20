@@ -160,23 +160,30 @@ export default function TopNavigation() {
                 Settings
               </DropdownMenuLabel>
               
-              {/* Theme Toggle */}
-              <div className="flex items-center justify-between px-2 py-2.5 rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="flex items-center gap-3">
-                  {theme === 'dark' ? (
-                    <Moon className="w-4 h-4 text-primary" />
-                  ) : (
-                    <Sun className="w-4 h-4 text-accent" />
-                  )}
-                  <span className="text-sm font-medium">
-                    {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
-                  </span>
+              {/* Theme Selector */}
+              <div className="px-2 py-1.5">
+                <p className="text-xs text-muted-foreground mb-2">Theme</p>
+                <div className="flex gap-1">
+                  {([
+                    { key: 'light' as const, icon: Sun, label: 'Light' },
+                    { key: 'dark' as const, icon: Moon, label: 'Dark' },
+                    { key: 'army' as const, icon: Shield, label: 'Army' },
+                  ]).map(({ key, icon: Icon, label }) => (
+                    <button
+                      key={key}
+                      onClick={() => setTheme(key)}
+                      className={cn(
+                        'flex-1 flex flex-col items-center gap-1 py-2 px-2 rounded-lg text-xs font-medium transition-all duration-200',
+                        theme === key 
+                          ? 'bg-primary/15 text-primary' 
+                          : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                      )}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {label}
+                    </button>
+                  ))}
                 </div>
-                <Switch 
-                  checked={theme === 'dark'} 
-                  onCheckedChange={toggleTheme}
-                  className="data-[state=checked]:bg-primary"
-                />
               </div>
               
               <DropdownMenuSeparator className="my-2" />
