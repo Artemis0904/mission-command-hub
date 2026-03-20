@@ -245,6 +245,18 @@
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
+  /* Army mode: monospace military font */
+  .army body,
+  .army {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    letter-spacing: 0.02em;
+  }
+
+  .army h1, .army h2, .army h3, .army h4, .army h5, .army h6 {
+    @apply font-bold uppercase;
+    letter-spacing: 0.08em;
+  }
+
   /* Consistent heading styles */
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
