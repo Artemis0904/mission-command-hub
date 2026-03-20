@@ -332,6 +332,26 @@
       inset 0 -1px 1px hsl(var(--foreground) / 0.05);
   }
 
+  /* Army mode card overrides */
+  .army .tactical-card {
+    @apply rounded-lg;
+    background: hsl(90 12% 14% / 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(80 20% 30% / 0.4);
+    box-shadow: 
+      0 4px 16px hsl(0 0% 0% / 0.3),
+      inset 0 1px 0 hsl(80 20% 40% / 0.1);
+  }
+
+  .army .tactical-card::before {
+    background: linear-gradient(
+      180deg,
+      hsl(80 20% 30% / 0.15) 0%,
+      transparent 100%
+    );
+  }
+
   /* Top highlight reflection */
   .tactical-card::before {
     content: '';
@@ -369,8 +389,21 @@
       inset 0 -1px 1px hsl(var(--foreground) / 0.05);
   }
 
+  .army .tactical-card-hover:hover {
+    background: hsl(90 12% 16% / 0.9);
+    border-color: hsl(80 50% 40% / 0.5);
+    transform: translateY(-4px);
+    box-shadow: 
+      0 8px 24px hsl(0 0% 0% / 0.4),
+      inset 0 1px 0 hsl(80 20% 40% / 0.15);
+  }
+
   .tactical-card-hover:active {
     transform: translateY(-2px) scale(1);
+  }
+
+  .army .tactical-card-hover:active {
+    transform: translateY(0);
   }
 
   /* Data table styles */
