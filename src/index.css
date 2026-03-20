@@ -173,6 +173,65 @@
     --sidebar-border: 220 15% 90%;
     --sidebar-ring: 250 85% 60%;
   }
+
+  .army {
+    /* Army / Military Tactical Mode */
+    --background: 90 15% 12%;
+    --foreground: 80 20% 85%;
+
+    --card: 90 12% 18%;
+    --card-foreground: 80 20% 85%;
+
+    --popover: 90 12% 20%;
+    --popover-foreground: 80 20% 85%;
+
+    /* Olive green primary */
+    --primary: 80 50% 40%;
+    --primary-foreground: 80 20% 95%;
+
+    --secondary: 90 12% 22%;
+    --secondary-foreground: 80 15% 80%;
+
+    --muted: 90 10% 16%;
+    --muted-foreground: 80 10% 55%;
+
+    /* Amber/gold accent */
+    --accent: 45 80% 45%;
+    --accent-foreground: 90 15% 10%;
+
+    --destructive: 0 65% 45%;
+    --destructive-foreground: 80 20% 95%;
+
+    --border: 90 10% 25%;
+    --input: 90 12% 20%;
+    --ring: 80 50% 40%;
+
+    --radius: 0.5rem;
+
+    /* Status colors for army */
+    --status-active: 120 50% 38%;
+    --status-warning: 45 80% 45%;
+    --status-danger: 0 65% 45%;
+    --status-info: 180 40% 40%;
+    --status-idle: 80 10% 40%;
+    --status-offline: 90 8% 30%;
+
+    /* Sidebar */
+    --sidebar-background: 90 15% 10%;
+    --sidebar-foreground: 80 15% 80%;
+    --sidebar-primary: 80 50% 40%;
+    --sidebar-primary-foreground: 80 20% 95%;
+    --sidebar-accent: 90 12% 20%;
+    --sidebar-accent-foreground: 80 50% 50%;
+    --sidebar-border: 90 10% 20%;
+    --sidebar-ring: 80 50% 40%;
+
+    /* Gradient tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(80 50% 40%) 0%, hsl(100 45% 35%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(45 80% 45%) 0%, hsl(35 75% 40%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(90 12% 18%) 0%, hsl(90 12% 14%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(120 50% 38%) 0%, hsl(140 45% 35%) 100%);
+  }
 }
 
 @layer base {
