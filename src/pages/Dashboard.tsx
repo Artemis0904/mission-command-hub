@@ -33,6 +33,7 @@ import { AnimatedCounter } from '@/hooks/useAnimatedCounter';
 import { dashboardStats, missions, trainees, complianceAlerts, getStationById, getCourseById, iwtsStations } from '@/data/mockData';
 
 export default function Dashboard() {
+  const { theme } = useTheme();
   const navigate = useNavigate();
 
   const todaysMissions = missions.filter(m => m.date === '2026-01-23');
